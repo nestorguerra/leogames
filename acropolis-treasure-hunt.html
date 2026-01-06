@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏛️ La Búsqueda del Tesoro en la Acrópolis - Aventura Familiar</title>
+    <title>Tesoro de la Acrópolis - Aventura Griega</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
@@ -355,16 +355,33 @@
 
         <!-- Pantalla de inicio -->
         <div id="startScreen">
-            <canvas id="titleArt" width="400" height="180"></canvas>
-            <h1>LA BÚSQUEDA DEL<br>TESORO EN LA ACRÓPOLIS</h1>
-            <h2>Una Aventura Familiar en Grecia</h2>
+            <h1>🏛️ TESORO DE<br>LA ACRÓPOLIS 🏛️</h1>
+            <h2>⚔️ Aventura en la Antigua Grecia ⚔️</h2>
+
+            <!-- Arte de columnas griegas -->
+            <div style="display: flex; gap: 15px; margin: 20px 0; align-items: flex-end;">
+                <div style="width: 30px; height: 80px; background: linear-gradient(90deg, #d4af37 0%, #f5deb3 50%, #d4af37 100%); border-radius: 5px 5px 0 0;"></div>
+                <div style="width: 30px; height: 100px; background: linear-gradient(90deg, #d4af37 0%, #f5deb3 50%, #d4af37 100%); border-radius: 5px 5px 0 0;"></div>
+                <div style="text-align: center;">
+                    <div style="font-size: 60px; animation: glow 2s infinite alternate;">🏺</div>
+                    <div style="color: #ffd700; font-size: 8px;">TESORO</div>
+                </div>
+                <div style="width: 30px; height: 100px; background: linear-gradient(90deg, #d4af37 0%, #f5deb3 50%, #d4af37 100%); border-radius: 5px 5px 0 0;"></div>
+                <div style="width: 30px; height: 80px; background: linear-gradient(90deg, #d4af37 0%, #f5deb3 50%, #d4af37 100%); border-radius: 5px 5px 0 0;"></div>
+            </div>
+
+            <div style="color: #87ceeb; font-size: 10px; margin: 15px 0; text-align: center; line-height: 2;">
+                🗡️ EXPLORA RUINAS ANTIGUAS<br>
+                💎 ENCUENTRA 5 RELIQUIAS<br>
+                👨‍👩‍👧‍👦 ELIGE TU PERSONAJE
+            </div>
+
             <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
                 <a href="juegos.html" class="btn-back">← VOLVER</a>
-                <button class="btn" onclick="showStory()">▶ COMENZAR AVENTURA</button>
+                <button class="btn" onclick="showStory()">🏛️ EXPLORAR</button>
             </div>
-            <div class="instructions">
-                ← → MOVER &nbsp;&nbsp; ↑ SALTAR &nbsp;&nbsp; ESPACIO ATACAR<br>
-                P PAUSA &nbsp;&nbsp; M MÚSICA ON/OFF
+            <div class="instructions" style="color: #87ceeb; font-size: 8px; margin-top: 20px;">
+                ← → MOVER &nbsp;&nbsp; ↑ SALTAR &nbsp;&nbsp; ESPACIO ATACAR
             </div>
         </div>
 

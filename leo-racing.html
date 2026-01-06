@@ -205,23 +205,42 @@
         <div class="lap-complete" id="lapComplete">VUELTA COMPLETADA!</div>
 
         <div id="startScreen">
-            <h1>KARTING CANTABRIA</h1>
-            <h2>🛴 CARRERAS EN PATINETE ELÉCTRICO 🛴</h2>
+            <h1>🏎️ KARTING<br>CANTABRIA 🏎️</h1>
+            <h2>Leo en Patinete vs Los Coches</h2>
 
             <canvas id="carPreview" class="car-preview"></canvas>
 
-            <div style="color: #fff; font-size: 10px; margin: 20px 0;">
-                <div style="color: #ffff00;">CIRCUITO: COSTA DE CANTABRIA</div>
-                <div style="margin-top: 10px;">3 VUELTAS - LEO 🛴 vs SIMON, GORDITO, GUILLE 🚗</div>
+            <!-- Rivales -->
+            <div style="display: flex; gap: 20px; margin: 15px 0; justify-content: center;">
+                <div style="text-align: center;">
+                    <div style="font-size: 24px;">🔴</div>
+                    <div style="color: #ff0000; font-size: 8px;">SIMON</div>
+                    <div style="color: #ff6666; font-size: 7px;">280km/h</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 24px;">🟢</div>
+                    <div style="color: #00ff00; font-size: 8px;">GUILLE</div>
+                    <div style="color: #66ff66; font-size: 7px;">230km/h</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 24px;">🔵</div>
+                    <div style="color: #0088ff; font-size: 8px;">GORDITO</div>
+                    <div style="color: #66aaff; font-size: 7px;">170km/h</div>
+                </div>
+            </div>
+
+            <div style="color: #ffff00; font-size: 10px; margin: 10px 0;">
+                🏁 CIRCUITO: COSTA DE CANTABRIA 🏁<br>
+                <span style="color: #fff; font-size: 9px;">3 VUELTAS</span>
             </div>
 
             <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; align-items: center;">
                 <a href="juegos.html" class="btn-back">← VOLVER</a>
-                <button class="btn" onclick="startRace()">EMPEZAR CARRERA</button>
+                <button class="btn" onclick="startRace()">🏁 ¡CARRERA!</button>
             </div>
 
             <div class="controls-info">
-                ← → GIRAR PATINETE | ↑ ACELERAR | ↓ FRENAR<br>
+                ← → GIRAR | ↑ ACELERAR | ↓ FRENAR<br>
                 ESPACIO: TURBO ⚡
             </div>
         </div>

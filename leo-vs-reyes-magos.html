@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leo vs Los Reyes Magos - Pacman Style</title>
+    <title>Noche de Reyes - Arcade Pacman</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         * {
@@ -240,52 +240,64 @@
         <canvas id="gameCanvas" width="560" height="620"></canvas>
 
         <div id="startScreen">
-            <h1>🎄 LEO vs<br>LOS REYES MAGOS 👑</h1>
-            <h2>¡Estilo Pacman!</h2>
+            <h1>👑 NOCHE DE REYES 👑</h1>
+            <h2>🎄 ¡Huye de Melchor, Gaspar y Baltasar! 🎄</h2>
 
-            <div class="kings-preview">
-                <div class="king-icon"></div>
-                <div class="king-icon"></div>
-                <div class="king-icon"></div>
+            <!-- Los tres Reyes Magos animados -->
+            <div style="display: flex; gap: 30px; margin: 25px 0; align-items: center;">
+                <div style="text-align: center;">
+                    <div style="font-size: 50px; animation: float 1s infinite alternate;">👑</div>
+                    <div style="color: #c41e3a; font-size: 8px; margin-top: 5px;">MELCHOR</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 50px; animation: float 1s infinite alternate; animation-delay: 0.3s;">👑</div>
+                    <div style="color: #228b22; font-size: 8px; margin-top: 5px;">GASPAR</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 50px; animation: float 1s infinite alternate; animation-delay: 0.6s;">👑</div>
+                    <div style="color: #20b2aa; font-size: 8px; margin-top: 5px;">BALTASAR</div>
+                </div>
+            </div>
+
+            <div style="color: #ffd700; font-size: 12px; margin: 10px 0;">
+                🎮 ARCADE PACMAN STYLE 🎮
             </div>
 
             <div class="power-info">
                 <div class="power-item">
                     <div class="icon">🎁</div>
-                    <div>Regalos<br>+10 pts</div>
+                    <div>Regalos</div>
                 </div>
                 <div class="power-item">
                     <div class="icon">⭐</div>
-                    <div>Estrella<br>+50 pts</div>
+                    <div>Estrella</div>
                 </div>
                 <div class="power-item">
                     <div class="icon">⚫</div>
-                    <div>Carbón<br>¡Asustar!</div>
-                </div>
-                <div class="power-item">
-                    <div class="icon">🥯</div>
-                    <div>Roscón<br>+100 pts</div>
+                    <div>¡Carbón!</div>
                 </div>
                 <div class="power-item">
                     <div class="icon">🐪</div>
-                    <div>Camello<br>+200 pts</div>
-                </div>
-                <div class="power-item">
-                    <div class="icon">👟</div>
-                    <div>Zapato<br>+Regalos</div>
+                    <div>Camello</div>
                 </div>
             </div>
 
             <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; align-items: center;">
                 <a href="juegos.html" class="btn-back">← VOLVER</a>
-                <button class="btn" onclick="startGame()">👑 ¡JUGAR! 👑</button>
+                <button class="btn" onclick="startGame()">🎁 ¡A JUGAR! 🎁</button>
             </div>
 
             <div class="instructions">
-                <span>← → ↑ ↓</span> ó <span>WASD</span> = MOVER<br>
-                Recoge todos los <span>REGALOS</span> sin que te pillen<br>
-                ¡El <span>CARBÓN</span> asusta a los Reyes!
+                <span>← → ↑ ↓</span> = MOVER A LEO<br>
+                ⚫ <span>CARBÓN</span> = ¡ASUSTAR REYES!
             </div>
+
+            <style>
+                @keyframes float {
+                    from { transform: translateY(0) rotate(-5deg); }
+                    to { transform: translateY(-10px) rotate(5deg); }
+                }
+            </style>
         </div>
 
         <div id="levelBanner">
