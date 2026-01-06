@@ -48,6 +48,8 @@
             justify-content: center;
             background: rgba(0, 0, 0, 0.9);
             z-index: 10;
+            overflow-y: auto;
+            padding: 20px 0;
         }
 
         #gameOverScreen, #victoryScreen {
@@ -92,11 +94,31 @@
             box-shadow: 0 0 20px rgba(74, 222, 128, 0.6);
         }
 
+        .btn-back {
+            background: linear-gradient(180deg, #666 0%, #444 100%);
+            border: 3px solid #333;
+            color: #fff;
+            padding: 10px 25px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #888;
+            background: linear-gradient(180deg, #888 0%, #666 100%);
+        }
+
         .instructions {
             color: #94a3b8;
             font-size: 8px;
             text-align: center;
-            margin-top: 30px;
+            margin-top: 15px;
             line-height: 2.5;
         }
 
@@ -170,7 +192,10 @@
             <h1>LA AVENTURA<br>DE LEO</h1>
             <h2>⛏️ Estilo Minecraft ⛏️</h2>
             <div class="subtitle">Diseñado por Leo</div>
-            <button class="btn" onclick="startGame()">▶ JUGAR</button>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; align-items: center;">
+                <a href="juegos.html" class="btn-back">← VOLVER</a>
+                <button class="btn" onclick="startGame()">▶ JUGAR</button>
+            </div>
             <div class="instructions">
                 ← → ↑ ↓ ó WASD = MOVER<br>
                 ESPACIO = ATACAR ESQUELETOS<br>

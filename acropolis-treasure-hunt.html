@@ -51,6 +51,8 @@
             align-items: center;
             justify-content: center;
             z-index: 10;
+            overflow-y: auto;
+            padding: 20px 0;
         }
 
         #startScreen h1 {
@@ -170,6 +172,26 @@
         .btn:hover {
             transform: scale(1.1);
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+        }
+
+        .btn-back {
+            background: linear-gradient(180deg, #666 0%, #444 100%);
+            border: 3px solid #333;
+            color: #fff;
+            padding: 10px 25px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #888;
+            background: linear-gradient(180deg, #888 0%, #666 100%);
         }
 
         .btn:disabled {
@@ -336,7 +358,10 @@
             <canvas id="titleArt" width="400" height="180"></canvas>
             <h1>LA BÚSQUEDA DEL<br>TESORO EN LA ACRÓPOLIS</h1>
             <h2>Una Aventura Familiar en Grecia</h2>
-            <button class="btn" onclick="showStory()">▶ COMENZAR AVENTURA</button>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                <a href="juegos.html" class="btn-back">← VOLVER</a>
+                <button class="btn" onclick="showStory()">▶ COMENZAR AVENTURA</button>
+            </div>
             <div class="instructions">
                 ← → MOVER &nbsp;&nbsp; ↑ SALTAR &nbsp;&nbsp; ESPACIO ATACAR<br>
                 P PAUSA &nbsp;&nbsp; M MÚSICA ON/OFF

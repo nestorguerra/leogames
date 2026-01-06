@@ -49,6 +49,8 @@
             background: rgba(0, 0, 0, 0.95);
             z-index: 10;
             border-radius: 5px;
+            overflow-y: auto;
+            padding: 20px 0;
         }
 
         #gameOverScreen, #victoryScreen {
@@ -108,6 +110,26 @@
         .btn:hover {
             transform: scale(1.1);
             box-shadow: 0 0 30px rgba(255, 107, 107, 0.6);
+        }
+
+        .btn-back {
+            background: linear-gradient(180deg, #666 0%, #444 100%);
+            border: 3px solid #333;
+            color: #fff;
+            padding: 10px 25px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #888;
+            background: linear-gradient(180deg, #888 0%, #666 100%);
         }
 
         .instructions {
@@ -254,7 +276,10 @@
                 </div>
             </div>
 
-            <button class="btn" onclick="startGame()">👑 ¡JUGAR! 👑</button>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; align-items: center;">
+                <a href="juegos.html" class="btn-back">← VOLVER</a>
+                <button class="btn" onclick="startGame()">👑 ¡JUGAR! 👑</button>
+            </div>
 
             <div class="instructions">
                 <span>← → ↑ ↓</span> ó <span>WASD</span> = MOVER<br>
