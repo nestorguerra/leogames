@@ -519,6 +519,29 @@
                 <a href="leo-racing.html" class="play-btn">▶ JUGAR</a>
             </div>
         </article>
+
+        <!-- Juego 5: Leo Astronauta -->
+        <article class="game-card">
+            <div class="game-cover">
+                <canvas id="cover5" width="380" height="280"></canvas>
+                <div class="new-badge">NEW!</div>
+                <div class="rating-badge">TODOS</div>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title">LEO ASTRONAUTA</h2>
+                <p class="game-description">
+                    ¡Leo pilota una nave espacial! Esquiva asteroides,
+                    recoge estrellas y sobrevive en el espacio infinito.
+                    ¡Cuántas estrellas puedes conseguir?
+                </p>
+                <div class="game-meta">
+                    <span class="meta-item">🚀 ESPACIAL</span>
+                    <span class="meta-item">⭐ ESTRELLAS</span>
+                    <span class="meta-item">☄️ ASTEROIDES</span>
+                </div>
+                <a href="leo-astronauta.html" class="play-btn">▶ JUGAR</a>
+            </div>
+        </article>
     </main>
 
     <!-- High Scores decorativo -->
@@ -1236,11 +1259,190 @@
             });
         }
 
+        // ===== PORTADA 5: Leo Astronauta =====
+        function drawCover5() {
+            const canvas = document.getElementById('cover5');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            // Fondo espacial profundo
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#000033');
+            gradient.addColorStop(0.5, '#000066');
+            gradient.addColorStop(1, '#000033');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Nebulosa de fondo
+            ctx.fillStyle = 'rgba(100, 0, 150, 0.2)';
+            ctx.beginPath();
+            ctx.arc(100, 100, 80, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(0, 100, 150, 0.15)';
+            ctx.beginPath();
+            ctx.arc(300, 180, 100, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Estrellas de fondo
+            ctx.fillStyle = '#fff';
+            for (let i = 0; i < 60; i++) {
+                const size = Math.random() * 2 + 0.5;
+                ctx.beginPath();
+                ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Planeta al fondo
+            ctx.fillStyle = '#3498db';
+            ctx.beginPath();
+            ctx.arc(320, 220, 50, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#2980b9';
+            ctx.beginPath();
+            ctx.arc(335, 210, 45, 0, Math.PI * 2);
+            ctx.fill();
+            // Anillo del planeta
+            ctx.strokeStyle = '#87CEEB';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.ellipse(320, 220, 70, 15, -0.3, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Asteroides
+            const drawAsteroid = (ax, ay, size) => {
+                ctx.fillStyle = '#6B4423';
+                ctx.beginPath();
+                ctx.arc(ax, ay, size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#4A2F17';
+                ctx.beginPath();
+                ctx.arc(ax - size * 0.3, ay - size * 0.2, size * 0.3, 0, Math.PI * 2);
+                ctx.fill();
+            };
+            drawAsteroid(50, 60, 18);
+            drawAsteroid(340, 80, 14);
+            drawAsteroid(280, 140, 10);
+            drawAsteroid(70, 180, 12);
+
+            // Estrellas coleccionables (doradas)
+            const drawStarShape = (sx, sy, size) => {
+                ctx.fillStyle = '#FFD700';
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) {
+                    ctx.lineTo(sx + Math.cos((18 + i * 72) * Math.PI / 180) * size,
+                              sy - Math.sin((18 + i * 72) * Math.PI / 180) * size);
+                    ctx.lineTo(sx + Math.cos((54 + i * 72) * Math.PI / 180) * size * 0.5,
+                              sy - Math.sin((54 + i * 72) * Math.PI / 180) * size * 0.5);
+                }
+                ctx.closePath();
+                ctx.fill();
+            };
+            drawStarShape(100, 120, 15);
+            drawStarShape(250, 60, 12);
+            drawStarShape(180, 180, 10);
+
+            // La nave de Leo (grande, en el centro)
+            const shipX = 150, shipY = 140;
+
+            // Cuerpo de la nave
+            ctx.fillStyle = '#3498db';
+            ctx.beginPath();
+            ctx.moveTo(shipX, shipY - 50);
+            ctx.lineTo(shipX + 30, shipY + 15);
+            ctx.lineTo(shipX + 22, shipY + 38);
+            ctx.lineTo(shipX - 22, shipY + 38);
+            ctx.lineTo(shipX - 30, shipY + 15);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#2980b9';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Ventana/cabina
+            ctx.fillStyle = '#87CEEB';
+            ctx.beginPath();
+            ctx.ellipse(shipX, shipY - 5, 15, 18, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#5DADE2';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Leo dentro de la nave
+            ctx.fillStyle = '#FFDAB9';
+            ctx.beginPath();
+            ctx.arc(shipX, shipY - 5, 11, 0, Math.PI * 2);
+            ctx.fill();
+            // Pelo
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.arc(shipX, shipY - 11, 8, Math.PI, 0);
+            ctx.fill();
+            // Ojos
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(shipX - 4, shipY - 7, 2, 0, Math.PI * 2);
+            ctx.arc(shipX + 4, shipY - 7, 2, 0, Math.PI * 2);
+            ctx.fill();
+            // Sonrisa
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(shipX, shipY - 2, 5, 0.2, Math.PI - 0.2);
+            ctx.stroke();
+
+            // Alas de la nave
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.moveTo(shipX - 30, shipY + 15);
+            ctx.lineTo(shipX - 55, shipY + 38);
+            ctx.lineTo(shipX - 30, shipY + 30);
+            ctx.closePath();
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(shipX + 30, shipY + 15);
+            ctx.lineTo(shipX + 55, shipY + 38);
+            ctx.lineTo(shipX + 30, shipY + 30);
+            ctx.closePath();
+            ctx.fill();
+
+            // Llamas del motor
+            ctx.fillStyle = '#f39c12';
+            ctx.beginPath();
+            ctx.moveTo(shipX - 15, shipY + 38);
+            ctx.lineTo(shipX, shipY + 70);
+            ctx.lineTo(shipX + 15, shipY + 38);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.moveTo(shipX - 10, shipY + 38);
+            ctx.lineTo(shipX, shipY + 55);
+            ctx.lineTo(shipX + 10, shipY + 38);
+            ctx.closePath();
+            ctx.fill();
+
+            // Título
+            ctx.fillStyle = 'rgba(0, 0, 50, 0.9)';
+            ctx.fillRect(0, 215, canvas.width, 65);
+
+            ctx.fillStyle = '#FFD700';
+            ctx.font = 'bold 24px "Press Start 2P", monospace';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#FFD700';
+            ctx.shadowBlur = 10;
+            ctx.fillText('LEO', canvas.width/2, 245);
+            ctx.fillStyle = '#87CEEB';
+            ctx.shadowColor = '#87CEEB';
+            ctx.fillText('ASTRONAUTA', canvas.width/2, 272);
+            ctx.shadowBlur = 0;
+        }
+
         // Dibujar portadas
         drawCover1();
         drawCover2();
         drawCover3();
         drawCover4();
+        drawCover5();
 
         // Redibujar periódicamente para animación sutil
         setInterval(() => {

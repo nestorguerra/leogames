@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leo Astronauta - Aventura Espacial</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 50%, #0a0a2e 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+        #gameContainer {
+            position: relative;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(100, 150, 255, 0.5);
+        }
+        #gameCanvas {
+            display: block;
+            border-radius: 10px;
+        }
+        #startScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(180deg, #000033 0%, #000066 30%, #000033 100%);
+            border-radius: 10px;
+            z-index: 10;
+        }
+        #startScreen h1 {
+            color: #FFD700;
+            font-size: 42px;
+            text-shadow: 0 0 20px #FFD700, 0 0 40px #FFA500;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #startScreen h2 {
+            color: #87CEEB;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        #startScreen button {
+            padding: 15px 40px;
+            font-size: 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+        #playButton {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            color: white;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+        }
+        #playButton:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.8);
+        }
+        #backButton {
+            background: linear-gradient(45deg, #2196F3, #03A9F4);
+            color: white;
+            box-shadow: 0 0 20px rgba(33, 150, 243, 0.5);
+        }
+        #backButton:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(33, 150, 243, 0.8);
+        }
+        #instructions {
+            color: #AADDFF;
+            font-size: 16px;
+            margin-top: 30px;
+            text-align: center;
+            line-height: 1.8;
+        }
+        #gameOver {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 30, 0.9);
+            border-radius: 10px;
+            z-index: 10;
+        }
+        #gameOver h2 {
+            color: #FF6B6B;
+            font-size: 48px;
+            text-shadow: 0 0 20px #FF0000;
+            margin-bottom: 20px;
+        }
+        #finalScore {
+            color: #FFD700;
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+        #gameOver button {
+            padding: 15px 40px;
+            font-size: 20px;
+            background: linear-gradient(45deg, #9C27B0, #E91E63);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(156, 39, 176, 0.5);
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        #gameOver button:hover {
+            transform: scale(1.1);
+        }
+        #hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: none;
+            justify-content: space-between;
+            color: white;
+            font-size: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            z-index: 5;
+        }
+        #preview {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="hud">
+            <span id="score">Estrellas: 0</span>
+            <span id="lives">Vidas: 3</span>
+        </div>
+        <div id="startScreen">
+            <h1>LEO ASTRONAUTA</h1>
+            <h2>Aventura Espacial</h2>
+            <canvas id="preview" width="300" height="200"></canvas>
+            <div class="button-container">
+                <button id="backButton" onclick="window.location.href='juegos.html'">VOLVER</button>
+                <button id="playButton">JUGAR</button>
+            </div>
+            <div id="instructions">
+                ← → Mover la nave<br>
+                Recoge ⭐ estrellas y evita ☄️ asteroides<br>
+                ¡Consigue el máximo de puntos!
+            </div>
+        </div>
+        <div id="gameOver">
+            <h2>¡GAME OVER!</h2>
+            <p id="finalScore">Estrellas: 0</p>
+            <div>
+                <button onclick="restartGame()">REINTENTAR</button>
+                <button onclick="goToMenu()">MENÚ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOver');
+        const hud = document.getElementById('hud');
+        const scoreDisplay = document.getElementById('score');
+        const livesDisplay = document.getElementById('lives');
+        const finalScoreDisplay = document.getElementById('finalScore');
+
+        // Game state
+        let gameRunning = false;
+        let score = 0;
+        let lives = 3;
+        let ship = { x: 400, y: 500, width: 60, height: 70 };
+        let stars = [];
+        let asteroids = [];
+        let particles = [];
+        let backgroundStars = [];
+        let keys = {};
+        let difficulty = 1;
+        let gameTime = 0;
+
+        // Initialize background stars
+        function initBackgroundStars() {
+            backgroundStars = [];
+            for (let i = 0; i < 100; i++) {
+                backgroundStars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2 + 0.5,
+                    speed: Math.random() * 2 + 1,
+                    brightness: Math.random()
+                });
+            }
+        }
+
+        // Draw Leo's spaceship
+        function drawShip(x, y, scale = 1) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+
+            // Ship body (rocket shape)
+            ctx.fillStyle = '#3498db';
+            ctx.beginPath();
+            ctx.moveTo(0, -35);
+            ctx.lineTo(20, 10);
+            ctx.lineTo(15, 25);
+            ctx.lineTo(-15, 25);
+            ctx.lineTo(-20, 10);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#2980b9';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Ship window (cockpit)
+            ctx.fillStyle = '#87CEEB';
+            ctx.beginPath();
+            ctx.ellipse(0, -5, 10, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#5DADE2';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Leo inside (face)
+            ctx.fillStyle = '#FFDAB9';
+            ctx.beginPath();
+            ctx.arc(0, -5, 7, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Leo's hair
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.arc(0, -9, 5, Math.PI, 0);
+            ctx.fill();
+
+            // Leo's eyes
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(-2, -6, 1.5, 0, Math.PI * 2);
+            ctx.arc(2, -6, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Leo's smile
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(0, -4, 3, 0.2, Math.PI - 0.2);
+            ctx.stroke();
+
+            // Ship wings
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.moveTo(-20, 10);
+            ctx.lineTo(-35, 25);
+            ctx.lineTo(-20, 20);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(20, 10);
+            ctx.lineTo(35, 25);
+            ctx.lineTo(20, 20);
+            ctx.closePath();
+            ctx.fill();
+
+            // Engine flames (animated)
+            if (gameRunning) {
+                const flameHeight = 15 + Math.random() * 10;
+                ctx.fillStyle = '#f39c12';
+                ctx.beginPath();
+                ctx.moveTo(-10, 25);
+                ctx.lineTo(0, 25 + flameHeight);
+                ctx.lineTo(10, 25);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.moveTo(-6, 25);
+                ctx.lineTo(0, 25 + flameHeight * 0.7);
+                ctx.lineTo(6, 25);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            ctx.restore();
+        }
+
+        // Draw star collectible
+        function drawStar(x, y, size = 20) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(Date.now() / 500);
+
+            ctx.fillStyle = '#FFD700';
+            ctx.shadowColor = '#FFD700';
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * size,
+                          -Math.sin((18 + i * 72) * Math.PI / 180) * size);
+                ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * size * 0.5,
+                          -Math.sin((54 + i * 72) * Math.PI / 180) * size * 0.5);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            ctx.restore();
+        }
+
+        // Draw asteroid
+        function drawAsteroid(asteroid) {
+            ctx.save();
+            ctx.translate(asteroid.x, asteroid.y);
+            ctx.rotate(asteroid.rotation);
+
+            ctx.fillStyle = '#6B4423';
+            ctx.beginPath();
+            const points = asteroid.points || 8;
+            for (let i = 0; i < points; i++) {
+                const angle = (i / points) * Math.PI * 2;
+                const radius = asteroid.size * (0.7 + Math.random() * 0.3);
+                if (i === 0) {
+                    ctx.moveTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+                } else {
+                    ctx.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+                }
+            }
+            ctx.closePath();
+            ctx.fill();
+
+            // Crater details
+            ctx.fillStyle = '#4A2F17';
+            ctx.beginPath();
+            ctx.arc(-asteroid.size * 0.3, -asteroid.size * 0.2, asteroid.size * 0.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(asteroid.size * 0.2, asteroid.size * 0.3, asteroid.size * 0.15, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // Draw particles
+        function drawParticles() {
+            particles.forEach(p => {
+                ctx.fillStyle = `rgba(${p.color}, ${p.alpha})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        // Create explosion particles
+        function createExplosion(x, y, color) {
+            for (let i = 0; i < 20; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10,
+                    size: Math.random() * 4 + 2,
+                    color: color,
+                    alpha: 1,
+                    decay: Math.random() * 0.03 + 0.02
+                });
+            }
+        }
+
+        // Create star collect effect
+        function createStarCollect(x, y) {
+            for (let i = 0; i < 10; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    size: Math.random() * 3 + 1,
+                    color: '255, 215, 0',
+                    alpha: 1,
+                    decay: Math.random() * 0.05 + 0.03
+                });
+            }
+        }
+
+        // Update game objects
+        function update() {
+            if (!gameRunning) return;
+
+            gameTime++;
+
+            // Increase difficulty over time
+            if (gameTime % 600 === 0) {
+                difficulty += 0.2;
+            }
+
+            // Move ship
+            if (keys['ArrowLeft'] && ship.x > 30) {
+                ship.x -= 8;
+            }
+            if (keys['ArrowRight'] && ship.x < canvas.width - 30) {
+                ship.x += 8;
+            }
+
+            // Update background stars
+            backgroundStars.forEach(star => {
+                star.y += star.speed;
+                if (star.y > canvas.height) {
+                    star.y = 0;
+                    star.x = Math.random() * canvas.width;
+                }
+            });
+
+            // Spawn stars
+            if (Math.random() < 0.02) {
+                stars.push({
+                    x: Math.random() * (canvas.width - 40) + 20,
+                    y: -20,
+                    speed: 3 + Math.random() * 2
+                });
+            }
+
+            // Spawn asteroids
+            if (Math.random() < 0.01 * difficulty) {
+                asteroids.push({
+                    x: Math.random() * (canvas.width - 60) + 30,
+                    y: -30,
+                    size: 20 + Math.random() * 30,
+                    speed: 2 + Math.random() * 3 * difficulty,
+                    rotation: 0,
+                    rotationSpeed: (Math.random() - 0.5) * 0.1,
+                    points: Math.floor(Math.random() * 4) + 6
+                });
+            }
+
+            // Update stars
+            stars.forEach((star, index) => {
+                star.y += star.speed;
+
+                // Check collision with ship
+                const dx = star.x - ship.x;
+                const dy = star.y - ship.y;
+                if (Math.sqrt(dx * dx + dy * dy) < 35) {
+                    stars.splice(index, 1);
+                    score++;
+                    scoreDisplay.textContent = `Estrellas: ${score}`;
+                    createStarCollect(star.x, star.y);
+                }
+
+                // Remove off-screen stars
+                if (star.y > canvas.height + 20) {
+                    stars.splice(index, 1);
+                }
+            });
+
+            // Update asteroids
+            asteroids.forEach((asteroid, index) => {
+                asteroid.y += asteroid.speed;
+                asteroid.rotation += asteroid.rotationSpeed;
+
+                // Check collision with ship
+                const dx = asteroid.x - ship.x;
+                const dy = asteroid.y - ship.y;
+                if (Math.sqrt(dx * dx + dy * dy) < asteroid.size + 25) {
+                    asteroids.splice(index, 1);
+                    lives--;
+                    livesDisplay.textContent = `Vidas: ${lives}`;
+                    createExplosion(ship.x, ship.y, '255, 100, 50');
+
+                    if (lives <= 0) {
+                        endGame();
+                    }
+                }
+
+                // Remove off-screen asteroids
+                if (asteroid.y > canvas.height + 50) {
+                    asteroids.splice(index, 1);
+                }
+            });
+
+            // Update particles
+            particles.forEach((p, index) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= p.decay;
+                if (p.alpha <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+        }
+
+        // Draw everything
+        function draw() {
+            // Clear and draw space background
+            ctx.fillStyle = '#000022';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw background stars
+            backgroundStars.forEach(star => {
+                const brightness = 0.5 + Math.sin(Date.now() / 500 + star.brightness * 10) * 0.3;
+                ctx.fillStyle = `rgba(255, 255, 255, ${brightness})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw nebula effect
+            const gradient = ctx.createRadialGradient(400, 300, 0, 400, 300, 400);
+            gradient.addColorStop(0, 'rgba(100, 0, 150, 0.1)');
+            gradient.addColorStop(0.5, 'rgba(0, 50, 150, 0.05)');
+            gradient.addColorStop(1, 'rgba(0, 0, 50, 0)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw stars
+            stars.forEach(star => drawStar(star.x, star.y));
+
+            // Draw asteroids
+            asteroids.forEach(asteroid => drawAsteroid(asteroid));
+
+            // Draw particles
+            drawParticles();
+
+            // Draw ship
+            if (gameRunning && lives > 0) {
+                drawShip(ship.x, ship.y);
+            }
+        }
+
+        // Game loop
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start game
+        function startGame() {
+            startScreen.style.display = 'none';
+            gameOverScreen.style.display = 'none';
+            hud.style.display = 'flex';
+
+            gameRunning = true;
+            score = 0;
+            lives = 3;
+            difficulty = 1;
+            gameTime = 0;
+            ship.x = 400;
+            ship.y = 500;
+            stars = [];
+            asteroids = [];
+            particles = [];
+
+            scoreDisplay.textContent = `Estrellas: ${score}`;
+            livesDisplay.textContent = `Vidas: ${lives}`;
+
+            initBackgroundStars();
+        }
+
+        // End game
+        function endGame() {
+            gameRunning = false;
+            gameOverScreen.style.display = 'flex';
+            hud.style.display = 'none';
+            finalScoreDisplay.textContent = `Estrellas recogidas: ${score}`;
+        }
+
+        // Restart game
+        function restartGame() {
+            startGame();
+        }
+
+        // Go to menu
+        function goToMenu() {
+            gameOverScreen.style.display = 'none';
+            startScreen.style.display = 'flex';
+            gameRunning = false;
+        }
+
+        // Draw preview on start screen
+        function drawPreview() {
+            const previewCanvas = document.getElementById('preview');
+            const pctx = previewCanvas.getContext('2d');
+
+            // Space background
+            pctx.fillStyle = '#000033';
+            pctx.fillRect(0, 0, 300, 200);
+
+            // Background stars
+            for (let i = 0; i < 30; i++) {
+                pctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.8 + 0.2})`;
+                pctx.beginPath();
+                pctx.arc(Math.random() * 300, Math.random() * 200, Math.random() * 1.5 + 0.5, 0, Math.PI * 2);
+                pctx.fill();
+            }
+
+            // Draw ship in preview
+            pctx.save();
+            pctx.translate(150, 130);
+            pctx.scale(0.8, 0.8);
+
+            // Ship body
+            pctx.fillStyle = '#3498db';
+            pctx.beginPath();
+            pctx.moveTo(0, -35);
+            pctx.lineTo(20, 10);
+            pctx.lineTo(15, 25);
+            pctx.lineTo(-15, 25);
+            pctx.lineTo(-20, 10);
+            pctx.closePath();
+            pctx.fill();
+
+            // Window
+            pctx.fillStyle = '#87CEEB';
+            pctx.beginPath();
+            pctx.ellipse(0, -5, 10, 12, 0, 0, Math.PI * 2);
+            pctx.fill();
+
+            // Leo
+            pctx.fillStyle = '#FFDAB9';
+            pctx.beginPath();
+            pctx.arc(0, -5, 7, 0, Math.PI * 2);
+            pctx.fill();
+
+            pctx.fillStyle = '#8B4513';
+            pctx.beginPath();
+            pctx.arc(0, -9, 5, Math.PI, 0);
+            pctx.fill();
+
+            pctx.fillStyle = '#000';
+            pctx.beginPath();
+            pctx.arc(-2, -6, 1.5, 0, Math.PI * 2);
+            pctx.arc(2, -6, 1.5, 0, Math.PI * 2);
+            pctx.fill();
+
+            // Wings
+            pctx.fillStyle = '#e74c3c';
+            pctx.beginPath();
+            pctx.moveTo(-20, 10);
+            pctx.lineTo(-35, 25);
+            pctx.lineTo(-20, 20);
+            pctx.closePath();
+            pctx.fill();
+
+            pctx.beginPath();
+            pctx.moveTo(20, 10);
+            pctx.lineTo(35, 25);
+            pctx.lineTo(20, 20);
+            pctx.closePath();
+            pctx.fill();
+
+            // Flames
+            pctx.fillStyle = '#f39c12';
+            pctx.beginPath();
+            pctx.moveTo(-10, 25);
+            pctx.lineTo(0, 45);
+            pctx.lineTo(10, 25);
+            pctx.closePath();
+            pctx.fill();
+
+            pctx.restore();
+
+            // Draw some stars
+            drawStarPreview(pctx, 60, 50, 12);
+            drawStarPreview(pctx, 240, 80, 10);
+            drawStarPreview(pctx, 100, 160, 8);
+
+            // Draw asteroid
+            pctx.save();
+            pctx.translate(220, 150);
+            pctx.fillStyle = '#6B4423';
+            pctx.beginPath();
+            pctx.arc(0, 0, 18, 0, Math.PI * 2);
+            pctx.fill();
+            pctx.fillStyle = '#4A2F17';
+            pctx.beginPath();
+            pctx.arc(-5, -3, 5, 0, Math.PI * 2);
+            pctx.fill();
+            pctx.restore();
+        }
+
+        function drawStarPreview(pctx, x, y, size) {
+            pctx.save();
+            pctx.translate(x, y);
+            pctx.fillStyle = '#FFD700';
+            pctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                pctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * size,
+                          -Math.sin((18 + i * 72) * Math.PI / 180) * size);
+                pctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * size * 0.5,
+                          -Math.sin((54 + i * 72) * Math.PI / 180) * size * 0.5);
+            }
+            pctx.closePath();
+            pctx.fill();
+            pctx.restore();
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' '].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+
+        document.getElementById('playButton').addEventListener('click', startGame);
+
+        // Initialize
+        initBackgroundStars();
+        drawPreview();
+        gameLoop();
+    </script>
+</body>
+</html>
