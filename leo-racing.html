@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Karting de Cantabria - Carreras en Patinete Eléctrico</title>
+    <title>Karting Cantabria - Carreras en Patinete Eléctrico</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         * {
@@ -205,23 +205,42 @@
         <div class="lap-complete" id="lapComplete">VUELTA COMPLETADA!</div>
 
         <div id="startScreen">
-            <h1>KARTING DE CANTABRIA</h1>
-            <h2>🛴 CARRERAS EN PATINETE ELÉCTRICO 🛴</h2>
+            <h1>🏎️ KARTING<br>CANTABRIA 🏎️</h1>
+            <h2>Leo en Patinete vs Los Coches</h2>
 
             <canvas id="carPreview" class="car-preview"></canvas>
 
-            <div style="color: #fff; font-size: 10px; margin: 20px 0;">
-                <div style="color: #ffff00;">CIRCUITO: COSTA DE CANTABRIA</div>
-                <div style="margin-top: 10px;">3 VUELTAS - LEO 🛴 vs SIMON, GORDITO, GUILLE 🚗</div>
+            <!-- Rivales -->
+            <div style="display: flex; gap: 20px; margin: 15px 0; justify-content: center;">
+                <div style="text-align: center;">
+                    <div style="font-size: 24px;">🔴</div>
+                    <div style="color: #ff0000; font-size: 8px;">SIMON</div>
+                    <div style="color: #ff6666; font-size: 7px;">280km/h</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 24px;">🟢</div>
+                    <div style="color: #00ff00; font-size: 8px;">GUILLE</div>
+                    <div style="color: #66ff66; font-size: 7px;">230km/h</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 24px;">🔵</div>
+                    <div style="color: #0088ff; font-size: 8px;">GORDITO</div>
+                    <div style="color: #66aaff; font-size: 7px;">170km/h</div>
+                </div>
+            </div>
+
+            <div style="color: #ffff00; font-size: 10px; margin: 10px 0;">
+                🏁 CIRCUITO: COSTA DE CANTABRIA 🏁<br>
+                <span style="color: #fff; font-size: 9px;">3 VUELTAS</span>
             </div>
 
             <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; align-items: center;">
                 <a href="juegos.html" class="btn-back">← VOLVER</a>
-                <button class="btn" onclick="startRace()">EMPEZAR CARRERA</button>
+                <button class="btn" onclick="startRace()">🏁 ¡CARRERA!</button>
             </div>
 
             <div class="controls-info">
-                ← → GIRAR PATINETE | ↑ ACELERAR | ↓ FRENAR<br>
+                ← → GIRAR | ↑ ACELERAR | ↓ FRENAR<br>
                 ESPACIO: TURBO ⚡
             </div>
         </div>
@@ -397,11 +416,11 @@
         // Crear coches rivales (3 amigos: Simon, Gordito, Guille)
         function createCars() {
             cars = [];
-            // Cada rival tiene características únicas de velocidad
+            // Cada rival tiene velocidades MUY diferentes
             const carData = [
-                { color: '#ff0000', name: 'SIMON', baseSpeed: 220, speedVariation: 25 },    // SIMON: rápido pero inconsistente
-                { color: '#0000ff', name: 'GORDITO', baseSpeed: 195, speedVariation: 10 },  // GORDITO: más lento pero constante
-                { color: '#00ff00', name: 'GUILLE', baseSpeed: 210, speedVariation: 20 }    // GUILLE: equilibrado
+                { color: '#ff0000', name: 'SIMON', baseSpeed: 280, speedVariation: 30 },    // SIMON: muy rápido! 280km/h
+                { color: '#0000ff', name: 'GORDITO', baseSpeed: 170, speedVariation: 15 },  // GORDITO: lento y constante
+                { color: '#00ff00', name: 'GUILLE', baseSpeed: 230, speedVariation: 35 }    // GUILLE: rápido pero inconsistente
             ];
 
             // Todos parten DELANTE del jugador para que se vean

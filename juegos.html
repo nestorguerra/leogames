@@ -438,11 +438,11 @@
                 <div class="rating-badge">TODOS</div>
             </div>
             <div class="game-info">
-                <h2 class="game-title">LA AVENTURA DE LEO</h2>
+                <h2 class="game-title">MINAS DE MINECRAFT</h2>
                 <p class="game-description">
-                    Explora un mundo estilo Minecraft. Esquiva esqueletos,
-                    recoge monedas y encuentra el tesoro legendario.
-                    ¡Diseñado por Leo!
+                    Explora las minas oscuras. Derrota esqueletos,
+                    recoge diamantes y encuentra el tesoro legendario.
+                    ¡Sobrevive en las profundidades!
                 </p>
                 <div class="game-meta">
                     <span class="meta-item">🎮 1 JUGADOR</span>
@@ -482,16 +482,16 @@
                 <div class="rating-badge">TODOS</div>
             </div>
             <div class="game-info">
-                <h2 class="game-title">LEO VS REYES MAGOS</h2>
+                <h2 class="game-title">NOCHE DE REYES</h2>
                 <p class="game-description">
-                    ¡Estilo Pacman! Los Reyes Magos persiguen a Leo.
+                    ¡Huye de Melchor, Gaspar y Baltasar!
                     Recoge regalos, usa el carbón para asustarlos
                     y escapa con todos los regalos.
                 </p>
                 <div class="game-meta">
                     <span class="meta-item">🎮 1 JUGADOR</span>
                     <span class="meta-item">👑 3 REYES</span>
-                    <span class="meta-item">🎁 PACMAN</span>
+                    <span class="meta-item">🎄 ARCADE</span>
                 </div>
                 <a href="leo-vs-reyes-magos.html" class="play-btn">▶ JUGAR</a>
             </div>
@@ -505,15 +505,15 @@
                 <div class="rating-badge">TODOS</div>
             </div>
             <div class="game-info">
-                <h2 class="game-title">LEO RACING</h2>
+                <h2 class="game-title">KARTING CANTABRIA</h2>
                 <p class="game-description">
-                    Carreras arcade en primera persona estilo años 90.
-                    Circuito Costa del Sol, 5 coches, curvas y colinas.
-                    ¡Usa el turbo para ganar!
+                    ¡Leo en patinete vs Simon, Gordito y Guille!
+                    Circuito Costa de Cantabria. Cada rival tiene
+                    su propia velocidad. ¡Usa el turbo!
                 </p>
                 <div class="game-meta">
-                    <span class="meta-item">🎮 1 JUGADOR</span>
-                    <span class="meta-item">🏎️ 5 COCHES</span>
+                    <span class="meta-item">🛴 PATINETE</span>
+                    <span class="meta-item">🏎️ 3 RIVALES</span>
                     <span class="meta-item">🏁 3 VUELTAS</span>
                 </div>
                 <a href="leo-racing.html" class="play-btn">▶ JUGAR</a>
@@ -718,12 +718,12 @@
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 240, canvas.width, 40);
             ctx.fillStyle = '#4ade80';
-            ctx.font = 'bold 20px "Press Start 2P", monospace';
+            ctx.font = 'bold 18px "Press Start 2P", monospace';
             ctx.textAlign = 'center';
-            ctx.fillText('LA AVENTURA', canvas.width/2, 262);
+            ctx.fillText('MINAS DE', canvas.width/2, 260);
             ctx.fillStyle = '#fff';
-            ctx.font = 'bold 14px "Press Start 2P", monospace';
-            ctx.fillText('DE LEO', canvas.width/2, 278);
+            ctx.font = 'bold 16px "Press Start 2P", monospace';
+            ctx.fillText('MINECRAFT', canvas.width/2, 278);
         }
 
         // ===== PORTADA 2: Tesoro en la Acrópolis =====
@@ -863,320 +863,377 @@
             ctx.fillText('ACRÓPOLIS', canvas.width/2, 273);
         }
 
-        // ===== PORTADA 3: Leo vs Reyes Magos =====
+        // ===== PORTADA 3: Noche de Reyes =====
         function drawCover3() {
             const canvas = document.getElementById('cover3');
             const ctx = canvas.getContext('2d');
 
-            // Fondo azul oscuro estilo Pacman
-            ctx.fillStyle = '#000022';
+            // Fondo noche estrellada navideña
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#0a0a2e');
+            gradient.addColorStop(0.5, '#1a1a4e');
+            gradient.addColorStop(1, '#0a2a1a');
+            ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Laberinto simplificado
-            ctx.strokeStyle = '#1a4a1a';
-            ctx.lineWidth = 4;
-
-            // Muros del laberinto
-            const walls = [
-                [20, 20, 340, 20], [20, 20, 20, 100], [340, 20, 340, 100],
-                [60, 60, 120, 60], [160, 60, 220, 60], [260, 60, 320, 60],
-                [60, 60, 60, 100], [120, 60, 120, 100], [260, 60, 260, 100], [320, 60, 320, 100],
-                [20, 140, 80, 140], [120, 140, 260, 140], [300, 140, 360, 140],
-                [160, 100, 220, 100], [160, 100, 160, 140], [220, 100, 220, 140]
-            ];
-
-            walls.forEach(w => {
+            // Estrellas
+            ctx.fillStyle = '#fff';
+            for (let i = 0; i < 40; i++) {
                 ctx.beginPath();
-                ctx.moveTo(w[0], w[1]);
-                ctx.lineTo(w[2], w[3]);
-                ctx.stroke();
-            });
-
-            // Luces navideñas en el laberinto
-            const colors = ['#ff0000', '#ffd700', '#00ff00', '#ff00ff'];
-            for (let i = 0; i < 15; i++) {
-                ctx.fillStyle = colors[i % 4];
-                ctx.beginPath();
-                ctx.arc(30 + i * 22, 20, 4, 0, Math.PI * 2);
+                ctx.arc(Math.random() * canvas.width, Math.random() * 120, Math.random() * 2 + 1, 0, Math.PI * 2);
                 ctx.fill();
             }
 
-            // Regalos (puntos)
+            // Estrella de Belén grande
             ctx.fillStyle = '#ffd700';
-            for (let i = 0; i < 8; i++) {
-                for (let j = 0; j < 5; j++) {
-                    if (Math.random() > 0.3) {
-                        ctx.beginPath();
-                        ctx.arc(50 + i * 40, 40 + j * 35, 4, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                }
-            }
-
-            // Leo (Pacman)
-            const time = Date.now() / 200;
-            const mouthAngle = Math.abs(Math.sin(time)) * 0.5;
-
-            ctx.fillStyle = '#fcd34d';
             ctx.beginPath();
-            ctx.arc(100, 110, 22, mouthAngle + 0.2, Math.PI * 2 - mouthAngle - 0.2);
-            ctx.lineTo(100, 110);
+            ctx.moveTo(190, 20);
+            for (let i = 0; i < 8; i++) {
+                const r = i % 2 === 0 ? 25 : 10;
+                const angle = (i * Math.PI / 4) - Math.PI / 2;
+                ctx.lineTo(190 + Math.cos(angle) * r, 45 + Math.sin(angle) * r);
+            }
             ctx.closePath();
             ctx.fill();
+            // Brillo
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.3)';
+            ctx.beginPath();
+            ctx.arc(190, 45, 40, 0, Math.PI * 2);
+            ctx.fill();
 
-            // Ojo de Leo
+            // Luces navideñas arriba
+            const colors = ['#ff0000', '#ffd700', '#00ff00', '#ff00ff', '#00ffff'];
+            for (let i = 0; i < 20; i++) {
+                ctx.fillStyle = colors[i % 5];
+                ctx.beginPath();
+                ctx.arc(20 + i * 18, 8, 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Suelo con nieve
+            ctx.fillStyle = '#1a4a2a';
+            ctx.fillRect(0, 170, canvas.width, 30);
+            ctx.fillStyle = '#fff';
+            for (let i = 0; i < 30; i++) {
+                ctx.beginPath();
+                ctx.arc(i * 13, 170 + Math.random() * 5, 8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            const time = Date.now() / 300;
+
+            // LEO (protagonista a la izquierda, más grande)
+            const leoX = 70, leoY = 120;
+            // Cuerpo
+            ctx.fillStyle = '#3b82f6';
+            ctx.fillRect(leoX - 12, leoY, 24, 40);
+            // Cabeza
+            ctx.fillStyle = '#fcd9b6';
+            ctx.beginPath();
+            ctx.arc(leoX, leoY - 12, 18, 0, Math.PI * 2);
+            ctx.fill();
+            // Pelo
+            ctx.fillStyle = '#5c3d2e';
+            ctx.beginPath();
+            ctx.arc(leoX, leoY - 18, 16, Math.PI, 0);
+            ctx.fill();
+            // Ojos
             ctx.fillStyle = '#000';
+            ctx.fillRect(leoX - 8, leoY - 14, 5, 5);
+            ctx.fillRect(leoX + 3, leoY - 14, 5, 5);
+            // Sonrisa
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.arc(105, 98, 4, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.arc(leoX, leoY - 5, 8, 0.2, Math.PI - 0.2);
+            ctx.stroke();
+            // Piernas
+            ctx.fillStyle = '#1e40af';
+            ctx.fillRect(leoX - 10, leoY + 40, 8, 20);
+            ctx.fillRect(leoX + 2, leoY + 40, 8, 20);
 
-            // Pelo de Leo
-            ctx.fillStyle = '#78350f';
-            ctx.beginPath();
-            ctx.arc(100, 95, 10, Math.PI, 0, false);
-            ctx.fill();
-
-            // Los 3 Reyes Magos (fantasmas)
+            // Los 3 Reyes Magos
             const kingsData = [
-                { x: 220, y: 90, color: '#ff6b6b', name: 'M' },
-                { x: 270, y: 110, color: '#4ecdc4', name: 'G' },
-                { x: 320, y: 90, color: '#ffe66d', name: 'B' }
+                { x: 180, color: '#c41e3a', name: 'MELCHOR', skinColor: '#fcd9b6' },
+                { x: 260, color: '#228b22', name: 'GASPAR', skinColor: '#fcd9b6' },
+                { x: 340, color: '#4169e1', name: 'BALTASAR', skinColor: '#8b4513' }
             ];
 
             kingsData.forEach((king, i) => {
                 const wobble = Math.sin(time + i) * 3;
+                const ky = 115 + wobble;
 
-                // Cuerpo fantasma
+                // Manto/túnica real
                 ctx.fillStyle = king.color;
                 ctx.beginPath();
-                ctx.arc(king.x, king.y - 5 + wobble, 18, Math.PI, 0, false);
-                ctx.lineTo(king.x + 18, king.y + 15 + wobble);
-                for (let j = 0; j < 6; j++) {
-                    ctx.lineTo(king.x + 18 - j * 6, king.y + (j % 2 ? 15 : 20) + wobble);
-                }
+                ctx.moveTo(king.x - 18, ky + 5);
+                ctx.lineTo(king.x + 18, ky + 5);
+                ctx.lineTo(king.x + 22, ky + 55);
+                ctx.lineTo(king.x - 22, ky + 55);
                 ctx.closePath();
                 ctx.fill();
 
-                // Corona
+                // Detalles dorados
+                ctx.fillStyle = '#ffd700';
+                ctx.fillRect(king.x - 3, ky + 5, 6, 50);
+
+                // Cabeza
+                ctx.fillStyle = king.skinColor;
+                ctx.beginPath();
+                ctx.arc(king.x, ky - 8, 16, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Barba (excepto para uno)
+                if (i !== 2) {
+                    ctx.fillStyle = i === 0 ? '#fff' : '#8b4513';
+                    ctx.beginPath();
+                    ctx.ellipse(king.x, ky + 2, 10, 12, 0, 0, Math.PI);
+                    ctx.fill();
+                }
+
+                // Corona real grande
                 ctx.fillStyle = '#ffd700';
                 ctx.beginPath();
-                ctx.moveTo(king.x - 12, king.y - 20 + wobble);
-                ctx.lineTo(king.x - 8, king.y - 12 + wobble);
-                ctx.lineTo(king.x, king.y - 18 + wobble);
-                ctx.lineTo(king.x + 8, king.y - 12 + wobble);
-                ctx.lineTo(king.x + 12, king.y - 20 + wobble);
-                ctx.lineTo(king.x + 12, king.y - 12 + wobble);
-                ctx.lineTo(king.x - 12, king.y - 12 + wobble);
+                ctx.moveTo(king.x - 14, ky - 20);
+                ctx.lineTo(king.x - 10, ky - 10);
+                ctx.lineTo(king.x - 5, ky - 25);
+                ctx.lineTo(king.x, ky - 12);
+                ctx.lineTo(king.x + 5, ky - 25);
+                ctx.lineTo(king.x + 10, ky - 10);
+                ctx.lineTo(king.x + 14, ky - 20);
+                ctx.lineTo(king.x + 14, ky - 10);
+                ctx.lineTo(king.x - 14, ky - 10);
                 ctx.closePath();
+                ctx.fill();
+
+                // Joyas en la corona
+                ctx.fillStyle = '#ff0000';
+                ctx.beginPath();
+                ctx.arc(king.x, ky - 18, 3, 0, Math.PI * 2);
                 ctx.fill();
 
                 // Ojos
-                ctx.fillStyle = '#fff';
-                ctx.beginPath();
-                ctx.ellipse(king.x - 6, king.y - 3 + wobble, 5, 6, 0, 0, Math.PI * 2);
-                ctx.ellipse(king.x + 6, king.y - 3 + wobble, 5, 6, 0, 0, Math.PI * 2);
-                ctx.fill();
-
                 ctx.fillStyle = '#000';
-                ctx.beginPath();
-                ctx.arc(king.x - 4, king.y - 2 + wobble, 2, 0, Math.PI * 2);
-                ctx.arc(king.x + 8, king.y - 2 + wobble, 2, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.fillRect(king.x - 7, ky - 10, 4, 4);
+                ctx.fillRect(king.x + 3, ky - 10, 4, 4);
+
+                // Nombre debajo
+                ctx.fillStyle = '#fff';
+                ctx.font = '7px "Press Start 2P", monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(king.name, king.x, ky + 70);
             });
 
-            // Carbón (power pellet)
-            ctx.fillStyle = '#333';
-            ctx.beginPath();
-            ctx.arc(50, 170, 12, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = 'rgba(255, 100, 100, 0.6)';
-            ctx.beginPath();
-            ctx.arc(46, 166, 5, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Roscón de Reyes
-            ctx.fillStyle = '#d4a574';
-            ctx.beginPath();
-            ctx.ellipse(320, 170, 20, 12, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#000022';
-            ctx.beginPath();
-            ctx.ellipse(320, 170, 8, 5, 0, 0, Math.PI * 2);
-            ctx.fill();
-            // Frutas
-            ctx.fillStyle = '#ff0000';
-            ctx.beginPath();
-            ctx.arc(310, 165, 4, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#00ff00';
-            ctx.beginPath();
-            ctx.arc(330, 168, 4, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Estrella de Belén
-            ctx.fillStyle = '#ffd700';
-            ctx.font = '20px Arial';
-            ctx.fillText('⭐', 175, 55);
+            // Regalos en el suelo
+            const giftColors = ['#ff0000', '#00ff00', '#0000ff', '#ff00ff'];
+            for (let i = 0; i < 4; i++) {
+                ctx.fillStyle = giftColors[i];
+                ctx.fillRect(100 + i * 70, 175, 20, 18);
+                ctx.fillStyle = '#ffd700';
+                ctx.fillRect(108 + i * 70, 175, 4, 18);
+                ctx.fillRect(100 + i * 70, 182, 20, 4);
+            }
 
             // Título
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
             ctx.fillRect(0, 200, canvas.width, 80);
 
-            ctx.fillStyle = '#ff6b6b';
-            ctx.font = 'bold 18px "Press Start 2P", monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText('LEO VS', canvas.width/2, 230);
             ctx.fillStyle = '#ffd700';
-            ctx.fillText('REYES MAGOS', canvas.width/2, 255);
+            ctx.font = 'bold 22px "Press Start 2P", monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('NOCHE DE', canvas.width/2, 230);
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillText('REYES', canvas.width/2, 258);
             ctx.fillStyle = '#4ecdc4';
-            ctx.font = '10px "Press Start 2P", monospace';
-            ctx.fillText('👑 PACMAN STYLE 👑', canvas.width/2, 273);
+            ctx.font = '9px "Press Start 2P", monospace';
+            ctx.fillText('🎁 ARCADE PACMAN 🎁', canvas.width/2, 275);
         }
 
-        // ===== PORTADA 4: Leo Racing =====
+        // ===== PORTADA 4: Karting Cantabria =====
         function drawCover4() {
             const canvas = document.getElementById('cover4');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
 
-            // Cielo degradado
-            const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height/2);
+            // Cielo de Cantabria
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, 100);
             skyGradient.addColorStop(0, '#0066cc');
             skyGradient.addColorStop(1, '#87ceeb');
             ctx.fillStyle = skyGradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height/2);
+            ctx.fillRect(0, 0, canvas.width, 100);
 
             // Sol
             ctx.fillStyle = '#ffdd00';
             ctx.beginPath();
-            ctx.arc(320, 50, 30, 0, Math.PI * 2);
+            ctx.arc(330, 40, 25, 0, Math.PI * 2);
             ctx.fill();
 
-            // Montañas
-            ctx.fillStyle = '#4a6741';
+            // Montañas de Cantabria
+            ctx.fillStyle = '#2d5a27';
             ctx.beginPath();
-            ctx.moveTo(0, 140);
-            ctx.lineTo(80, 80);
-            ctx.lineTo(150, 120);
-            ctx.lineTo(220, 70);
-            ctx.lineTo(300, 110);
-            ctx.lineTo(380, 90);
-            ctx.lineTo(380, 140);
+            ctx.moveTo(0, 100);
+            ctx.lineTo(60, 50);
+            ctx.lineTo(120, 80);
+            ctx.lineTo(190, 40);
+            ctx.lineTo(260, 70);
+            ctx.lineTo(320, 55);
+            ctx.lineTo(380, 75);
+            ctx.lineTo(380, 100);
             ctx.closePath();
             ctx.fill();
 
-            // Carretera (perspectiva)
-            const roadGradient = ctx.createLinearGradient(0, 140, 0, 280);
-            roadGradient.addColorStop(0, '#555');
-            roadGradient.addColorStop(1, '#333');
-
             // Hierba
             ctx.fillStyle = '#228b22';
-            ctx.fillRect(0, 140, canvas.width, 140);
+            ctx.fillRect(0, 100, canvas.width, 80);
 
             // Carretera con perspectiva
-            ctx.fillStyle = roadGradient;
+            ctx.fillStyle = '#444';
             ctx.beginPath();
-            ctx.moveTo(140, 140);
-            ctx.lineTo(240, 140);
-            ctx.lineTo(380, 280);
-            ctx.lineTo(0, 280);
+            ctx.moveTo(150, 100);
+            ctx.lineTo(230, 100);
+            ctx.lineTo(380, 180);
+            ctx.lineTo(0, 180);
             ctx.closePath();
             ctx.fill();
 
             // Líneas de carretera
             ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 3;
-            ctx.setLineDash([20, 15]);
+            ctx.lineWidth = 2;
+            ctx.setLineDash([15, 10]);
             ctx.beginPath();
-            ctx.moveTo(190, 140);
-            ctx.lineTo(190, 280);
+            ctx.moveTo(190, 100);
+            ctx.lineTo(190, 180);
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Bordes de carretera (rumbel strips)
-            for (let i = 0; i < 7; i++) {
-                const y = 145 + i * 20;
-                const width = 5 + i * 2;
-                const leftX = 140 - i * 20;
-                const rightX = 240 + i * 20;
-
+            // Bordes rojo/blanco
+            for (let i = 0; i < 4; i++) {
                 ctx.fillStyle = i % 2 === 0 ? '#ff0000' : '#fff';
-                ctx.fillRect(leftX - width, y, width, 18);
-                ctx.fillRect(rightX, y, width, 18);
+                ctx.fillRect(150 - i * 35, 100 + i * 20, 8, 20);
+                ctx.fillRect(230 + i * 35, 100 + i * 20, 8, 20);
             }
 
-            // Coche del jugador (abajo, grande)
-            const carX = 170;
-            const carY = 200;
-
-            // Sombra
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-            ctx.ellipse(carX + 20, carY + 60, 35, 8, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Cuerpo del coche
-            ctx.fillStyle = '#ff3300';
-            ctx.beginPath();
-            ctx.moveTo(carX, carY + 50);
-            ctx.lineTo(carX + 40, carY + 50);
-            ctx.lineTo(carX + 35, carY + 20);
-            ctx.lineTo(carX + 5, carY + 20);
-            ctx.closePath();
-            ctx.fill();
-
-            // Techo
-            ctx.fillStyle = '#cc2200';
-            ctx.beginPath();
-            ctx.moveTo(carX + 8, carY + 20);
-            ctx.lineTo(carX + 32, carY + 20);
-            ctx.lineTo(carX + 28, carY + 5);
-            ctx.lineTo(carX + 12, carY + 5);
-            ctx.closePath();
-            ctx.fill();
-
-            // Ventana
-            ctx.fillStyle = '#333';
-            ctx.fillRect(carX + 10, carY + 8, 20, 10);
-
-            // Ruedas
-            ctx.fillStyle = '#111';
-            ctx.fillRect(carX - 5, carY + 35, 10, 18);
-            ctx.fillRect(carX + 35, carY + 35, 10, 18);
-
-            // Coches rivales (más pequeños, arriba)
+            // 3 COCHES RIVALES (arriba, pequeños)
             const rivals = [
-                { x: 160, y: 150, color: '#0000ff', scale: 0.4 },
-                { x: 220, y: 155, color: '#00ff00', scale: 0.35 }
+                { x: 100, y: 110, color: '#ff0000', name: 'SIMON', speed: '280' },
+                { x: 180, y: 108, color: '#00ff00', name: 'GUILLE', speed: '230' },
+                { x: 260, y: 112, color: '#0000ff', name: 'GORDITO', speed: '170' }
             ];
 
-            rivals.forEach(r => {
+            rivals.forEach((r, i) => {
+                const scale = 0.5;
+                // Coche
                 ctx.fillStyle = r.color;
-                ctx.fillRect(r.x, r.y, 20 * r.scale, 15 * r.scale);
+                ctx.fillRect(r.x - 10, r.y, 20, 12);
                 ctx.fillStyle = '#111';
-                ctx.fillRect(r.x - 2, r.y + 8 * r.scale, 4 * r.scale, 8 * r.scale);
-                ctx.fillRect(r.x + 18 * r.scale, r.y + 8 * r.scale, 4 * r.scale, 8 * r.scale);
+                ctx.fillRect(r.x - 12, r.y + 8, 5, 6);
+                ctx.fillRect(r.x + 7, r.y + 8, 5, 6);
+                // Techo
+                ctx.fillStyle = r.color === '#ff0000' ? '#cc0000' : (r.color === '#00ff00' ? '#00aa00' : '#0000aa');
+                ctx.fillRect(r.x - 6, r.y - 4, 12, 5);
             });
+
+            // LEO EN PATINETE (grande, en primer plano)
+            const leoX = 190, leoY = 140;
+
+            // Sombra
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.beginPath();
+            ctx.ellipse(leoX, leoY + 42, 25, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Rueda del patinete
+            ctx.fillStyle = '#1a1a1a';
+            ctx.beginPath();
+            ctx.arc(leoX, leoY + 35, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#00aaff';
+            ctx.beginPath();
+            ctx.arc(leoX, leoY + 35, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Plataforma patinete
+            ctx.fillStyle = '#333';
+            ctx.fillRect(leoX - 20, leoY + 25, 40, 5);
+
+            // Tubo vertical
+            ctx.fillStyle = '#444';
+            ctx.fillRect(leoX - 2, leoY - 15, 4, 42);
+
+            // Manillar
+            ctx.fillStyle = '#333';
+            ctx.fillRect(leoX - 18, leoY - 18, 36, 4);
+            ctx.fillStyle = '#ff6600';
+            ctx.fillRect(leoX - 22, leoY - 20, 8, 8);
+            ctx.fillRect(leoX + 14, leoY - 20, 8, 8);
+
+            // Leo en el patinete
+            // Piernas
+            ctx.fillStyle = '#2244aa';
+            ctx.fillRect(leoX - 8, leoY + 5, 6, 20);
+            ctx.fillRect(leoX + 2, leoY + 5, 6, 20);
+            // Cuerpo
+            ctx.fillStyle = '#ff6600';
+            ctx.fillRect(leoX - 10, leoY - 15, 20, 22);
+            // Brazos
+            ctx.fillStyle = '#ffcc99';
+            ctx.fillRect(leoX - 20, leoY - 17, 12, 5);
+            ctx.fillRect(leoX + 8, leoY - 17, 12, 5);
+            // Cabeza
+            ctx.fillStyle = '#ffcc99';
+            ctx.beginPath();
+            ctx.arc(leoX, leoY - 28, 12, 0, Math.PI * 2);
+            ctx.fill();
+            // Pelo
+            ctx.fillStyle = '#4a3000';
+            ctx.beginPath();
+            ctx.arc(leoX, leoY - 32, 10, Math.PI, 0);
+            ctx.fill();
+            // Casco rojo
+            ctx.fillStyle = '#ff3300';
+            ctx.beginPath();
+            ctx.ellipse(leoX, leoY - 36, 14, 8, 0, Math.PI, 0);
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(leoX - 1, leoY - 44, 2, 12);
+
+            // Nombre LEO
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 7px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('LEO', leoX, leoY - 5);
+
+            // Panel de rivales abajo
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+            ctx.fillRect(0, 185, canvas.width, 95);
 
             // Título
             ctx.fillStyle = '#ff6600';
-            ctx.font = 'bold 28px "Press Start 2P", monospace';
+            ctx.font = 'bold 18px "Press Start 2P", monospace';
             ctx.textAlign = 'center';
-            ctx.shadowColor = '#000';
-            ctx.shadowBlur = 5;
-            ctx.shadowOffsetX = 3;
-            ctx.shadowOffsetY = 3;
-            ctx.fillText('LEO', canvas.width/2, 35);
-
+            ctx.fillText('KARTING', canvas.width/2, 210);
             ctx.fillStyle = '#ffcc00';
-            ctx.font = 'bold 22px "Press Start 2P", monospace';
-            ctx.fillText('RACING', canvas.width/2, 65);
-            ctx.shadowBlur = 0;
+            ctx.fillText('CANTABRIA', canvas.width/2, 232);
 
-            // Badge
-            ctx.fillStyle = '#fff';
-            ctx.font = '10px "Press Start 2P", monospace';
-            ctx.fillText('🏎️ ARCADE 1998 🏁', canvas.width/2, 270);
+            // Info de rivales
+            ctx.font = '8px "Press Start 2P", monospace';
+            const rivalInfo = [
+                { name: 'SIMON', color: '#ff0000', speed: '280km/h' },
+                { name: 'GUILLE', color: '#00ff00', speed: '230km/h' },
+                { name: 'GORDITO', color: '#0088ff', speed: '170km/h' }
+            ];
+
+            rivalInfo.forEach((r, i) => {
+                const rx = 70 + i * 115;
+                ctx.fillStyle = r.color;
+                ctx.fillRect(rx - 25, 248, 10, 10);
+                ctx.fillStyle = '#fff';
+                ctx.fillText(r.name, rx + 15, 257);
+                ctx.fillStyle = '#aaa';
+                ctx.font = '6px "Press Start 2P", monospace';
+                ctx.fillText(r.speed, rx + 15, 270);
+                ctx.font = '8px "Press Start 2P", monospace';
+            });
         }
 
         // Dibujar portadas
