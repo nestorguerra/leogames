@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Karting de Cantabria - Carreras en Patinete Eléctrico</title>
+    <title>Karting Cantabria - Carreras en Patinete Eléctrico</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         * {
@@ -205,7 +205,7 @@
         <div class="lap-complete" id="lapComplete">VUELTA COMPLETADA!</div>
 
         <div id="startScreen">
-            <h1>KARTING DE CANTABRIA</h1>
+            <h1>KARTING CANTABRIA</h1>
             <h2>🛴 CARRERAS EN PATINETE ELÉCTRICO 🛴</h2>
 
             <canvas id="carPreview" class="car-preview"></canvas>
@@ -397,11 +397,11 @@
         // Crear coches rivales (3 amigos: Simon, Gordito, Guille)
         function createCars() {
             cars = [];
-            // Cada rival tiene características únicas de velocidad
+            // Cada rival tiene velocidades MUY diferentes
             const carData = [
-                { color: '#ff0000', name: 'SIMON', baseSpeed: 220, speedVariation: 25 },    // SIMON: rápido pero inconsistente
-                { color: '#0000ff', name: 'GORDITO', baseSpeed: 195, speedVariation: 10 },  // GORDITO: más lento pero constante
-                { color: '#00ff00', name: 'GUILLE', baseSpeed: 210, speedVariation: 20 }    // GUILLE: equilibrado
+                { color: '#ff0000', name: 'SIMON', baseSpeed: 280, speedVariation: 30 },    // SIMON: muy rápido! 280km/h
+                { color: '#0000ff', name: 'GORDITO', baseSpeed: 170, speedVariation: 15 },  // GORDITO: lento y constante
+                { color: '#00ff00', name: 'GUILLE', baseSpeed: 230, speedVariation: 35 }    // GUILLE: rápido pero inconsistente
             ];
 
             // Todos parten DELANTE del jugador para que se vean
