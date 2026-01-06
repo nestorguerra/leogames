@@ -92,6 +92,26 @@
             box-shadow: 0 0 20px rgba(74, 222, 128, 0.6);
         }
 
+        .btn-back {
+            background: linear-gradient(180deg, #666 0%, #444 100%);
+            border: 3px solid #333;
+            color: #fff;
+            padding: 10px 25px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #888;
+            background: linear-gradient(180deg, #888 0%, #666 100%);
+        }
+
         .instructions {
             color: #94a3b8;
             font-size: 8px;
@@ -176,6 +196,8 @@
                 ESPACIO = ATACAR ESQUELETOS<br>
                 ¡LLEGA AL TESORO DEL FONDO!
             </div>
+
+            <a href="juegos.html" class="btn-back">← VOLVER</a>
         </div>
 
         <div id="gameOverScreen">
