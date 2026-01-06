@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Los Juegos de Leo - Arcade Retro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a1a;
+            min-height: 100vh;
+            font-family: 'Press Start 2P', cursive;
+            overflow-x: hidden;
+        }
+
+        /* Fondo animado estilo arcade */
+        .arcade-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse at top, #1a1a3a 0%, #0a0a1a 70%),
+                linear-gradient(180deg, #0a0a1a 0%, #1a0a2a 100%);
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .logo-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .main-title {
+            font-size: clamp(24px, 6vw, 48px);
+            color: #fff;
+            text-shadow:
+                0 0 10px #ff00ff,
+                0 0 20px #ff00ff,
+                0 0 40px #ff00ff,
+                4px 4px 0 #00ffff,
+                -2px -2px 0 #ffff00;
+            animation: neonFlicker 3s infinite;
+            letter-spacing: 4px;
+        }
+
+        .subtitle {
+            font-size: clamp(10px, 2vw, 14px);
+            color: #00ffff;
+            margin-top: 15px;
+            text-shadow: 0 0 10px #00ffff;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes neonFlicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.8; }
+            94% { opacity: 1; }
+            95% { opacity: 0.9; }
+            96% { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* Decoración arcade */
+        .arcade-decoration {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .coin {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        @keyframes spin {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+
+        /* Contenedor de juegos */
+        .games-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            justify-items: center;
+        }
+
+        /* Tarjeta de juego - Estilo caja de juego retro */
+        .game-card {
+            width: 100%;
+            max-width: 380px;
+            background: linear-gradient(180deg, #2a2a4a 0%, #1a1a3a 100%);
+            border: 6px solid #333;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.7),
+                0 0 30px rgba(255, 0, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border-color: #ff00ff;
+        }
+
+        /* Portada del juego */
+        .game-cover {
+            width: 100%;
+            height: 280px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 4px solid #ff00ff;
+        }
+
+        .game-cover canvas {
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+        }
+
+        /* Badge de clasificación estilo ESRB retro */
+        .rating-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: #000;
+            border: 2px solid #fff;
+            padding: 5px 8px;
+            font-size: 8px;
+            color: #fff;
+        }
+
+        /* Etiqueta NEW */
+        .new-badge {
+            position: absolute;
+            top: 10px;
+            left: -30px;
+            background: #ff0000;
+            color: #fff;
+            padding: 5px 40px;
+            font-size: 10px;
+            transform: rotate(-45deg);
+            box-shadow: 0 2px 10px rgba(255, 0, 0, 0.5);
+        }
+
+        /* Info del juego */
+        .game-info {
+            padding: 20px;
+        }
+
+        .game-title {
+            font-size: 14px;
+            color: #ffd700;
+            text-shadow: 2px 2px 0 #8b4513;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .game-description {
+            font-size: 9px;
+            color: #aaa;
+            line-height: 2;
+            margin-bottom: 15px;
+        }
+
+        .game-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            font-size: 8px;
+            color: #00ffff;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Botón PLAY */
+        .play-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(180deg, #00ff00 0%, #00aa00 100%);
+            border: 4px solid #008800;
+            color: #000;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .play-btn:hover {
+            background: linear-gradient(180deg, #00ff88 0%, #00cc00 100%);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+            transform: scale(1.02);
+        }
+
+        .play-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Sección "Próximamente" */
+        .coming-soon {
+            text-align: center;
+            padding: 60px 20px;
+            border-top: 2px dashed #333;
+            margin-top: 40px;
+        }
+
+        .coming-soon h2 {
+            font-size: 18px;
+            color: #ff00ff;
+            text-shadow: 0 0 20px #ff00ff;
+            margin-bottom: 20px;
+        }
+
+        .coming-soon p {
+            font-size: 10px;
+            color: #666;
+            line-height: 2;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 2px solid #222;
+            margin-top: 40px;
+        }
+
+        footer p {
+            font-size: 10px;
+            color: #444;
+            line-height: 2;
+        }
+
+        footer .credits {
+            color: #ff00ff;
+        }
+
+        /* Líneas de escaneo CRT */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+        }
+
+        /* Efecto CRT en las esquinas */
+        .crt-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%);
+        }
+
+        /* High Scores decorativo */
+        .high-scores {
+            max-width: 400px;
+            margin: 40px auto;
+            background: rgba(0, 0, 0, 0.5);
+            border: 3px solid #ffd700;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .high-scores h3 {
+            color: #ffd700;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #ffd700;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #333;
+            font-size: 10px;
+        }
+
+        .score-row .name { color: #00ffff; }
+        .score-row .score { color: #ff00ff; }
+
+        /* Joystick animado decorativo */
+        .joystick-decoration {
+            text-align: center;
+            font-size: 40px;
+            margin: 20px 0;
+            animation: joystickMove 1s infinite;
+        }
+
+        @keyframes joystickMove {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .games-container {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+
+            .game-card {
+                max-width: 100%;
+            }
+
+            header {
+                padding: 20px 10px;
+            }
+        }
+
+        /* INSERT COIN animation */
+        .insert-coin {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .insert-coin span {
+            font-size: 16px;
+            color: #ffd700;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="arcade-bg"></div>
+    <div class="stars" id="stars"></div>
+    <div class="scanlines"></div>
+    <div class="crt-effect"></div>
+
+    <header>
+        <div class="logo-container">
+            <h1 class="main-title">LOS JUEGOS DE LEO</h1>
+        </div>
+        <p class="subtitle">MIS JUEGOS PREFES CREADOS PARA MI Y MIS AMIGOS</p>
+
+        <div class="arcade-decoration">
+            <div class="coin"></div>
+            <div class="coin" style="animation-delay: 0.3s;"></div>
+            <div class="coin" style="animation-delay: 0.6s;"></div>
+        </div>
+
+        <div class="insert-coin">
+            <span>- PULSA PARA JUGAR -</span>
+        </div>
+    </header>
+
+    <main class="games-container">
+        <!-- Juego 1: Aventura de Leo -->
+        <article class="game-card">
+            <div class="game-cover">
+                <canvas id="cover1" width="380" height="280"></canvas>
+                <div class="new-badge">NEW!</div>
+                <div class="rating-badge">TODOS</div>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title">LA AVENTURA DE LEO</h2>
+                <p class="game-description">
+                    Explora un mundo estilo Minecraft. Esquiva esqueletos,
+                    recoge monedas y encuentra el tesoro legendario.
+                    ¡Diseñado por Leo!
+                </p>
+                <div class="game-meta">
+                    <span class="meta-item">🎮 1 JUGADOR</span>
+                    <span class="meta-item">⚔️ AVENTURA</span>
+                    <span class="meta-item">💀 ESQUELETOS</span>
+                </div>
+                <a href="leo-minecraft-adventure.html" class="play-btn">▶ JUGAR</a>
+            </div>
+        </article>
+
+        <!-- Juego 2: Acrópolis -->
+        <article class="game-card">
+            <div class="game-cover">
+                <canvas id="cover2" width="380" height="280"></canvas>
+                <div class="rating-badge">TODOS</div>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title">TESORO EN LA ACRÓPOLIS</h2>
+                <p class="game-description">
+                    Una familia de 6 viaja a Grecia en busca del Tesoro de Atenea.
+                    Elige tu héroe, derrota guardianes y explora el Partenón.
+                </p>
+                <div class="game-meta">
+                    <span class="meta-item">🎮 1 JUGADOR</span>
+                    <span class="meta-item">👨‍👩‍👧‍👦 6 PERSONAJES</span>
+                    <span class="meta-item">🏛️ 5 NIVELES</span>
+                </div>
+                <a href="acropolis-treasure-hunt.html" class="play-btn">▶ JUGAR</a>
+            </div>
+        </article>
+
+        <!-- Juego 3: Leo vs Reyes Magos -->
+        <article class="game-card">
+            <div class="game-cover">
+                <canvas id="cover3" width="380" height="280"></canvas>
+                <div class="new-badge">NEW!</div>
+                <div class="rating-badge">TODOS</div>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title">LEO VS REYES MAGOS</h2>
+                <p class="game-description">
+                    ¡Estilo Pacman! Los Reyes Magos persiguen a Leo.
+                    Recoge regalos, usa el carbón para asustarlos
+                    y escapa con todos los regalos.
+                </p>
+                <div class="game-meta">
+                    <span class="meta-item">🎮 1 JUGADOR</span>
+                    <span class="meta-item">👑 3 REYES</span>
+                    <span class="meta-item">🎁 PACMAN</span>
+                </div>
+                <a href="leo-vs-reyes-magos.html" class="play-btn">▶ JUGAR</a>
+            </div>
+        </article>
+
+        <!-- Juego 4: Leo Racing -->
+        <article class="game-card">
+            <div class="game-cover">
+                <canvas id="cover4" width="380" height="280"></canvas>
+                <div class="new-badge">NEW!</div>
+                <div class="rating-badge">TODOS</div>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title">LEO RACING</h2>
+                <p class="game-description">
+                    Carreras arcade en primera persona estilo años 90.
+                    Circuito Costa del Sol, 5 coches, curvas y colinas.
+                    ¡Usa el turbo para ganar!
+                </p>
+                <div class="game-meta">
+                    <span class="meta-item">🎮 1 JUGADOR</span>
+                    <span class="meta-item">🏎️ 5 COCHES</span>
+                    <span class="meta-item">🏁 3 VUELTAS</span>
+                </div>
+                <a href="leo-racing.html" class="play-btn">▶ JUGAR</a>
+            </div>
+        </article>
+    </main>
+
+    <!-- High Scores decorativo -->
+    <section class="high-scores">
+        <h3>🏆 HIGH SCORES 🏆</h3>
+        <div class="score-row">
+            <span class="name">1. LEO</span>
+            <span class="score">999,999</span>
+        </div>
+        <div class="score-row">
+            <span class="name">2. ALMA</span>
+            <span class="score">850,000</span>
+        </div>
+        <div class="score-row">
+            <span class="name">3. GUILLE</span>
+            <span class="score">720,000</span>
+        </div>
+        <div class="score-row">
+            <span class="name">4. GABRIEL</span>
+            <span class="score">680,000</span>
+        </div>
+        <div class="score-row">
+            <span class="name">5. PAPÁ</span>
+            <span class="score">500,000</span>
+        </div>
+    </section>
+
+    <div class="joystick-decoration">🕹️</div>
+
+    <!-- Próximamente -->
+    <section class="coming-soon">
+        <h2>🚀 PRÓXIMAMENTE 🚀</h2>
+        <p>Más juegos en camino...<br>¡Vuelve pronto!</p>
+    </section>
+
+    <footer>
+        <p>
+            <span class="credits">LOS JUEGOS DE LEO</span><br><br>
+            2026 - Papa me ha ayudado con mucho ❤️<br><br>
+            🎮 BEST PLAYED WITH KEYBOARD 🎮
+        </p>
+    </footer>
+
+    <script>
+        // Generar estrellas
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = (Math.random() * 3 + 1) + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        createStars();
+
+        // ===== PORTADA 1: La Aventura de Leo =====
+        function drawCover1() {
+            const canvas = document.getElementById('cover1');
+            const ctx = canvas.getContext('2d');
+
+            // Fondo cielo nocturno
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#1a1a3a');
+            gradient.addColorStop(0.5, '#2a3a5a');
+            gradient.addColorStop(1, '#1a4a2a');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Luna
+            ctx.fillStyle = '#f0f0f0';
+            ctx.beginPath();
+            ctx.arc(320, 60, 35, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#1a1a3a';
+            ctx.beginPath();
+            ctx.arc(335, 50, 30, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Estrellas
+            ctx.fillStyle = '#fff';
+            for (let i = 0; i < 30; i++) {
+                ctx.fillRect(Math.random() * canvas.width, Math.random() * 150, 2, 2);
+            }
+
+            // Suelo
+            ctx.fillStyle = '#22c55e';
+            ctx.fillRect(0, 200, canvas.width, 80);
+            ctx.fillStyle = '#16a34a';
+            for (let i = 0; i < 50; i++) {
+                ctx.fillRect(i * 15 + 5, 200, 3, 10);
+            }
+
+            // Templo de fondo
+            ctx.fillStyle = '#d4c4a8';
+            ctx.fillRect(250, 120, 100, 80);
+            ctx.fillStyle = '#c4b498';
+            ctx.beginPath();
+            ctx.moveTo(240, 120);
+            ctx.lineTo(300, 70);
+            ctx.lineTo(360, 120);
+            ctx.closePath();
+            ctx.fill();
+            // Columnas
+            ctx.fillStyle = '#e8dcc8';
+            for (let i = 0; i < 4; i++) {
+                ctx.fillRect(260 + i * 25, 130, 12, 50);
+            }
+
+            // Esqueleto enemigo
+            ctx.fillStyle = '#f5f5dc';
+            // Cráneo
+            ctx.beginPath();
+            ctx.arc(100, 170, 15, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#000';
+            ctx.fillRect(92, 165, 6, 8);
+            ctx.fillRect(102, 165, 6, 8);
+            ctx.fillRect(95, 178, 10, 4);
+            // Cuerpo
+            ctx.fillStyle = '#f5f5dc';
+            ctx.fillRect(97, 185, 6, 30);
+            for (let i = 0; i < 3; i++) {
+                ctx.fillRect(85, 190 + i * 8, 30, 3);
+            }
+            ctx.fillRect(90, 215, 5, 25);
+            ctx.fillRect(105, 215, 5, 25);
+            // Arco
+            ctx.strokeStyle = '#8b4513';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(120, 195, 18, -Math.PI/2, Math.PI/2);
+            ctx.stroke();
+
+            // Personaje de Leo (Minecraft style)
+            const px = 190, py = 180;
+            // Cuerpo
+            ctx.fillStyle = '#3b82f6';
+            ctx.fillRect(px - 10, py, 20, 35);
+            // Cabeza cuadrada
+            ctx.fillStyle = '#fcd9b6';
+            ctx.fillRect(px - 14, py - 28, 28, 26);
+            // Pelo
+            ctx.fillStyle = '#78350f';
+            ctx.fillRect(px - 14, py - 28, 28, 8);
+            // Ojos cuadrados
+            ctx.fillStyle = '#000';
+            ctx.fillRect(px - 9, py - 18, 6, 6);
+            ctx.fillRect(px + 3, py - 18, 6, 6);
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(px - 8, py - 17, 2, 2);
+            ctx.fillRect(px + 4, py - 17, 2, 2);
+            // Piernas
+            ctx.fillStyle = '#1e40af';
+            ctx.fillRect(px - 8, py + 35, 7, 15);
+            ctx.fillRect(px + 1, py + 35, 7, 15);
+            // Espada
+            ctx.fillStyle = '#9ca3af';
+            ctx.fillRect(px + 18, py - 10, 5, 35);
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillRect(px + 15, py + 20, 11, 6);
+
+            // Cofre del tesoro
+            ctx.fillStyle = '#92400e';
+            ctx.fillRect(50, 220, 45, 28);
+            ctx.fillStyle = '#b45309';
+            ctx.beginPath();
+            ctx.moveTo(48, 220);
+            ctx.quadraticCurveTo(72, 200, 97, 220);
+            ctx.fill();
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillRect(48, 218, 49, 5);
+            ctx.beginPath();
+            ctx.arc(72, 235, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Monedas flotantes
+            const time = Date.now() / 500;
+            for (let i = 0; i < 5; i++) {
+                const cx = 50 + i * 70;
+                const cy = 100 + Math.sin(time + i) * 10;
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath();
+                ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#f59e0b';
+                ctx.beginPath();
+                ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Título
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 240, canvas.width, 40);
+            ctx.fillStyle = '#4ade80';
+            ctx.font = 'bold 20px "Press Start 2P", monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('LA AVENTURA', canvas.width/2, 262);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px "Press Start 2P", monospace';
+            ctx.fillText('DE LEO', canvas.width/2, 278);
+        }
+
+        // ===== PORTADA 2: Tesoro en la Acrópolis =====
+        function drawCover2() {
+            const canvas = document.getElementById('cover2');
+            const ctx = canvas.getContext('2d');
+
+            // Fondo atardecer griego
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#ff6b35');
+            gradient.addColorStop(0.3, '#f7931e');
+            gradient.addColorStop(0.6, '#ffd700');
+            gradient.addColorStop(1, '#87ceeb');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Sol
+            ctx.fillStyle = '#fff5e0';
+            ctx.beginPath();
+            ctx.arc(300, 80, 50, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#ffd700';
+            ctx.beginPath();
+            ctx.arc(300, 80, 40, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Partenón
+            ctx.fillStyle = '#e8dcc8';
+            // Base
+            ctx.fillRect(90, 160, 200, 15);
+            ctx.fillRect(100, 175, 180, 10);
+            // Columnas
+            for (let i = 0; i < 6; i++) {
+                ctx.fillRect(110 + i * 32, 90, 18, 85);
+                // Capitel
+                ctx.fillRect(107 + i * 32, 85, 24, 8);
+            }
+            // Techo triangular
+            ctx.fillStyle = '#d4c4a8';
+            ctx.beginPath();
+            ctx.moveTo(80, 85);
+            ctx.lineTo(190, 30);
+            ctx.lineTo(300, 85);
+            ctx.closePath();
+            ctx.fill();
+            // Decoración del frontón
+            ctx.fillStyle = '#c4b498';
+            ctx.beginPath();
+            ctx.moveTo(100, 85);
+            ctx.lineTo(190, 45);
+            ctx.lineTo(280, 85);
+            ctx.closePath();
+            ctx.fill();
+
+            // Suelo
+            ctx.fillStyle = '#d4a574';
+            ctx.fillRect(0, 185, canvas.width, 95);
+
+            // Familia (6 personajes simplificados)
+            const familyColors = ['#4a90d9', '#d94a8a', '#4ad97a', '#d9d94a', '#d94ad9', '#4ad9d9'];
+            const familyHeights = [55, 50, 45, 42, 38, 35];
+
+            for (let i = 0; i < 6; i++) {
+                const fx = 60 + i * 50;
+                const fy = 230 - familyHeights[i];
+
+                // Cuerpo
+                ctx.fillStyle = familyColors[i];
+                ctx.fillRect(fx - 8, fy, 16, familyHeights[i] * 0.6);
+
+                // Cabeza
+                ctx.fillStyle = '#fcd9b6';
+                ctx.beginPath();
+                ctx.arc(fx, fy - 8, 10, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Pelo
+                ctx.fillStyle = i === 0 ? '#3d2314' : '#2a1a0a';
+                ctx.beginPath();
+                ctx.arc(fx, fy - 12, 9, Math.PI, 0, false);
+                ctx.fill();
+
+                // Barba para Papá
+                if (i === 0) {
+                    ctx.fillStyle = '#3d2314';
+                    ctx.beginPath();
+                    ctx.arc(fx, fy - 2, 6, 0, Math.PI);
+                    ctx.fill();
+                }
+
+                // Piernas
+                ctx.fillStyle = '#1e3a5f';
+                ctx.fillRect(fx - 6, fy + familyHeights[i] * 0.6, 5, familyHeights[i] * 0.4);
+                ctx.fillRect(fx + 1, fy + familyHeights[i] * 0.6, 5, familyHeights[i] * 0.4);
+            }
+
+            // Minotauro enemigo
+            ctx.fillStyle = '#8b4513';
+            ctx.fillRect(340, 175, 30, 40);
+            ctx.beginPath();
+            ctx.arc(355, 165, 18, 0, Math.PI * 2);
+            ctx.fill();
+            // Cuernos
+            ctx.fillStyle = '#f5f5dc';
+            ctx.beginPath();
+            ctx.moveTo(340, 155);
+            ctx.quadraticCurveTo(325, 135, 335, 125);
+            ctx.quadraticCurveTo(345, 140, 345, 155);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(370, 155);
+            ctx.quadraticCurveTo(385, 135, 375, 125);
+            ctx.quadraticCurveTo(365, 140, 365, 155);
+            ctx.fill();
+            // Ojos rojos
+            ctx.fillStyle = '#ff0000';
+            ctx.fillRect(347, 160, 5, 5);
+            ctx.fillRect(358, 160, 5, 5);
+
+            // Tesoro brillante
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.4)';
+            ctx.beginPath();
+            ctx.arc(190, 140, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#ffd700';
+            ctx.font = '30px Arial';
+            ctx.fillText('💎', 175, 150);
+
+            // Título
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillRect(0, 235, canvas.width, 45);
+            ctx.fillStyle = '#ffd700';
+            ctx.font = 'bold 14px "Press Start 2P", monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('TESORO EN LA', canvas.width/2, 255);
+            ctx.fillStyle = '#fff';
+            ctx.fillText('ACRÓPOLIS', canvas.width/2, 273);
+        }
+
+        // ===== PORTADA 3: Leo vs Reyes Magos =====
+        function drawCover3() {
+            const canvas = document.getElementById('cover3');
+            const ctx = canvas.getContext('2d');
+
+            // Fondo azul oscuro estilo Pacman
+            ctx.fillStyle = '#000022';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Laberinto simplificado
+            ctx.strokeStyle = '#1a4a1a';
+            ctx.lineWidth = 4;
+
+            // Muros del laberinto
+            const walls = [
+                [20, 20, 340, 20], [20, 20, 20, 100], [340, 20, 340, 100],
+                [60, 60, 120, 60], [160, 60, 220, 60], [260, 60, 320, 60],
+                [60, 60, 60, 100], [120, 60, 120, 100], [260, 60, 260, 100], [320, 60, 320, 100],
+                [20, 140, 80, 140], [120, 140, 260, 140], [300, 140, 360, 140],
+                [160, 100, 220, 100], [160, 100, 160, 140], [220, 100, 220, 140]
+            ];
+
+            walls.forEach(w => {
+                ctx.beginPath();
+                ctx.moveTo(w[0], w[1]);
+                ctx.lineTo(w[2], w[3]);
+                ctx.stroke();
+            });
+
+            // Luces navideñas en el laberinto
+            const colors = ['#ff0000', '#ffd700', '#00ff00', '#ff00ff'];
+            for (let i = 0; i < 15; i++) {
+                ctx.fillStyle = colors[i % 4];
+                ctx.beginPath();
+                ctx.arc(30 + i * 22, 20, 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Regalos (puntos)
+            ctx.fillStyle = '#ffd700';
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 5; j++) {
+                    if (Math.random() > 0.3) {
+                        ctx.beginPath();
+                        ctx.arc(50 + i * 40, 40 + j * 35, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+
+            // Leo (Pacman)
+            const time = Date.now() / 200;
+            const mouthAngle = Math.abs(Math.sin(time)) * 0.5;
+
+            ctx.fillStyle = '#fcd34d';
+            ctx.beginPath();
+            ctx.arc(100, 110, 22, mouthAngle + 0.2, Math.PI * 2 - mouthAngle - 0.2);
+            ctx.lineTo(100, 110);
+            ctx.closePath();
+            ctx.fill();
+
+            // Ojo de Leo
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(105, 98, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Pelo de Leo
+            ctx.fillStyle = '#78350f';
+            ctx.beginPath();
+            ctx.arc(100, 95, 10, Math.PI, 0, false);
+            ctx.fill();
+
+            // Los 3 Reyes Magos (fantasmas)
+            const kingsData = [
+                { x: 220, y: 90, color: '#ff6b6b', name: 'M' },
+                { x: 270, y: 110, color: '#4ecdc4', name: 'G' },
+                { x: 320, y: 90, color: '#ffe66d', name: 'B' }
+            ];
+
+            kingsData.forEach((king, i) => {
+                const wobble = Math.sin(time + i) * 3;
+
+                // Cuerpo fantasma
+                ctx.fillStyle = king.color;
+                ctx.beginPath();
+                ctx.arc(king.x, king.y - 5 + wobble, 18, Math.PI, 0, false);
+                ctx.lineTo(king.x + 18, king.y + 15 + wobble);
+                for (let j = 0; j < 6; j++) {
+                    ctx.lineTo(king.x + 18 - j * 6, king.y + (j % 2 ? 15 : 20) + wobble);
+                }
+                ctx.closePath();
+                ctx.fill();
+
+                // Corona
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath();
+                ctx.moveTo(king.x - 12, king.y - 20 + wobble);
+                ctx.lineTo(king.x - 8, king.y - 12 + wobble);
+                ctx.lineTo(king.x, king.y - 18 + wobble);
+                ctx.lineTo(king.x + 8, king.y - 12 + wobble);
+                ctx.lineTo(king.x + 12, king.y - 20 + wobble);
+                ctx.lineTo(king.x + 12, king.y - 12 + wobble);
+                ctx.lineTo(king.x - 12, king.y - 12 + wobble);
+                ctx.closePath();
+                ctx.fill();
+
+                // Ojos
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.ellipse(king.x - 6, king.y - 3 + wobble, 5, 6, 0, 0, Math.PI * 2);
+                ctx.ellipse(king.x + 6, king.y - 3 + wobble, 5, 6, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(king.x - 4, king.y - 2 + wobble, 2, 0, Math.PI * 2);
+                ctx.arc(king.x + 8, king.y - 2 + wobble, 2, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Carbón (power pellet)
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.arc(50, 170, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(255, 100, 100, 0.6)';
+            ctx.beginPath();
+            ctx.arc(46, 166, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Roscón de Reyes
+            ctx.fillStyle = '#d4a574';
+            ctx.beginPath();
+            ctx.ellipse(320, 170, 20, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#000022';
+            ctx.beginPath();
+            ctx.ellipse(320, 170, 8, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Frutas
+            ctx.fillStyle = '#ff0000';
+            ctx.beginPath();
+            ctx.arc(310, 165, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#00ff00';
+            ctx.beginPath();
+            ctx.arc(330, 168, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Estrella de Belén
+            ctx.fillStyle = '#ffd700';
+            ctx.font = '20px Arial';
+            ctx.fillText('⭐', 175, 55);
+
+            // Título
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+            ctx.fillRect(0, 200, canvas.width, 80);
+
+            ctx.fillStyle = '#ff6b6b';
+            ctx.font = 'bold 18px "Press Start 2P", monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('LEO VS', canvas.width/2, 230);
+            ctx.fillStyle = '#ffd700';
+            ctx.fillText('REYES MAGOS', canvas.width/2, 255);
+            ctx.fillStyle = '#4ecdc4';
+            ctx.font = '10px "Press Start 2P", monospace';
+            ctx.fillText('👑 PACMAN STYLE 👑', canvas.width/2, 273);
+        }
+
+        // ===== PORTADA 4: Leo Racing =====
+        function drawCover4() {
+            const canvas = document.getElementById('cover4');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            // Cielo degradado
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height/2);
+            skyGradient.addColorStop(0, '#0066cc');
+            skyGradient.addColorStop(1, '#87ceeb');
+            ctx.fillStyle = skyGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height/2);
+
+            // Sol
+            ctx.fillStyle = '#ffdd00';
+            ctx.beginPath();
+            ctx.arc(320, 50, 30, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Montañas
+            ctx.fillStyle = '#4a6741';
+            ctx.beginPath();
+            ctx.moveTo(0, 140);
+            ctx.lineTo(80, 80);
+            ctx.lineTo(150, 120);
+            ctx.lineTo(220, 70);
+            ctx.lineTo(300, 110);
+            ctx.lineTo(380, 90);
+            ctx.lineTo(380, 140);
+            ctx.closePath();
+            ctx.fill();
+
+            // Carretera (perspectiva)
+            const roadGradient = ctx.createLinearGradient(0, 140, 0, 280);
+            roadGradient.addColorStop(0, '#555');
+            roadGradient.addColorStop(1, '#333');
+
+            // Hierba
+            ctx.fillStyle = '#228b22';
+            ctx.fillRect(0, 140, canvas.width, 140);
+
+            // Carretera con perspectiva
+            ctx.fillStyle = roadGradient;
+            ctx.beginPath();
+            ctx.moveTo(140, 140);
+            ctx.lineTo(240, 140);
+            ctx.lineTo(380, 280);
+            ctx.lineTo(0, 280);
+            ctx.closePath();
+            ctx.fill();
+
+            // Líneas de carretera
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([20, 15]);
+            ctx.beginPath();
+            ctx.moveTo(190, 140);
+            ctx.lineTo(190, 280);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Bordes de carretera (rumbel strips)
+            for (let i = 0; i < 7; i++) {
+                const y = 145 + i * 20;
+                const width = 5 + i * 2;
+                const leftX = 140 - i * 20;
+                const rightX = 240 + i * 20;
+
+                ctx.fillStyle = i % 2 === 0 ? '#ff0000' : '#fff';
+                ctx.fillRect(leftX - width, y, width, 18);
+                ctx.fillRect(rightX, y, width, 18);
+            }
+
+            // Coche del jugador (abajo, grande)
+            const carX = 170;
+            const carY = 200;
+
+            // Sombra
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            ctx.ellipse(carX + 20, carY + 60, 35, 8, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cuerpo del coche
+            ctx.fillStyle = '#ff3300';
+            ctx.beginPath();
+            ctx.moveTo(carX, carY + 50);
+            ctx.lineTo(carX + 40, carY + 50);
+            ctx.lineTo(carX + 35, carY + 20);
+            ctx.lineTo(carX + 5, carY + 20);
+            ctx.closePath();
+            ctx.fill();
+
+            // Techo
+            ctx.fillStyle = '#cc2200';
+            ctx.beginPath();
+            ctx.moveTo(carX + 8, carY + 20);
+            ctx.lineTo(carX + 32, carY + 20);
+            ctx.lineTo(carX + 28, carY + 5);
+            ctx.lineTo(carX + 12, carY + 5);
+            ctx.closePath();
+            ctx.fill();
+
+            // Ventana
+            ctx.fillStyle = '#333';
+            ctx.fillRect(carX + 10, carY + 8, 20, 10);
+
+            // Ruedas
+            ctx.fillStyle = '#111';
+            ctx.fillRect(carX - 5, carY + 35, 10, 18);
+            ctx.fillRect(carX + 35, carY + 35, 10, 18);
+
+            // Coches rivales (más pequeños, arriba)
+            const rivals = [
+                { x: 160, y: 150, color: '#0000ff', scale: 0.4 },
+                { x: 220, y: 155, color: '#00ff00', scale: 0.35 }
+            ];
+
+            rivals.forEach(r => {
+                ctx.fillStyle = r.color;
+                ctx.fillRect(r.x, r.y, 20 * r.scale, 15 * r.scale);
+                ctx.fillStyle = '#111';
+                ctx.fillRect(r.x - 2, r.y + 8 * r.scale, 4 * r.scale, 8 * r.scale);
+                ctx.fillRect(r.x + 18 * r.scale, r.y + 8 * r.scale, 4 * r.scale, 8 * r.scale);
+            });
+
+            // Título
+            ctx.fillStyle = '#ff6600';
+            ctx.font = 'bold 28px "Press Start 2P", monospace';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#000';
+            ctx.shadowBlur = 5;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 3;
+            ctx.fillText('LEO', canvas.width/2, 35);
+
+            ctx.fillStyle = '#ffcc00';
+            ctx.font = 'bold 22px "Press Start 2P", monospace';
+            ctx.fillText('RACING', canvas.width/2, 65);
+            ctx.shadowBlur = 0;
+
+            // Badge
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px "Press Start 2P", monospace';
+            ctx.fillText('🏎️ ARCADE 1998 🏁', canvas.width/2, 270);
+        }
+
+        // Dibujar portadas
+        drawCover1();
+        drawCover2();
+        drawCover3();
+        drawCover4();
+
+        // Redibujar periódicamente para animación sutil
+        setInterval(() => {
+            drawCover1();
+            drawCover3();
+        }, 100);
+    </script>
+</body>
+</html>

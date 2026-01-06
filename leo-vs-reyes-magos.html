@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leo vs Los Reyes Magos - Pacman Style</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(180deg, #0a0a2e 0%, #1a0a3e 50%, #0a1a2e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Press Start 2P', cursive;
+            overflow: hidden;
+        }
+
+        #gameContainer {
+            position: relative;
+            background: #000;
+            border: 6px solid #ffd700;
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.4);
+            padding: 10px;
+        }
+
+        canvas {
+            display: block;
+            border-radius: 5px;
+        }
+
+        #startScreen, #gameOverScreen, #victoryScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10;
+            border-radius: 5px;
+        }
+
+        #gameOverScreen, #victoryScreen {
+            display: none;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #ffd700;
+            text-shadow: 4px 4px #8b4513, 0 0 20px #ffd700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 14px;
+            color: #ff6b6b;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .kings-preview {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .king-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            animation: bounce 0.5s infinite alternate;
+        }
+
+        .king-icon:nth-child(1) { background: #c41e3a; animation-delay: 0s; }
+        .king-icon:nth-child(2) { background: #228b22; animation-delay: 0.1s; }
+        .king-icon:nth-child(3) { background: #20b2aa; animation-delay: 0.2s; }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        .btn {
+            background: linear-gradient(180deg, #ff6b6b 0%, #c0392b 100%);
+            border: 4px solid #8b0000;
+            color: #fff;
+            padding: 15px 40px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.2s;
+            text-shadow: 2px 2px #000;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.6);
+        }
+
+        .instructions {
+            color: #87ceeb;
+            font-size: 8px;
+            text-align: center;
+            margin-top: 30px;
+            line-height: 2.5;
+        }
+
+        .instructions span {
+            color: #ffd700;
+        }
+
+        #hud {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: #111;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: -5px;
+        }
+
+        .hud-item {
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .hud-item span {
+            color: #ffd700;
+        }
+
+        #levelBanner {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 4px solid #ffd700;
+            padding: 30px 50px;
+            border-radius: 10px;
+            z-index: 15;
+            text-align: center;
+        }
+
+        #levelBanner h2 {
+            color: #ffd700;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        #levelBanner p {
+            color: #87ceeb;
+            font-size: 10px;
+        }
+
+        .power-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .power-item {
+            text-align: center;
+            font-size: 8px;
+            color: #aaa;
+        }
+
+        .power-item .icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        #gameOverScreen h1 {
+            color: #ff0000;
+            text-shadow: 4px 4px #8b0000;
+        }
+
+        #victoryScreen h1 {
+            animation: rainbow 2s infinite;
+        }
+
+        @keyframes rainbow {
+            0% { color: #ff6b6b; }
+            33% { color: #4ecdc4; }
+            66% { color: #ffe66d; }
+            100% { color: #ff6b6b; }
+        }
+
+        .final-score {
+            color: #ffd700;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="hud">
+            <div class="hud-item">🎁 <span id="score">0</span></div>
+            <div class="hud-item">❤️ <span id="lives">3</span></div>
+            <div class="hud-item">⭐ NIVEL <span id="level">1</span></div>
+            <div class="hud-item">🏆 HI: <span id="highScore">0</span></div>
+        </div>
+        <canvas id="gameCanvas" width="560" height="620"></canvas>
+
+        <div id="startScreen">
+            <h1>🎄 LEO vs<br>LOS REYES MAGOS 👑</h1>
+            <h2>¡Estilo Pacman!</h2>
+
+            <div class="kings-preview">
+                <div class="king-icon"></div>
+                <div class="king-icon"></div>
+                <div class="king-icon"></div>
+            </div>
+
+            <div class="power-info">
+                <div class="power-item">
+                    <div class="icon">🎁</div>
+                    <div>Regalos<br>+10 pts</div>
+                </div>
+                <div class="power-item">
+                    <div class="icon">⭐</div>
+                    <div>Estrella<br>+50 pts</div>
+                </div>
+                <div class="power-item">
+                    <div class="icon">⚫</div>
+                    <div>Carbón<br>¡Asustar!</div>
+                </div>
+                <div class="power-item">
+                    <div class="icon">🥯</div>
+                    <div>Roscón<br>+100 pts</div>
+                </div>
+                <div class="power-item">
+                    <div class="icon">🐪</div>
+                    <div>Camello<br>+200 pts</div>
+                </div>
+                <div class="power-item">
+                    <div class="icon">👟</div>
+                    <div>Zapato<br>+Regalos</div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="startGame()">👑 ¡JUGAR! 👑</button>
+
+            <div class="instructions">
+                <span>← → ↑ ↓</span> ó <span>WASD</span> = MOVER<br>
+                Recoge todos los <span>REGALOS</span> sin que te pillen<br>
+                ¡El <span>CARBÓN</span> asusta a los Reyes!
+            </div>
+        </div>
+
+        <div id="levelBanner">
+            <h2>🎄 NIVEL <span id="levelNum">1</span> 🎄</h2>
+            <p>¡Los Reyes Magos vienen más rápido!</p>
+        </div>
+
+        <div id="gameOverScreen">
+            <h1>💀 ¡TE PILLARON! 💀</h1>
+            <h2>Los Reyes Magos te atraparon</h2>
+            <div class="final-score">Puntuación: <span id="finalScore">0</span></div>
+            <button class="btn" onclick="restartGame()">🔄 REINTENTAR</button>
+        </div>
+
+        <div id="victoryScreen">
+            <h1>🎉 ¡VICTORIA! 🎉</h1>
+            <h2>¡Leo escapó con todos los regalos!</h2>
+            <div class="final-score">Puntuación Final: <span id="victoryScore">0</span></div>
+            <button class="btn" onclick="restartGame()">🎮 JUGAR DE NUEVO</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const TILE_SIZE = 28;
+        const COLS = 20;
+        const ROWS = 22;
+
+        // Estado del juego
+        let gameState = 'menu';
+        let score = 0;
+        let lives = 3;
+        let level = 1;
+        let highScore = parseInt(localStorage.getItem('leoKingsHighScore')) || 0;
+        // Validar high score (resetear si está corrupto)
+        if (isNaN(highScore) || highScore > 999999 || highScore < 0) {
+            highScore = 0;
+            localStorage.setItem('leoKingsHighScore', 0);
+        }
+        document.getElementById('highScore').textContent = highScore;
+
+        // Audio
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            switch(type) {
+                case 'dot':
+                    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.05);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+                    break;
+                case 'power':
+                    osc.type = 'square';
+                    [523, 659, 784, 1047].forEach((f, i) => {
+                        osc.frequency.setValueAtTime(f, audioCtx.currentTime + i * 0.08);
+                    });
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+                    break;
+                case 'death':
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.5);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+                    break;
+                case 'eatGhost':
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+                    break;
+            }
+        }
+
+        // Mapa: 0=vacío, 1=muro, 2=regalo, 3=carbón(power), 4=caja de juguetes
+        const mapTemplate = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,4,2,2,2,2,2,2,2,1,1,2,2,2,2,2,2,2,4,1],
+            [1,2,1,1,2,1,1,1,2,1,1,2,1,1,1,2,1,1,2,1],
+            [1,3,1,1,2,1,1,1,2,1,1,2,1,1,1,2,1,1,3,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,2,1,2,1,1,1,1,1,1,2,1,2,1,1,2,1],
+            [1,2,2,2,2,1,2,2,2,1,1,2,2,2,1,2,2,2,2,1],
+            [1,1,1,1,2,1,1,1,0,1,1,0,1,1,1,2,1,1,1,1],
+            [0,0,0,1,2,1,0,0,0,0,0,0,0,0,1,2,1,0,0,0],
+            [1,1,1,1,2,1,0,1,1,0,0,1,1,0,1,2,1,1,1,1],
+            [0,0,0,0,2,0,0,1,0,0,0,0,1,0,0,2,0,0,0,0],
+            [1,1,1,1,2,1,0,1,1,1,1,1,1,0,1,2,1,1,1,1],
+            [0,0,0,1,2,1,0,0,0,0,0,0,0,0,1,2,1,0,0,0],
+            [1,1,1,1,2,1,0,1,1,1,1,1,1,0,1,2,1,1,1,1],
+            [1,2,2,2,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,2,1,1,1,2,1,1,2,1,1,1,2,1,1,2,1],
+            [1,3,2,1,2,2,2,4,2,2,2,2,4,2,2,2,1,2,3,1],
+            [1,1,2,1,2,1,2,1,1,1,1,1,1,2,1,2,1,2,1,1],
+            [1,2,2,2,2,1,2,2,2,1,1,2,2,2,1,2,2,2,2,1],
+            [1,2,1,1,1,1,1,1,2,1,1,2,1,1,1,1,1,1,2,1],
+            [1,4,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,4,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ];
+
+        let map = [];
+        let totalDots = 0;
+        let dotsEaten = 0;
+
+        // Puntuaciones flotantes
+        let floatingScores = [];
+
+        function showFloatingScore(x, y, text) {
+            floatingScores.push({
+                x: x,
+                y: y,
+                text: text,
+                life: 60, // 1 segundo a 60fps
+                vy: -2
+            });
+        }
+
+        function updateFloatingScores() {
+            floatingScores = floatingScores.filter(fs => {
+                fs.y += fs.vy;
+                fs.life--;
+                return fs.life > 0;
+            });
+        }
+
+        function drawFloatingScores() {
+            floatingScores.forEach(fs => {
+                const alpha = fs.life / 60;
+                ctx.fillStyle = `rgba(255, 215, 0, ${alpha})`;
+                ctx.font = 'bold 16px "Press Start 2P"';
+                ctx.textAlign = 'center';
+                ctx.fillText(fs.text, fs.x, fs.y);
+
+                // Sombra
+                ctx.fillStyle = `rgba(0, 0, 0, ${alpha * 0.5})`;
+                ctx.fillText(fs.text, fs.x + 2, fs.y + 2);
+            });
+        }
+
+        // Leo (jugador)
+        const leo = {
+            x: 10,
+            y: 16,
+            targetX: 10,
+            targetY: 16,
+            direction: 'right',
+            nextDirection: null,
+            mouthOpen: 0,
+            speed: 0.12
+        };
+
+        // Reyes Magos - Melchor (rojo), Gaspar (verde), Baltasar (turquesa)
+        const kings = [
+            { name: 'Melchor', color: '#c41e3a', x: 9, y: 10, targetX: 9, targetY: 10, direction: 'left', scared: false, eaten: false, speed: 0.08 },
+            { name: 'Gaspar', color: '#228b22', x: 10, y: 10, targetX: 10, targetY: 10, direction: 'up', scared: false, eaten: false, speed: 0.08 },
+            { name: 'Baltasar', color: '#20b2aa', x: 11, y: 10, targetX: 11, targetY: 10, direction: 'right', scared: false, eaten: false, speed: 0.08 }
+        ];
+
+        let powerMode = false;
+        let powerTimer = 0;
+        let ghostEatBonus = 200;
+
+        // Bonus items
+        let bonusItem = null;
+        let bonusTimer = 0;
+        const bonusTypes = ['🥯', '🐪', '⭐', '👟', '🌟'];
+
+        // Controles
+        const keys = {};
+        document.addEventListener('keydown', e => {
+            keys[e.code] = true;
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
+                e.preventDefault();
+            }
+
+            if (gameState === 'playing') {
+                if (e.code === 'ArrowUp' || e.code === 'KeyW') leo.nextDirection = 'up';
+                if (e.code === 'ArrowDown' || e.code === 'KeyS') leo.nextDirection = 'down';
+                if (e.code === 'ArrowLeft' || e.code === 'KeyA') leo.nextDirection = 'left';
+                if (e.code === 'ArrowRight' || e.code === 'KeyD') leo.nextDirection = 'right';
+            }
+        });
+        document.addEventListener('keyup', e => keys[e.code] = false);
+
+        function initMap() {
+            map = [];
+            totalDots = 0;
+            dotsEaten = 0;
+
+            for (let y = 0; y < ROWS; y++) {
+                map[y] = [];
+                for (let x = 0; x < COLS; x++) {
+                    map[y][x] = mapTemplate[y][x];
+                    // Contar todos los coleccionables: regalos(2), carbón(3) y cajas(4)
+                    if (map[y][x] === 2 || map[y][x] === 3 || map[y][x] === 4) {
+                        totalDots++;
+                    }
+                }
+            }
+        }
+
+        function resetPositions() {
+            leo.x = 10; leo.y = 16;
+            leo.targetX = 10; leo.targetY = 16;
+            leo.direction = 'right';
+            leo.nextDirection = null;
+
+            kings[0].x = 9; kings[0].y = 10; kings[0].targetX = 9; kings[0].targetY = 10;
+            kings[1].x = 10; kings[1].y = 10; kings[1].targetX = 10; kings[1].targetY = 10;
+            kings[2].x = 11; kings[2].y = 10; kings[2].targetX = 11; kings[2].targetY = 10;
+
+            kings.forEach(k => {
+                k.scared = false;
+                k.eaten = false;
+            });
+            powerMode = false;
+        }
+
+        // ===================== DIBUJAR =====================
+        function drawMap() {
+            for (let y = 0; y < ROWS; y++) {
+                for (let x = 0; x < COLS; x++) {
+                    const tile = map[y][x];
+                    const px = x * TILE_SIZE;
+                    const py = y * TILE_SIZE;
+
+                    if (tile === 1) {
+                        // Muro - estilo navideño
+                        ctx.fillStyle = '#1a4a1a';
+                        ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+
+                        // Borde brillante
+                        ctx.strokeStyle = '#2d8a2d';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(px + 1, py + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+
+                        // Decoración de luces navideñas ocasionales
+                        if ((x + y) % 7 === 0) {
+                            const colors = ['#ff0000', '#ffd700', '#00ff00', '#0088ff'];
+                            ctx.fillStyle = colors[(x + y) % 4];
+                            ctx.beginPath();
+                            ctx.arc(px + TILE_SIZE/2, py + TILE_SIZE/2, 4, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    } else if (tile === 2) {
+                        // Regalo (punto)
+                        const bounce = Math.sin(Date.now() / 200 + x + y) * 2;
+                        ctx.fillStyle = '#ffd700';
+                        ctx.beginPath();
+                        ctx.arc(px + TILE_SIZE/2, py + TILE_SIZE/2 + bounce, 5, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // Lazo
+                        ctx.fillStyle = '#ff0000';
+                        ctx.fillRect(px + TILE_SIZE/2 - 1, py + TILE_SIZE/2 - 6 + bounce, 2, 4);
+                    } else if (tile === 3) {
+                        // Carbón (power pellet)
+                        const pulse = 0.8 + Math.sin(Date.now() / 150) * 0.2;
+                        ctx.fillStyle = '#333';
+                        ctx.beginPath();
+                        ctx.arc(px + TILE_SIZE/2, py + TILE_SIZE/2, 10 * pulse, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // Brillo
+                        ctx.fillStyle = 'rgba(255, 100, 100, 0.5)';
+                        ctx.beginPath();
+                        ctx.arc(px + TILE_SIZE/2 - 3, py + TILE_SIZE/2 - 3, 4 * pulse, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (tile === 4) {
+                        // Caja de juguetes
+                        const bounce = Math.sin(Date.now() / 200 + x * 2) * 2;
+                        const cx = px + TILE_SIZE/2;
+                        const cy = py + TILE_SIZE/2 + bounce;
+
+                        // Sombra
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                        ctx.fillRect(cx - 10, cy + 8, 20, 4);
+
+                        // Caja base (marrón)
+                        ctx.fillStyle = '#8b4513';
+                        ctx.fillRect(cx - 10, cy - 6, 20, 14);
+
+                        // Tapa de la caja
+                        ctx.fillStyle = '#a0522d';
+                        ctx.fillRect(cx - 11, cy - 9, 22, 5);
+
+                        // Decoración de la caja (líneas)
+                        ctx.fillStyle = '#654321';
+                        ctx.fillRect(cx - 1, cy - 6, 2, 14);
+
+                        // Juguetes asomando
+                        // Pelota roja
+                        ctx.fillStyle = '#ff4444';
+                        ctx.beginPath();
+                        ctx.arc(cx - 5, cy - 10, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#ff8888';
+                        ctx.beginPath();
+                        ctx.arc(cx - 6, cy - 11, 1.5, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // Estrella amarilla
+                        ctx.fillStyle = '#ffd700';
+                        ctx.beginPath();
+                        ctx.moveTo(cx + 5, cy - 14);
+                        ctx.lineTo(cx + 6, cy - 10);
+                        ctx.lineTo(cx + 9, cy - 10);
+                        ctx.lineTo(cx + 7, cy - 8);
+                        ctx.lineTo(cx + 8, cy - 5);
+                        ctx.lineTo(cx + 5, cy - 7);
+                        ctx.lineTo(cx + 2, cy - 5);
+                        ctx.lineTo(cx + 3, cy - 8);
+                        ctx.lineTo(cx + 1, cy - 10);
+                        ctx.lineTo(cx + 4, cy - 10);
+                        ctx.closePath();
+                        ctx.fill();
+
+                        // Brillo animado
+                        const sparkle = Math.sin(Date.now() / 100) * 0.5 + 0.5;
+                        ctx.fillStyle = `rgba(255, 255, 255, ${sparkle * 0.8})`;
+                        ctx.beginPath();
+                        ctx.arc(cx + 6, cy - 4, 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+        }
+
+        function drawLeo() {
+            const px = leo.x * TILE_SIZE + TILE_SIZE / 2;
+            const py = leo.y * TILE_SIZE + TILE_SIZE / 2;
+
+            ctx.save();
+            ctx.translate(px, py);
+
+            // Rotación según dirección
+            let rotation = 0;
+            if (leo.direction === 'right') rotation = 0;
+            if (leo.direction === 'down') rotation = Math.PI / 2;
+            if (leo.direction === 'left') rotation = Math.PI;
+            if (leo.direction === 'up') rotation = -Math.PI / 2;
+            ctx.rotate(rotation);
+
+            // Animación de movimiento
+            const bounce = Math.sin(Date.now() / 80) * 1.5;
+
+            // ===== LEO ESTILO MINECRAFT =====
+
+            // Cuerpo (camiseta verde)
+            ctx.fillStyle = '#4a7c29';
+            ctx.fillRect(-8, 2 + bounce, 16, 12);
+
+            // Mangas verdes
+            ctx.fillStyle = '#4a7c29';
+            ctx.fillRect(-12, 2 + bounce, 4, 8);
+            ctx.fillRect(8, 2 + bounce, 4, 8);
+
+            // Brazos (piel)
+            ctx.fillStyle = '#ffcc99';
+            ctx.fillRect(-12, 10 + bounce, 4, 4);
+            ctx.fillRect(8, 10 + bounce, 4, 4);
+
+            // Cabeza cuadrada (piel)
+            ctx.fillStyle = '#ffcc99';
+            ctx.fillRect(-10, -14 + bounce, 20, 16);
+
+            // Pelo naranja (estilo Minecraft)
+            ctx.fillStyle = '#d97706';
+            // Parte superior del pelo
+            ctx.fillRect(-10, -16 + bounce, 20, 4);
+            // Lados del pelo
+            ctx.fillRect(-10, -12 + bounce, 3, 8);
+            ctx.fillRect(7, -12 + bounce, 3, 8);
+            // Flequillo
+            ctx.fillRect(-7, -12 + bounce, 4, 2);
+            ctx.fillRect(3, -12 + bounce, 4, 2);
+
+            // Ojos
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(-7, -8 + bounce, 5, 4);
+            ctx.fillRect(2, -8 + bounce, 5, 4);
+
+            // Pupilas (verdes como en Minecraft Alex)
+            ctx.fillStyle = '#22c55e';
+            ctx.fillRect(-5, -7 + bounce, 3, 3);
+            ctx.fillRect(4, -7 + bounce, 3, 3);
+
+            // Pupilas negras
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(-4, -6 + bounce, 2, 2);
+            ctx.fillRect(5, -6 + bounce, 2, 2);
+
+            // Boca (sonrisa)
+            ctx.fillStyle = '#d97706';
+            ctx.fillRect(-3, -1 + bounce, 6, 2);
+
+            // Espada de diamante
+            ctx.save();
+            ctx.rotate(0.3);
+            // Mango
+            ctx.fillStyle = '#8b4513';
+            ctx.fillRect(12, -2 + bounce, 3, 8);
+            // Guarda
+            ctx.fillStyle = '#ffd700';
+            ctx.fillRect(10, -2 + bounce, 7, 2);
+            // Hoja de diamante
+            ctx.fillStyle = '#00bcd4';
+            ctx.fillRect(12, -16 + bounce, 3, 14);
+            // Punta
+            ctx.beginPath();
+            ctx.moveTo(12, -16 + bounce);
+            ctx.lineTo(13.5, -20 + bounce);
+            ctx.lineTo(15, -16 + bounce);
+            ctx.fill();
+            // Brillo en la espada
+            ctx.fillStyle = '#80deea';
+            ctx.fillRect(13, -14 + bounce, 1, 10);
+            ctx.restore();
+
+            ctx.restore();
+
+            // Efecto de power mode (brillo dorado)
+            if (powerMode) {
+                ctx.strokeStyle = `rgba(255, 215, 0, ${0.5 + Math.sin(Date.now() / 100) * 0.3})`;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(px, py, 20, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        }
+
+        function drawKing(king) {
+            const px = king.x * TILE_SIZE + TILE_SIZE / 2;
+            const py = king.y * TILE_SIZE + TILE_SIZE / 2;
+
+            ctx.save();
+            ctx.translate(px, py);
+
+            if (king.eaten) {
+                // Solo corona/turbante volviendo a casa
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath();
+                ctx.arc(0, 0, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+                return;
+            }
+
+            const wobble = Math.sin(Date.now() / 100 + king.x) * 2;
+
+            if (king.scared) {
+                // Modo asustado - fantasma azul clásico
+                ctx.fillStyle = powerTimer < 100 && Math.floor(Date.now() / 100) % 2 ? '#fff' : '#2244aa';
+                ctx.beginPath();
+                ctx.arc(0, -4 + wobble, 12, Math.PI, 0, false);
+                ctx.lineTo(12, 10 + wobble);
+                for (let i = 0; i < 4; i++) {
+                    ctx.lineTo(12 - i * 6, (i % 2 ? 10 : 14) + wobble);
+                }
+                ctx.lineTo(-12, 10 + wobble);
+                ctx.closePath();
+                ctx.fill();
+
+                // Ojos asustados
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(-5, -2 + wobble, 4, 0, Math.PI * 2);
+                ctx.arc(5, -2 + wobble, 4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-5, 5 + wobble);
+                ctx.lineTo(-3, 3 + wobble);
+                ctx.lineTo(0, 5 + wobble);
+                ctx.lineTo(3, 3 + wobble);
+                ctx.lineTo(5, 5 + wobble);
+                ctx.stroke();
+            } else {
+                // ===== MELCHOR - Túnica roja, corona dorada, barba blanca =====
+                if (king.name === 'Melchor') {
+                    // Túnica roja
+                    ctx.fillStyle = '#c41e3a';
+                    ctx.beginPath();
+                    ctx.moveTo(-10, -2 + wobble);
+                    ctx.lineTo(-12, 14 + wobble);
+                    ctx.lineTo(12, 14 + wobble);
+                    ctx.lineTo(10, -2 + wobble);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Capa/manto dorado
+                    ctx.fillStyle = '#daa520';
+                    ctx.beginPath();
+                    ctx.moveTo(-10, -2 + wobble);
+                    ctx.lineTo(-14, 14 + wobble);
+                    ctx.lineTo(-10, 14 + wobble);
+                    ctx.lineTo(-8, 0 + wobble);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Cara (piel clara)
+                    ctx.fillStyle = '#ffdbac';
+                    ctx.beginPath();
+                    ctx.arc(0, -4 + wobble, 9, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Barba blanca larga
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.moveTo(-7, 0 + wobble);
+                    ctx.quadraticCurveTo(-8, 10 + wobble, 0, 12 + wobble);
+                    ctx.quadraticCurveTo(8, 10 + wobble, 7, 0 + wobble);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Corona dorada con puntas
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath();
+                    ctx.moveTo(-8, -10 + wobble);
+                    ctx.lineTo(-8, -6 + wobble);
+                    ctx.lineTo(8, -6 + wobble);
+                    ctx.lineTo(8, -10 + wobble);
+                    ctx.lineTo(6, -8 + wobble);
+                    ctx.lineTo(4, -14 + wobble);
+                    ctx.lineTo(2, -8 + wobble);
+                    ctx.lineTo(0, -16 + wobble);
+                    ctx.lineTo(-2, -8 + wobble);
+                    ctx.lineTo(-4, -14 + wobble);
+                    ctx.lineTo(-6, -8 + wobble);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Joyas rojas en corona
+                    ctx.fillStyle = '#ff0000';
+                    ctx.beginPath();
+                    ctx.arc(0, -12 + wobble, 2, 0, Math.PI * 2);
+                    ctx.arc(-4, -10 + wobble, 1.5, 0, Math.PI * 2);
+                    ctx.arc(4, -10 + wobble, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Ojos
+                    ctx.fillStyle = '#000';
+                    ctx.beginPath();
+                    ctx.arc(-3, -5 + wobble, 1.5, 0, Math.PI * 2);
+                    ctx.arc(3, -5 + wobble, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Regalo dorado en mano
+                    ctx.fillStyle = '#ffd700';
+                    ctx.fillRect(8, 4 + wobble, 6, 6);
+                    ctx.fillStyle = '#ff0000';
+                    ctx.fillRect(10, 4 + wobble, 2, 6);
+                }
+
+                // ===== GASPAR - Túnica verde, corona dorada, barba marrón =====
+                else if (king.name === 'Gaspar') {
+                    // Túnica verde
+                    ctx.fillStyle = '#228b22';
+                    ctx.beginPath();
+                    ctx.moveTo(-10, -2 + wobble);
+                    ctx.lineTo(-12, 14 + wobble);
+                    ctx.lineTo(12, 14 + wobble);
+                    ctx.lineTo(10, -2 + wobble);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Capa amarilla
+                    ctx.fillStyle = '#daa520';
+                    ctx.beginPath();
+                    ctx.moveTo(10, -2 + wobble);
+                    ctx.lineTo(14, 14 + wobble);
+                    ctx.lineTo(10, 14 + wobble);
+                    ctx.lineTo(8, 0 + wobble);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Cara (piel clara)
+                    ctx.fillStyle = '#ffdbac';
+                    ctx.beginPath();
+                    ctx.arc(0, -4 + wobble, 9, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Barba marrón
+                    ctx.fillStyle = '#8b4513';
+                    ctx.beginPath();
+                    ctx.moveTo(-5, 1 + wobble);
+                    ctx.quadraticCurveTo(-5, 8 + wobble, 0, 9 + wobble);
+                    ctx.quadraticCurveTo(5, 8 + wobble, 5, 1 + wobble);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Corona dorada
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath();
+                    ctx.moveTo(-7, -10 + wobble);
+                    ctx.lineTo(-7, -6 + wobble);
+                    ctx.lineTo(7, -6 + wobble);
+                    ctx.lineTo(7, -10 + wobble);
+                    ctx.lineTo(5, -8 + wobble);
+                    ctx.lineTo(3, -13 + wobble);
+                    ctx.lineTo(0, -9 + wobble);
+                    ctx.lineTo(-3, -13 + wobble);
+                    ctx.lineTo(-5, -8 + wobble);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Joyas verdes en corona
+                    ctx.fillStyle = '#00ff00';
+                    ctx.beginPath();
+                    ctx.arc(0, -9 + wobble, 2, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Ojos
+                    ctx.fillStyle = '#000';
+                    ctx.beginPath();
+                    ctx.arc(-3, -5 + wobble, 1.5, 0, Math.PI * 2);
+                    ctx.arc(3, -5 + wobble, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Regalo (incienso)
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath();
+                    ctx.moveTo(-12, 2 + wobble);
+                    ctx.lineTo(-10, 10 + wobble);
+                    ctx.lineTo(-6, 10 + wobble);
+                    ctx.lineTo(-8, 2 + wobble);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+
+                // ===== BALTASAR - Túnica verde/azul, turbante, piel oscura =====
+                else if (king.name === 'Baltasar') {
+                    // Túnica verde azulada
+                    ctx.fillStyle = '#20b2aa';
+                    ctx.beginPath();
+                    ctx.moveTo(-10, -2 + wobble);
+                    ctx.lineTo(-12, 14 + wobble);
+                    ctx.lineTo(12, 14 + wobble);
+                    ctx.lineTo(10, -2 + wobble);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Capa naranja
+                    ctx.fillStyle = '#ff8c00';
+                    ctx.beginPath();
+                    ctx.moveTo(-10, -2 + wobble);
+                    ctx.lineTo(-14, 14 + wobble);
+                    ctx.lineTo(-10, 14 + wobble);
+                    ctx.lineTo(-8, 0 + wobble);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Cara (piel oscura)
+                    ctx.fillStyle = '#8b5a2b';
+                    ctx.beginPath();
+                    ctx.arc(0, -4 + wobble, 9, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Turbante dorado
+                    ctx.fillStyle = '#daa520';
+                    ctx.beginPath();
+                    ctx.ellipse(0, -10 + wobble, 10, 6, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Detalle del turbante
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath();
+                    ctx.ellipse(0, -10 + wobble, 4, 3, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Joya en turbante
+                    ctx.fillStyle = '#00bfff';
+                    ctx.beginPath();
+                    ctx.arc(0, -10 + wobble, 2, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Pluma en turbante
+                    ctx.fillStyle = '#ff6347';
+                    ctx.beginPath();
+                    ctx.moveTo(5, -12 + wobble);
+                    ctx.quadraticCurveTo(10, -18 + wobble, 8, -20 + wobble);
+                    ctx.quadraticCurveTo(6, -16 + wobble, 5, -12 + wobble);
+                    ctx.fill();
+
+                    // Ojos
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(-3, -5 + wobble, 2, 0, Math.PI * 2);
+                    ctx.arc(3, -5 + wobble, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#000';
+                    ctx.beginPath();
+                    ctx.arc(-3, -5 + wobble, 1, 0, Math.PI * 2);
+                    ctx.arc(3, -5 + wobble, 1, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Sonrisa
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(0, -2 + wobble, 3, 0.2, Math.PI - 0.2);
+                    ctx.stroke();
+
+                    // Regalo (copa dorada)
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath();
+                    ctx.moveTo(9, 3 + wobble);
+                    ctx.lineTo(7, 10 + wobble);
+                    ctx.lineTo(13, 10 + wobble);
+                    ctx.lineTo(11, 3 + wobble);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.fillRect(8, 10 + wobble, 4, 2);
+                }
+            }
+
+            ctx.restore();
+        }
+
+        function drawBonus() {
+            if (!bonusItem) return;
+
+            const px = bonusItem.x * TILE_SIZE + TILE_SIZE / 2;
+            const py = bonusItem.y * TILE_SIZE + TILE_SIZE / 2;
+            const bounce = Math.sin(Date.now() / 150) * 5;
+
+            // Brillo de fondo
+            ctx.fillStyle = `rgba(255, 215, 0, ${0.3 + Math.sin(Date.now() / 200) * 0.2})`;
+            ctx.beginPath();
+            ctx.arc(px, py + bounce, 18, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.font = '22px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(bonusItem.type, px, py + bounce);
+        }
+
+        // ===================== LÓGICA =====================
+        function canMove(x, y) {
+            const tileX = Math.floor(x);
+            const tileY = Math.floor(y);
+
+            // Portal (túneles)
+            if (tileX < 0) return true;
+            if (tileX >= COLS) return true;
+            if (tileY < 0 || tileY >= ROWS) return false;
+
+            return map[tileY][tileX] !== 1;
+        }
+
+        function updateLeo() {
+            // Verificar si puede cambiar dirección
+            if (leo.nextDirection) {
+                let testX = Math.round(leo.x);
+                let testY = Math.round(leo.y);
+
+                switch(leo.nextDirection) {
+                    case 'up': testY--; break;
+                    case 'down': testY++; break;
+                    case 'left': testX--; break;
+                    case 'right': testX++; break;
+                }
+
+                if (canMove(testX, testY)) {
+                    leo.direction = leo.nextDirection;
+                    leo.nextDirection = null;
+                }
+            }
+
+            // Mover en la dirección actual
+            let newX = leo.x;
+            let newY = leo.y;
+
+            switch(leo.direction) {
+                case 'up': newY -= leo.speed; break;
+                case 'down': newY += leo.speed; break;
+                case 'left': newX -= leo.speed; break;
+                case 'right': newX += leo.speed; break;
+            }
+
+            // Verificar colisión antes de mover
+            const nextTileX = Math.round(newX);
+            const nextTileY = Math.round(newY);
+
+            if (canMove(nextTileX, nextTileY)) {
+                leo.x = newX;
+                leo.y = newY;
+            }
+
+            // Portal (túneles laterales)
+            if (leo.x < -0.5) leo.x = COLS - 0.5;
+            if (leo.x > COLS - 0.5) leo.x = -0.5;
+
+            // Recoger items
+            const tileX = Math.round(leo.x);
+            const tileY = Math.round(leo.y);
+
+            if (tileX >= 0 && tileX < COLS && tileY >= 0 && tileY < ROWS) {
+                const tile = map[tileY][tileX];
+
+                if (tile === 2) {
+                    // Regalo
+                    map[tileY][tileX] = 0;
+                    score += 10;
+                    dotsEaten++;
+                    playSound('dot');
+                } else if (tile === 3) {
+                    // Carbón - power mode!
+                    map[tileY][tileX] = 0;
+                    score += 50;
+                    dotsEaten++;
+                    powerMode = true;
+                    powerTimer = 400;
+                    ghostEatBonus = 200;
+                    kings.forEach(k => k.scared = true);
+                    playSound('power');
+                } else if (tile === 4) {
+                    // Caja de juguetes - premio especial!
+                    map[tileY][tileX] = 0;
+                    score += 75;
+                    dotsEaten++;
+                    playSound('power');
+
+                    // Efecto visual de puntos flotantes
+                    showFloatingScore(tileX * TILE_SIZE + TILE_SIZE/2, tileY * TILE_SIZE, '+75');
+                }
+            }
+
+            // Bonus item
+            if (bonusItem) {
+                const dx = leo.x - bonusItem.x;
+                const dy = leo.y - bonusItem.y;
+                if (Math.sqrt(dx*dx + dy*dy) < 1) {
+                    score += bonusItem.points;
+                    playSound('power');
+                    bonusItem = null;
+                }
+            }
+
+            updateHUD();
+
+            // Verificar victoria
+            if (dotsEaten >= totalDots) {
+                nextLevel();
+            }
+        }
+
+        // Variables para comportamiento de los Reyes
+        let scatterMode = false;
+        let scatterTimer = 0;
+        let chaseTimer = 0;
+        const SCATTER_TIME = 420; // 7 segundos a 60fps
+        const CHASE_TIME = 1200;  // 20 segundos
+
+        // Esquinas para modo scatter (patrulla)
+        const scatterTargets = {
+            'Melchor': { x: 1, y: 1 },      // Esquina superior izquierda
+            'Gaspar': { x: COLS - 2, y: 1 }, // Esquina superior derecha
+            'Baltasar': { x: COLS - 2, y: ROWS - 2 } // Esquina inferior derecha
+        };
+
+        // Función para obtener el objetivo según la personalidad del Rey
+        function getKingTarget(king) {
+            // Si está en modo scatter, ir a su esquina
+            if (scatterMode && !king.scared && !king.eaten) {
+                return scatterTargets[king.name];
+            }
+
+            // Si fue comido, ir a casa
+            if (king.eaten) {
+                return { x: 10, y: 10 };
+            }
+
+            // Si está asustado, huir de Leo
+            if (king.scared) {
+                // Calcular dirección opuesta a Leo
+                const awayX = king.x + (king.x - leo.x);
+                const awayY = king.y + (king.y - leo.y);
+                return { x: awayX, y: awayY };
+            }
+
+            // Comportamiento único para cada Rey
+            switch (king.name) {
+                case 'Melchor':
+                    // PERSEGUIDOR DIRECTO - Siempre va directo a Leo
+                    return { x: leo.x, y: leo.y };
+
+                case 'Gaspar':
+                    // EMBOSCADOR - Apunta 4 casillas delante de Leo
+                    let targetX = leo.x;
+                    let targetY = leo.y;
+                    const lookAhead = 4;
+                    if (leo.direction === 'up') targetY -= lookAhead;
+                    if (leo.direction === 'down') targetY += lookAhead;
+                    if (leo.direction === 'left') targetX -= lookAhead;
+                    if (leo.direction === 'right') targetX += lookAhead;
+                    // Mantener dentro del mapa
+                    targetX = Math.max(1, Math.min(COLS - 2, targetX));
+                    targetY = Math.max(1, Math.min(ROWS - 2, targetY));
+                    return { x: targetX, y: targetY };
+
+                case 'Baltasar':
+                    // PATRULLERO/IMPREDECIBLE - Persigue si está cerca, patrulla si está lejos
+                    const distToLeo = Math.sqrt((king.x - leo.x) ** 2 + (king.y - leo.y) ** 2);
+                    if (distToLeo < 8) {
+                        // Cerca de Leo: perseguir
+                        return { x: leo.x, y: leo.y };
+                    } else {
+                        // Lejos: ir a su esquina de patrulla
+                        return scatterTargets['Baltasar'];
+                    }
+
+                default:
+                    return { x: leo.x, y: leo.y };
+            }
+        }
+
+        // Función para elegir la mejor dirección hacia un objetivo
+        function chooseBestDirection(king, targetX, targetY, directions) {
+            if (directions.length === 0) return king.direction;
+
+            let bestDir = directions[0];
+            let bestDist = Infinity;
+
+            // Si está asustado, queremos MAXIMIZAR distancia (huir)
+            if (king.scared) {
+                bestDist = -Infinity;
+                directions.forEach(dir => {
+                    let testX = king.x, testY = king.y;
+                    if (dir === 'up') testY--;
+                    if (dir === 'down') testY++;
+                    if (dir === 'left') testX--;
+                    if (dir === 'right') testX++;
+                    const dist = Math.sqrt((testX - leo.x) ** 2 + (testY - leo.y) ** 2);
+                    if (dist > bestDist) {
+                        bestDist = dist;
+                        bestDir = dir;
+                    }
+                });
+                // Añadir algo de aleatoriedad al huir
+                if (Math.random() < 0.3 && directions.length > 1) {
+                    bestDir = directions[Math.floor(Math.random() * directions.length)];
+                }
+            } else {
+                // Normal: minimizar distancia al objetivo
+                directions.forEach(dir => {
+                    let testX = king.x, testY = king.y;
+                    if (dir === 'up') testY--;
+                    if (dir === 'down') testY++;
+                    if (dir === 'left') testX--;
+                    if (dir === 'right') testX++;
+                    const dist = Math.sqrt((testX - targetX) ** 2 + (testY - targetY) ** 2);
+                    if (dist < bestDist) {
+                        bestDist = dist;
+                        bestDir = dir;
+                    }
+                });
+            }
+
+            return bestDir;
+        }
+
+        function updateKings() {
+            // Actualizar temporizadores de scatter/chase
+            if (!powerMode) {
+                if (scatterMode) {
+                    scatterTimer--;
+                    if (scatterTimer <= 0) {
+                        scatterMode = false;
+                        chaseTimer = CHASE_TIME;
+                    }
+                } else {
+                    chaseTimer--;
+                    if (chaseTimer <= 0) {
+                        scatterMode = true;
+                        scatterTimer = SCATTER_TIME;
+                    }
+                }
+            }
+
+            kings.forEach(king => {
+                // Velocidad según estado
+                let speed = king.speed + (level - 1) * 0.015;
+                if (king.scared) speed *= 0.5;
+                if (king.eaten) speed *= 2.5;
+                // Velocidad variable por personalidad
+                if (king.name === 'Melchor') speed *= 1.1; // Más rápido
+                if (king.name === 'Baltasar') speed *= 0.95; // Más lento pero impredecible
+
+                // Moverse hacia el target
+                const dx = king.targetX - king.x;
+                const dy = king.targetY - king.y;
+
+                if (Math.abs(dx) > 0.05) {
+                    king.x += Math.sign(dx) * speed;
+                }
+                if (Math.abs(dy) > 0.05) {
+                    king.y += Math.sign(dy) * speed;
+                }
+
+                // Llegó al target, elegir nueva dirección
+                if (Math.abs(dx) < 0.1 && Math.abs(dy) < 0.1) {
+                    king.x = king.targetX;
+                    king.y = king.targetY;
+
+                    // Si fue comido y llegó a casa, revivir
+                    if (king.eaten && king.x >= 9 && king.x <= 11 && king.y >= 9 && king.y <= 11) {
+                        king.eaten = false;
+                        king.scared = powerMode;
+                    }
+
+                    // Obtener direcciones disponibles (evitar dar la vuelta)
+                    const directions = [];
+                    const opposites = { 'up': 'down', 'down': 'up', 'left': 'right', 'right': 'left' };
+
+                    if (canMove(king.x, king.y - 1) && king.direction !== 'down') directions.push('up');
+                    if (canMove(king.x, king.y + 1) && king.direction !== 'up') directions.push('down');
+                    if (canMove(king.x - 1, king.y) && king.direction !== 'right') directions.push('left');
+                    if (canMove(king.x + 1, king.y) && king.direction !== 'left') directions.push('right');
+
+                    // Si no hay direcciones (callejón sin salida), permitir dar la vuelta
+                    if (directions.length === 0) {
+                        if (canMove(king.x, king.y - 1)) directions.push('up');
+                        if (canMove(king.x, king.y + 1)) directions.push('down');
+                        if (canMove(king.x - 1, king.y)) directions.push('left');
+                        if (canMove(king.x + 1, king.y)) directions.push('right');
+                    }
+
+                    if (directions.length > 0) {
+                        // Obtener objetivo según personalidad
+                        const target = getKingTarget(king);
+
+                        // Elegir mejor dirección
+                        king.direction = chooseBestDirection(king, target.x, target.y, directions);
+
+                        // Actualizar target de movimiento
+                        king.targetX = king.x;
+                        king.targetY = king.y;
+                        if (king.direction === 'up') king.targetY--;
+                        if (king.direction === 'down') king.targetY++;
+                        if (king.direction === 'left') king.targetX--;
+                        if (king.direction === 'right') king.targetX++;
+
+                        // Portal (túnel)
+                        if (king.targetX < 0) king.targetX = COLS - 1;
+                        if (king.targetX >= COLS) king.targetX = 0;
+                    }
+                }
+
+                // Colisión con Leo
+                if (!king.eaten) {
+                    const distToLeo = Math.sqrt((king.x - leo.x) ** 2 + (king.y - leo.y) ** 2);
+                    if (distToLeo < 0.8) {
+                        if (king.scared) {
+                            // ¡Comerse al Rey!
+                            king.eaten = true;
+                            king.scared = false;
+                            score += ghostEatBonus;
+                            ghostEatBonus *= 2;
+                            playSound('eatGhost');
+                        } else {
+                            // ¡Leo atrapado!
+                            loseLife();
+                        }
+                    }
+                }
+            });
+
+            // Power mode timer
+            if (powerMode) {
+                powerTimer--;
+                if (powerTimer <= 0) {
+                    powerMode = false;
+                    kings.forEach(k => {
+                        if (!k.eaten) k.scared = false;
+                    });
+                    ghostEatBonus = 200;
+                }
+            }
+        }
+
+        function updateBonus() {
+            bonusTimer++;
+
+            // Aparecer bonus ocasionalmente
+            if (!bonusItem && bonusTimer > 500 && Math.random() < 0.005) {
+                bonusItem = {
+                    x: 10,
+                    y: 13,
+                    type: bonusTypes[Math.floor(Math.random() * bonusTypes.length)],
+                    points: [100, 200, 300, 150, 500][Math.floor(Math.random() * 5)]
+                };
+            }
+
+            // Desaparecer después de un tiempo
+            if (bonusItem && bonusTimer > 800) {
+                bonusItem = null;
+                bonusTimer = 0;
+            }
+        }
+
+        function loseLife() {
+            lives--;
+            playSound('death');
+
+            if (lives <= 0) {
+                gameOver();
+            } else {
+                resetPositions();
+                updateHUD();
+            }
+        }
+
+        function nextLevel() {
+            level++;
+            if (level > 5) {
+                victory();
+                return;
+            }
+
+            // Mostrar banner de nivel
+            document.getElementById('levelBanner').style.display = 'block';
+            document.getElementById('levelNum').textContent = level;
+
+            setTimeout(() => {
+                document.getElementById('levelBanner').style.display = 'none';
+                initMap();
+                resetPositions();
+
+                // Aumentar velocidad de los Reyes
+                kings.forEach(k => {
+                    k.speed = 0.08 + level * 0.015;
+                });
+
+                updateHUD();
+            }, 2000);
+        }
+
+        function updateHUD() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('lives').textContent = lives;
+            document.getElementById('level').textContent = level;
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('leoKingsHighScore', highScore);
+                document.getElementById('highScore').textContent = highScore;
+            }
+        }
+
+        function gameOver() {
+            gameState = 'gameover';
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('gameOverScreen').style.display = 'flex';
+        }
+
+        function victory() {
+            gameState = 'victory';
+            document.getElementById('victoryScore').textContent = score;
+            document.getElementById('victoryScreen').style.display = 'flex';
+        }
+
+        function startGame() {
+            initAudio();
+            document.getElementById('startScreen').style.display = 'none';
+
+            score = 0;
+            lives = 3;
+            level = 1;
+            bonusTimer = 0;
+            bonusItem = null;
+
+            // Inicializar comportamiento IA
+            scatterMode = true;
+            scatterTimer = SCATTER_TIME;
+            chaseTimer = 0;
+
+            initMap();
+            resetPositions();
+
+            kings.forEach(k => {
+                k.speed = 0.08;
+            });
+
+            updateHUD();
+            gameState = 'playing';
+            gameLoop();
+        }
+
+        function restartGame() {
+            document.getElementById('gameOverScreen').style.display = 'none';
+            document.getElementById('victoryScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'flex';
+            gameState = 'menu';
+        }
+
+        // ===================== GAME LOOP =====================
+        function gameLoop() {
+            if (gameState !== 'playing') return;
+
+            // Clear
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Update
+            updateLeo();
+            updateKings();
+            updateBonus();
+            updateFloatingScores();
+
+            // Draw
+            drawMap();
+            drawBonus();
+            kings.forEach(drawKing);
+            drawLeo();
+            drawFloatingScores();
+
+            requestAnimationFrame(gameLoop);
+        }
+    </script>
+</body>
+</html>

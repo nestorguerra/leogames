@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leo Racing - Arcade Racing 90s</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Press Start 2P', cursive;
+            overflow: hidden;
+        }
+
+        #gameContainer {
+            position: relative;
+            background: #000;
+            border: 6px solid #ff6600;
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(255, 102, 0, 0.5);
+        }
+
+        canvas {
+            display: block;
+            border-radius: 5px;
+        }
+
+        #hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            color: #fff;
+            font-size: 12px;
+            text-shadow: 2px 2px #000;
+            z-index: 5;
+        }
+
+        .hud-item {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 2px solid #ff6600;
+        }
+
+        .speed-display {
+            font-size: 20px;
+            color: #00ff00;
+        }
+
+        .position-display {
+            font-size: 16px;
+            color: #ffff00;
+        }
+
+        #startScreen, #gameOverScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10;
+            border-radius: 5px;
+        }
+
+        #gameOverScreen {
+            display: none;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #ff6600;
+            text-shadow: 4px 4px #8b0000, 0 0 30px #ff6600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 14px;
+            color: #00ff00;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .car-preview {
+            width: 120px;
+            height: 80px;
+            margin: 20px 0;
+        }
+
+        .btn {
+            background: linear-gradient(180deg, #ff6600 0%, #cc3300 100%);
+            border: 4px solid #8b0000;
+            color: #fff;
+            padding: 15px 40px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.2s;
+            text-shadow: 2px 2px #000;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #ff6600;
+        }
+
+        .controls-info {
+            color: #aaa;
+            font-size: 10px;
+            margin-top: 30px;
+            text-align: center;
+            line-height: 2;
+        }
+
+        .countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            color: #ff0000;
+            text-shadow: 4px 4px #000, 0 0 50px #ff0000;
+            z-index: 15;
+            display: none;
+        }
+
+        .lap-complete {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            color: #00ff00;
+            text-shadow: 2px 2px #000;
+            display: none;
+            z-index: 15;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+        <div id="hud">
+            <div class="hud-item">
+                <div>VELOCIDAD</div>
+                <div class="speed-display"><span id="speed">0</span> km/h</div>
+            </div>
+            <div class="hud-item">
+                <div>VUELTA</div>
+                <div><span id="lap">1</span>/3</div>
+            </div>
+            <div class="hud-item">
+                <div>TIEMPO</div>
+                <div id="time">0:00.00</div>
+            </div>
+            <div class="hud-item">
+                <div>POSICION</div>
+                <div class="position-display"><span id="position">1</span>/4</div>
+            </div>
+        </div>
+
+        <div class="countdown" id="countdown">3</div>
+        <div class="lap-complete" id="lapComplete">VUELTA COMPLETADA!</div>
+
+        <div id="startScreen">
+            <h1>LEO RACING</h1>
+            <h2>ARCADE RACING 1998</h2>
+
+            <canvas id="carPreview" class="car-preview"></canvas>
+
+            <div style="color: #fff; font-size: 10px; margin: 20px 0;">
+                <div style="color: #ffff00;">CIRCUITO: COSTA DEL SOL</div>
+                <div style="margin-top: 10px;">3 VUELTAS - LEO vs JORGE, ALEX, ISA</div>
+            </div>
+
+            <button class="btn" onclick="startRace()">EMPEZAR CARRERA</button>
+
+            <div class="controls-info">
+                ← → GIRAR | ↑ ACELERAR | ↓ FRENAR<br>
+                ESPACIO: TURBO
+            </div>
+        </div>
+
+        <div id="gameOverScreen">
+            <h1 id="resultTitle">CARRERA TERMINADA</h1>
+            <h2 id="resultText"></h2>
+            <div style="color: #fff; font-size: 12px; margin: 20px 0;">
+                <div>POSICION FINAL: <span id="finalPosition" style="color: #ffff00;">1</span></div>
+                <div style="margin-top: 10px;">TIEMPO: <span id="finalTime" style="color: #00ff00;">0:00.00</span></div>
+                <div style="margin-top: 10px;">MEJOR VUELTA: <span id="bestLap" style="color: #ff6600;">0:00.00</span></div>
+            </div>
+            <button class="btn" onclick="restartRace()">OTRA CARRERA</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const WIDTH = canvas.width;
+        const HEIGHT = canvas.height;
+
+        // Constantes del juego
+        const ROAD_WIDTH = 2000;
+        const SEGMENT_LENGTH = 200;
+        const RUMBLE_LENGTH = 3;
+        const CAMERA_HEIGHT = 1000;
+        const CAMERA_DEPTH = 0.84;
+        const DRAW_DISTANCE = 300;
+        const FOV = 100;
+        const TOTAL_LAPS = 3;
+
+        // Estado del juego
+        let gameState = 'menu';
+        let segments = [];
+        let cars = [];
+        let player = {
+            x: 0,
+            z: 0,
+            speed: 0,
+            maxSpeed: 240,           // Velocidad máxima 240 km/h
+            accel: 0.6,              // Buena aceleración
+            brake: 0.8,
+            decel: 0.15,
+            turbo: false,
+            turboFuel: 100
+        };
+
+        let lap = 1;
+        let position = 1;
+        let raceTime = 0;
+        let lapTime = 0;
+        let bestLapTime = Infinity;
+        let trackLength = 0;
+
+        // Colores del circuito (Costa del Sol - colores mediterráneos)
+        const COLORS = {
+            SKY: { top: '#0066cc', bottom: '#87ceeb' },
+            TREE: '#228b22',
+            ROAD: { light: '#6b6b6b', dark: '#555555' },
+            GRASS: { light: '#10aa10', dark: '#009900' },
+            RUMBLE: { light: '#ffffff', dark: '#ff0000' },
+            LANE: '#ffffff',
+            START: { light: '#ffffff', dark: '#000000' }
+        };
+
+        // Crear circuito (EMOCIONANTE - curvas difíciles pero jugable)
+        function createTrack() {
+            segments = [];
+
+            // Sección de inicio - recta para coger velocidad
+            addRoad(80, 80, 80, 0, 0);
+
+            // Primera curva difícil a la derecha
+            addRoad(40, 50, 40, 3, 0);
+
+            // Recta corta
+            addRoad(50, 50, 50, 0, 0);
+
+            // Curva cerrada a la izquierda con subida
+            addRoad(35, 45, 35, -3.5, 25);
+
+            // Recta en la colina
+            addRoad(60, 60, 60, 0, 10);
+
+            // Bajada con curva a la derecha
+            addRoad(40, 50, 40, 2.5, -30);
+
+            // Chicane (curva S)
+            addRoad(30, 30, 30, -3, 0);
+            addRoad(30, 30, 30, 3, 0);
+
+            // Recta larga para recuperar
+            addRoad(100, 100, 100, 0, 0);
+
+            // Curva muy cerrada a la izquierda
+            addRoad(35, 40, 35, -4, 5);
+
+            // Pequeña recta
+            addRoad(40, 40, 40, 0, 0);
+
+            // Curva final difícil
+            addRoad(40, 50, 40, 3, -15);
+
+            // Recta de meta
+            addRoad(70, 70, 70, 0, 0);
+
+            // Calcular longitud total
+            trackLength = segments.length * SEGMENT_LENGTH;
+
+            // Añadir sprites (árboles, etc.)
+            addScenery();
+
+            // Línea de meta (patrón de cuadros)
+            segments[0].isStart = true;
+            segments[1].isStart = true;
+        }
+
+        function addRoad(enter, hold, leave, curve, hill) {
+            const startY = segments.length === 0 ? 0 : segments[segments.length - 1].p2.world.y;
+
+            // Entrada
+            for (let n = 0; n < enter; n++) {
+                addSegment(easeIn(0, curve, n / enter), easeInOut(startY, startY + hill, n / enter));
+            }
+
+            // Mantener
+            for (let n = 0; n < hold; n++) {
+                addSegment(curve, startY + hill);
+            }
+
+            // Salida
+            for (let n = 0; n < leave; n++) {
+                addSegment(easeInOut(curve, 0, n / leave), easeInOut(startY + hill, 0, n / leave));
+            }
+        }
+
+        function addSegment(curve, y) {
+            const n = segments.length;
+            segments.push({
+                index: n,
+                p1: { world: { x: 0, y: lastY(), z: n * SEGMENT_LENGTH }, camera: {}, screen: {} },
+                p2: { world: { x: 0, y: y, z: (n + 1) * SEGMENT_LENGTH }, camera: {}, screen: {} },
+                curve: curve,
+                sprites: [],
+                cars: [],
+                color: Math.floor(n / RUMBLE_LENGTH) % 2 ? COLORS.ROAD.dark : COLORS.ROAD.light
+            });
+        }
+
+        function lastY() {
+            return segments.length === 0 ? 0 : segments[segments.length - 1].p2.world.y;
+        }
+
+        function addScenery() {
+            // Añadir árboles y objetos a los lados
+            for (let i = 0; i < segments.length; i += 20) {
+                const segment = segments[i];
+
+                // Palmeras (Costa del Sol)
+                if (Math.random() > 0.3) {
+                    segment.sprites.push({ type: 'palm', offset: -1.5 - Math.random() });
+                    segment.sprites.push({ type: 'palm', offset: 1.5 + Math.random() });
+                }
+
+                // Edificios ocasionales
+                if (Math.random() > 0.8) {
+                    segment.sprites.push({ type: 'building', offset: -2.5 - Math.random() });
+                }
+            }
+        }
+
+        // Crear coches rivales (3 amigos: Alex, Jorge, Isa)
+        function createCars() {
+            cars = [];
+            const carData = [
+                { color: '#ff0000', name: 'JORGE' },
+                { color: '#0000ff', name: 'ALEX' },
+                { color: '#00ff00', name: 'ISA' }
+            ];
+
+            // Todos parten DELANTE del jugador para que se vean
+            // Cada uno con su estilo de conducción diferente
+            const drivingStyles = [
+                { preferredX: -0.4, style: 'inside' },    // JORGE: prefiere interior
+                { preferredX: 0.4, style: 'outside' },   // ALEX: prefiere exterior
+                { preferredX: 0, style: 'center' }       // ISA: prefiere centro
+            ];
+
+            for (let i = 0; i < 3; i++) {
+                cars.push({
+                    z: 200 + (i * 80),  // MUY cerca: 200, 280, 360
+                    x: drivingStyles[i].preferredX,
+                    speed: 0,  // Todos empiezan parados
+                    targetSpeed: 215 + Math.random() * 15,
+                    color: carData[i].color,
+                    name: carData[i].name,
+                    passed: false,
+                    aggression: 0.9 + Math.random() * 0.2,
+                    preferredX: drivingStyles[i].preferredX,  // Trayectoria preferida
+                    style: drivingStyles[i].style
+                });
+            }
+        }
+
+        // Funciones de interpolación
+        function easeIn(a, b, percent) {
+            return a + (b - a) * Math.pow(percent, 2);
+        }
+
+        function easeOut(a, b, percent) {
+            return a + (b - a) * (1 - Math.pow(1 - percent, 2));
+        }
+
+        function easeInOut(a, b, percent) {
+            return a + (b - a) * ((-Math.cos(percent * Math.PI) / 2) + 0.5);
+        }
+
+        // Proyección 3D
+        function project(p, cameraX, cameraY, cameraZ, cameraDepth, width, height, roadWidth) {
+            p.camera.x = (p.world.x || 0) - cameraX;
+            p.camera.y = (p.world.y || 0) - cameraY;
+            p.camera.z = (p.world.z || 0) - cameraZ;
+
+            p.screen.scale = cameraDepth / p.camera.z;
+            p.screen.x = Math.round((width / 2) + (p.screen.scale * p.camera.x * width / 2));
+            p.screen.y = Math.round((height / 2) - (p.screen.scale * p.camera.y * height / 2));
+            p.screen.w = Math.round((p.screen.scale * roadWidth * width / 2));
+        }
+
+        // Dibujar fondo (cielo y montañas)
+        function drawBackground() {
+            try {
+                // Cielo - parte superior
+                ctx.fillStyle = '#0066cc';
+                ctx.fillRect(0, 0, WIDTH, HEIGHT / 3);
+
+                // Cielo - parte inferior
+                ctx.fillStyle = '#87ceeb';
+                ctx.fillRect(0, HEIGHT / 3, WIDTH, HEIGHT / 6);
+
+                // Sol
+                ctx.fillStyle = '#ffdd00';
+                ctx.beginPath();
+                ctx.arc(650, 80, 40, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Montañas
+                ctx.fillStyle = '#4a6741';
+                ctx.beginPath();
+                ctx.moveTo(0, HEIGHT / 2);
+                ctx.lineTo(100, HEIGHT / 2 - 80);
+                ctx.lineTo(200, HEIGHT / 2 - 50);
+                ctx.lineTo(300, HEIGHT / 2 - 100);
+                ctx.lineTo(400, HEIGHT / 2 - 60);
+                ctx.lineTo(500, HEIGHT / 2 - 90);
+                ctx.lineTo(600, HEIGHT / 2 - 70);
+                ctx.lineTo(700, HEIGHT / 2 - 85);
+                ctx.lineTo(800, HEIGHT / 2 - 55);
+                ctx.lineTo(WIDTH, HEIGHT / 2);
+                ctx.closePath();
+                ctx.fill();
+
+                // Mar
+                ctx.fillStyle = '#0088cc';
+                ctx.fillRect(0, HEIGHT / 2 - 15, WIDTH, 25);
+
+                // Hierba base
+                ctx.fillStyle = '#228b22';
+                ctx.fillRect(0, HEIGHT / 2, WIDTH, HEIGHT / 2);
+
+            } catch (e) {
+                console.error('Error en drawBackground:', e);
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(0, 0, WIDTH, HEIGHT);
+            }
+        }
+
+        // Dibujar segmento de carretera
+        function drawSegment(x1, y1, w1, x2, y2, w2, color, rumbleColor, grassColor, laneColor) {
+            // Hierba
+            ctx.fillStyle = grassColor;
+            ctx.fillRect(0, y2, WIDTH, y1 - y2);
+
+            // Rumble strips (bordes)
+            drawPolygon(x1 - w1 - w1/5, y1, x1 - w1, y1, x2 - w2, y2, x2 - w2 - w2/5, y2, rumbleColor);
+            drawPolygon(x1 + w1 + w1/5, y1, x1 + w1, y1, x2 + w2, y2, x2 + w2 + w2/5, y2, rumbleColor);
+
+            // Carretera
+            drawPolygon(x1 - w1, y1, x1 + w1, y1, x2 + w2, y2, x2 - w2, y2, color);
+
+            // Líneas de carril
+            if (laneColor) {
+                const laneW1 = w1 / 20;
+                const laneW2 = w2 / 20;
+                const laneLine1 = w1 * 0.5;
+                const laneLine2 = w2 * 0.5;
+
+                // Línea central
+                drawPolygon(x1 - laneW1, y1, x1 + laneW1, y1, x2 + laneW2, y2, x2 - laneW2, y2, laneColor);
+
+                // Líneas de carril
+                drawPolygon(x1 - laneLine1 - laneW1, y1, x1 - laneLine1 + laneW1, y1,
+                           x2 - laneLine2 + laneW2, y2, x2 - laneLine2 - laneW2, y2, laneColor);
+                drawPolygon(x1 + laneLine1 - laneW1, y1, x1 + laneLine1 + laneW1, y1,
+                           x2 + laneLine2 + laneW2, y2, x2 + laneLine2 - laneW2, y2, laneColor);
+            }
+        }
+
+        function drawPolygon(x1, y1, x2, y2, x3, y3, x4, y4, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.lineTo(x3, y3);
+            ctx.lineTo(x4, y4);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // Dibujar sprite (palmera, edificio, etc.)
+        function drawSprite(sprite, scale, destX, destY, clipY) {
+            const width = 200 * scale;
+            const height = 300 * scale;
+
+            destX = destX - width / 2;
+            destY = destY - height;
+
+            const clipH = clipY ? Math.max(0, destY + height - clipY) : 0;
+            if (clipH < height) {
+                if (sprite.type === 'palm') {
+                    // Tronco
+                    ctx.fillStyle = '#8b4513';
+                    ctx.fillRect(destX + width * 0.4, destY + height * 0.4, width * 0.2, height * 0.6 - clipH);
+
+                    // Hojas
+                    ctx.fillStyle = '#228b22';
+                    for (let i = 0; i < 6; i++) {
+                        ctx.save();
+                        ctx.translate(destX + width / 2, destY + height * 0.3);
+                        ctx.rotate((i / 6) * Math.PI * 2);
+                        ctx.beginPath();
+                        ctx.ellipse(0, -height * 0.2, width * 0.1, height * 0.25, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                } else if (sprite.type === 'building') {
+                    ctx.fillStyle = '#ddd';
+                    ctx.fillRect(destX, destY, width, height - clipH);
+                    ctx.fillStyle = '#888';
+                    for (let row = 0; row < 5; row++) {
+                        for (let col = 0; col < 3; col++) {
+                            ctx.fillRect(destX + width * 0.1 + col * width * 0.3,
+                                        destY + height * 0.1 + row * height * 0.15,
+                                        width * 0.2, height * 0.1);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Dibujar coche (jugador o rival)
+        function drawCar(x, y, scale, color, isPlayer, carName) {
+            const carWidth = 160 * scale;
+            const carHeight = 80 * scale;
+
+            x = x - carWidth / 2;
+            y = y - carHeight;
+
+            if (isPlayer) {
+                // Coche del jugador - FERRARI STYLE mejorado
+
+                // Sombra grande
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.beginPath();
+                ctx.ellipse(x + carWidth / 2, y + carHeight + 8 * scale, carWidth / 1.8, 12 * scale, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Ruedas traseras con llantas (primero para que queden detrás)
+                // Rueda izquierda
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(x - 8 * scale, y + carHeight - 30 * scale, 22 * scale, 35 * scale);
+                ctx.fillStyle = '#333';
+                ctx.beginPath();
+                ctx.arc(x + 3 * scale, y + carHeight - 12 * scale, 8 * scale, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#666';
+                ctx.beginPath();
+                ctx.arc(x + 3 * scale, y + carHeight - 12 * scale, 4 * scale, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Rueda derecha
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(x + carWidth - 14 * scale, y + carHeight - 30 * scale, 22 * scale, 35 * scale);
+                ctx.fillStyle = '#333';
+                ctx.beginPath();
+                ctx.arc(x + carWidth - 3 * scale, y + carHeight - 12 * scale, 8 * scale, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#666';
+                ctx.beginPath();
+                ctx.arc(x + carWidth - 3 * scale, y + carHeight - 12 * scale, 4 * scale, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Cuerpo principal con degradado
+                const bodyGradient = ctx.createLinearGradient(x, y, x + carWidth, y);
+                bodyGradient.addColorStop(0, '#cc0000');
+                bodyGradient.addColorStop(0.3, '#ff2200');
+                bodyGradient.addColorStop(0.5, '#ff4400');
+                bodyGradient.addColorStop(0.7, '#ff2200');
+                bodyGradient.addColorStop(1, '#cc0000');
+                ctx.fillStyle = bodyGradient;
+                ctx.beginPath();
+                ctx.moveTo(x + 8 * scale, y + carHeight);
+                ctx.lineTo(x + carWidth - 8 * scale, y + carHeight);
+                ctx.lineTo(x + carWidth - 15 * scale, y + 25 * scale);
+                ctx.lineTo(x + 15 * scale, y + 25 * scale);
+                ctx.closePath();
+                ctx.fill();
+
+                // Línea decorativa lateral
+                ctx.fillStyle = '#ffcc00';
+                ctx.fillRect(x + 12 * scale, y + carHeight - 20 * scale, carWidth - 24 * scale, 3 * scale);
+
+                // Difusor trasero
+                ctx.fillStyle = '#222';
+                ctx.fillRect(x + 25 * scale, y + carHeight - 8 * scale, carWidth - 50 * scale, 8 * scale);
+                // Líneas del difusor
+                ctx.fillStyle = '#444';
+                for (let i = 0; i < 5; i++) {
+                    ctx.fillRect(x + 30 * scale + i * 18 * scale, y + carHeight - 6 * scale, 2 * scale, 6 * scale);
+                }
+
+                // Techo/cabina con degradado
+                const roofGradient = ctx.createLinearGradient(x, y, x + carWidth, y);
+                roofGradient.addColorStop(0, '#990000');
+                roofGradient.addColorStop(0.5, '#cc1100');
+                roofGradient.addColorStop(1, '#990000');
+                ctx.fillStyle = roofGradient;
+                ctx.beginPath();
+                ctx.moveTo(x + 28 * scale, y + 25 * scale);
+                ctx.lineTo(x + carWidth - 28 * scale, y + 25 * scale);
+                ctx.lineTo(x + carWidth - 38 * scale, y + 3 * scale);
+                ctx.lineTo(x + 38 * scale, y + 3 * scale);
+                ctx.closePath();
+                ctx.fill();
+
+                // Ventana trasera con reflejo
+                const windowGradient = ctx.createLinearGradient(x + 40 * scale, y, x + carWidth - 40 * scale, y + 20 * scale);
+                windowGradient.addColorStop(0, '#1a1a2e');
+                windowGradient.addColorStop(0.3, '#2a3a5a');
+                windowGradient.addColorStop(1, '#0a0a1a');
+                ctx.fillStyle = windowGradient;
+                ctx.beginPath();
+                ctx.moveTo(x + 33 * scale, y + 22 * scale);
+                ctx.lineTo(x + carWidth - 33 * scale, y + 22 * scale);
+                ctx.lineTo(x + carWidth - 40 * scale, y + 6 * scale);
+                ctx.lineTo(x + 40 * scale, y + 6 * scale);
+                ctx.closePath();
+                ctx.fill();
+
+                // Reflejo en ventana
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+                ctx.beginPath();
+                ctx.moveTo(x + 45 * scale, y + 8 * scale);
+                ctx.lineTo(x + 60 * scale, y + 8 * scale);
+                ctx.lineTo(x + 55 * scale, y + 18 * scale);
+                ctx.lineTo(x + 42 * scale, y + 18 * scale);
+                ctx.closePath();
+                ctx.fill();
+
+                // Luces traseras LED con brillo
+                // Luz izquierda
+                ctx.fillStyle = '#ff0000';
+                ctx.shadowColor = '#ff0000';
+                ctx.shadowBlur = 15 * scale;
+                ctx.fillRect(x + 12 * scale, y + carHeight - 18 * scale, 18 * scale, 6 * scale);
+                ctx.fillStyle = '#ff6666';
+                ctx.fillRect(x + 14 * scale, y + carHeight - 17 * scale, 4 * scale, 4 * scale);
+
+                // Luz derecha
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(x + carWidth - 30 * scale, y + carHeight - 18 * scale, 18 * scale, 6 * scale);
+                ctx.fillStyle = '#ff6666';
+                ctx.fillRect(x + carWidth - 28 * scale, y + carHeight - 17 * scale, 4 * scale, 4 * scale);
+                ctx.shadowBlur = 0;
+
+                // Matrícula
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(x + carWidth/2 - 12 * scale, y + carHeight - 12 * scale, 24 * scale, 8 * scale);
+                ctx.fillStyle = '#000';
+                ctx.font = `${6 * scale}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.fillText('LEO', x + carWidth/2, y + carHeight - 6 * scale);
+
+                // Alerón grande con soportes
+                ctx.fillStyle = '#1a1a1a';
+                // Soportes
+                ctx.fillRect(x + 30 * scale, y - 2 * scale, 6 * scale, 12 * scale);
+                ctx.fillRect(x + carWidth - 36 * scale, y - 2 * scale, 6 * scale, 12 * scale);
+                // Alerón principal
+                const spoilerGradient = ctx.createLinearGradient(x, y - 10 * scale, x, y);
+                spoilerGradient.addColorStop(0, '#333');
+                spoilerGradient.addColorStop(1, '#111');
+                ctx.fillStyle = spoilerGradient;
+                ctx.beginPath();
+                ctx.moveTo(x + 15 * scale, y - 3 * scale);
+                ctx.lineTo(x + carWidth - 15 * scale, y - 3 * scale);
+                ctx.lineTo(x + carWidth - 20 * scale, y - 12 * scale);
+                ctx.lineTo(x + 20 * scale, y - 12 * scale);
+                ctx.closePath();
+                ctx.fill();
+                // Borde rojo del alerón
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(x + 18 * scale, y - 12 * scale, carWidth - 36 * scale, 2 * scale);
+
+                // Tubos de escape con fuego
+                ctx.fillStyle = '#555';
+                ctx.beginPath();
+                ctx.arc(x + 35 * scale, y + carHeight + 2 * scale, 4 * scale, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(x + carWidth - 35 * scale, y + carHeight + 2 * scale, 4 * scale, 0, Math.PI * 2);
+                ctx.fill();
+                // Interior oscuro
+                ctx.fillStyle = '#222';
+                ctx.beginPath();
+                ctx.arc(x + 35 * scale, y + carHeight + 2 * scale, 2.5 * scale, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(x + carWidth - 35 * scale, y + carHeight + 2 * scale, 2.5 * scale, 0, Math.PI * 2);
+                ctx.fill();
+
+            } else {
+                // Coches rivales (vista desde atrás, mejorado)
+
+                // Sombra
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+                ctx.beginPath();
+                ctx.ellipse(x + carWidth / 2, y + carHeight + 5 * scale, carWidth / 2, 8 * scale, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Ruedas con detalle
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(x - 3 * scale, y + carHeight - 25 * scale, 18 * scale, 30 * scale);
+                ctx.fillRect(x + carWidth - 15 * scale, y + carHeight - 25 * scale, 18 * scale, 30 * scale);
+                // Llantas
+                ctx.fillStyle = '#444';
+                ctx.beginPath();
+                ctx.arc(x + 6 * scale, y + carHeight - 10 * scale, 6 * scale, 0, Math.PI * 2);
+                ctx.arc(x + carWidth - 6 * scale, y + carHeight - 10 * scale, 6 * scale, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Cuerpo con degradado
+                const rivalGradient = ctx.createLinearGradient(x, y, x + carWidth, y);
+                rivalGradient.addColorStop(0, shadeColor(color, -40));
+                rivalGradient.addColorStop(0.5, color);
+                rivalGradient.addColorStop(1, shadeColor(color, -40));
+                ctx.fillStyle = rivalGradient;
+                ctx.beginPath();
+                ctx.moveTo(x + 8 * scale, y + carHeight);
+                ctx.lineTo(x + carWidth - 8 * scale, y + carHeight);
+                ctx.lineTo(x + carWidth - 18 * scale, y + 22 * scale);
+                ctx.lineTo(x + 18 * scale, y + 22 * scale);
+                ctx.closePath();
+                ctx.fill();
+
+                // Techo
+                ctx.fillStyle = shadeColor(color, -30);
+                ctx.beginPath();
+                ctx.moveTo(x + 25 * scale, y + 22 * scale);
+                ctx.lineTo(x + carWidth - 25 * scale, y + 22 * scale);
+                ctx.lineTo(x + carWidth - 35 * scale, y + 2 * scale);
+                ctx.lineTo(x + 35 * scale, y + 2 * scale);
+                ctx.closePath();
+                ctx.fill();
+
+                // Ventana con reflejo
+                ctx.fillStyle = '#1a1a2e';
+                ctx.beginPath();
+                ctx.moveTo(x + 30 * scale, y + 20 * scale);
+                ctx.lineTo(x + carWidth - 30 * scale, y + 20 * scale);
+                ctx.lineTo(x + carWidth - 37 * scale, y + 5 * scale);
+                ctx.lineTo(x + 37 * scale, y + 5 * scale);
+                ctx.closePath();
+                ctx.fill();
+
+                // Luces traseras
+                ctx.fillStyle = '#ff0000';
+                ctx.shadowColor = '#ff0000';
+                ctx.shadowBlur = 8 * scale;
+                ctx.fillRect(x + 12 * scale, y + carHeight - 15 * scale, 12 * scale, 5 * scale);
+                ctx.fillRect(x + carWidth - 24 * scale, y + carHeight - 15 * scale, 12 * scale, 5 * scale);
+                ctx.shadowBlur = 0;
+
+                // NOMBRE GRANDE del piloto en la parte trasera
+                if (carName) {
+                    // Fondo para el nombre
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                    ctx.fillRect(x + 15 * scale, y + carHeight - 35 * scale, carWidth - 30 * scale, 14 * scale);
+
+                    // Nombre en grande
+                    ctx.fillStyle = '#fff';
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 2 * scale;
+                    ctx.font = `bold ${12 * scale}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.strokeText(carName, x + carWidth/2, y + carHeight - 24 * scale);
+                    ctx.fillText(carName, x + carWidth/2, y + carHeight - 24 * scale);
+                }
+            }
+        }
+
+        function shadeColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                         (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                         (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        }
+
+        // Actualizar física del jugador
+        function updatePlayer(dt) {
+            const segment = findSegment(player.z);
+            if (!segment) return;
+
+            const speedPercent = player.speed / player.maxSpeed;
+            const dx = dt * 1.8 * speedPercent;  // Steering responsive
+
+            // Controles - Acelerar
+            if (keys['ArrowUp'] || keys['KeyW']) {
+                let accel = player.accel;
+                // Turbo - boost de velocidad
+                if (keys['Space'] && player.turboFuel > 0) {
+                    player.turbo = true;
+                    accel *= 1.6;
+                    player.turboFuel = Math.max(0, player.turboFuel - dt * 25);
+                } else {
+                    player.turbo = false;
+                }
+                player.speed += accel * dt * 60;
+            } else if (keys['ArrowDown'] || keys['KeyS']) {
+                player.turbo = false;
+                player.speed -= player.brake * dt * 60;
+            } else {
+                player.turbo = false;
+                player.speed -= player.decel * dt * 60;
+            }
+
+            // Recargar turbo siempre (más rápido si no se usa)
+            if (!player.turbo && player.turboFuel < 100) {
+                player.turboFuel = Math.min(100, player.turboFuel + dt * 20);
+            }
+
+            // Steering responsive
+            let steering = 0;
+            if (keys['ArrowLeft'] || keys['KeyA']) {
+                steering = -1;
+            }
+            if (keys['ArrowRight'] || keys['KeyD']) {
+                steering = 1;
+            }
+
+            // Aplicar steering
+            player.x += steering * dx;
+
+            // Auto-centrado suave - ayuda a volver pero no fuerza
+            if (steering === 0 && Math.abs(player.x) > 0.02) {
+                player.x *= 0.97;  // Vuelve al centro suavemente
+            }
+
+            // Efecto de curva - las curvas te empujan (si no conduces bien, te sales!)
+            player.x -= (segment.curve * speedPercent * dt * 0.8);
+
+            // SIN límite duro - puedes salirte completamente si no conduces bien
+            // pero hay un límite muy amplio para no perderse
+            player.x = Math.max(-2.5, Math.min(2.5, player.x));
+
+            // Velocidad según posición en la pista
+            const offRoadAmount = Math.abs(player.x) - 1;  // Cuánto te has salido
+            let maxSpeed;
+
+            if (offRoadAmount > 0) {
+                // Fuera de pista - penalización progresiva
+                const penalty = Math.min(offRoadAmount * 0.4, 0.6);  // Hasta 60% de penalización
+                maxSpeed = player.maxSpeed * (1 - penalty);
+                if (player.turbo) maxSpeed *= 1.2;
+                player.speed *= (1 - penalty * 0.01);  // Frena según lo lejos que estés
+            } else {
+                // En pista: velocidad máxima
+                maxSpeed = player.turbo ? player.maxSpeed * 1.35 : player.maxSpeed;
+            }
+            player.speed = Math.max(0, Math.min(player.speed, maxSpeed));
+
+            // Mover hacia adelante
+            player.z += player.speed * dt * 50;
+
+            // Vuelta completada
+            if (player.z >= trackLength) {
+                player.z -= trackLength;
+
+                if (lapTime < bestLapTime) {
+                    bestLapTime = lapTime;
+                }
+
+                lap++;
+                lapTime = 0;
+
+                // Mostrar mensaje de vuelta
+                showLapComplete();
+
+                if (lap > TOTAL_LAPS) {
+                    endRace();
+                }
+            }
+        }
+
+        // Actualizar coches rivales (IA competitiva - SIEMPRE VISIBLES)
+        function updateCars(dt) {
+            cars.forEach(car => {
+                // Acelerar hacia velocidad objetivo
+                if (car.speed < car.targetSpeed) {
+                    car.speed += 0.5 * car.aggression * dt * 60;
+                }
+
+                // Mover
+                car.z += car.speed * dt * 50;
+
+                // Vuelta
+                if (car.z >= trackLength) {
+                    car.z -= trackLength;
+                }
+
+                // IA mejorada: seguir la carretera con trayectorias diferentes
+                const segment = findSegment(car.z);
+
+                // Cada coche tiende FUERTEMENTE hacia su trayectoria preferida
+                const targetX = car.preferredX;
+                const xDiff = targetX - car.x;
+
+                // Moverse con fuerza hacia su línea preferida (más agresivo)
+                car.x += xDiff * 0.08;
+
+                // Reaccionar a las curvas según su estilo
+                if (car.style === 'inside') {
+                    // JORGE: toma las curvas por dentro, corta más
+                    car.x -= segment.curve * 0.012 * car.aggression;
+                } else if (car.style === 'outside') {
+                    // ALEX: toma las curvas por fuera, más amplio
+                    car.x -= segment.curve * 0.003 * car.aggression;
+                } else {
+                    // ISA: línea central, equilibrado
+                    car.x -= segment.curve * 0.008 * car.aggression;
+                }
+
+                // Límites de la pista según su línea preferida
+                if (car.style === 'inside') {
+                    car.x = Math.max(-0.6, Math.min(-0.15, car.x));  // JORGE: siempre a la izquierda
+                } else if (car.style === 'outside') {
+                    car.x = Math.max(0.15, Math.min(0.6, car.x));    // ALEX: siempre a la derecha
+                } else {
+                    car.x = Math.max(-0.15, Math.min(0.15, car.x));  // ISA: siempre en el centro
+                }
+
+                // Distancia al jugador (positivo = delante, negativo = detrás)
+                let distToPlayer = car.z - player.z;
+
+                // Ajustar por vuelta completa
+                if (distToPlayer > trackLength / 2) distToPlayer -= trackLength;
+                if (distToPlayer < -trackLength / 2) distToPlayer += trackLength;
+
+                // *** IA QUE MANTIENE COCHES SIEMPRE VISIBLES ***
+                if (distToPlayer > 3000) {
+                    // Muy adelante - FRENAR MUCHO para que te alcancen
+                    car.speed *= 0.98;
+                    car.targetSpeed = 180;
+                } else if (distToPlayer > 1500) {
+                    // Adelante pero visible - frenar un poco
+                    car.speed *= 0.995;
+                } else if (distToPlayer < -1500) {
+                    // Muy atrás - acelerar mucho para alcanzar
+                    car.speed = Math.min(car.speed + 1 * dt * 60, 260);
+                    car.targetSpeed = 240;
+                } else if (distToPlayer < -500) {
+                    // Detrás - acelerar para alcanzar
+                    car.speed = Math.min(car.speed + 0.5 * dt * 60, 250);
+                } else {
+                    // Cerca del jugador - competir!
+                    // Variar velocidad para adelantamientos
+                    if (Math.random() > 0.98) {
+                        car.targetSpeed = 205 + Math.random() * 25;
+                    }
+                }
+
+                // Boost ocasional cuando están cerca
+                if (Math.abs(distToPlayer) < 1000 && Math.random() > 0.99) {
+                    car.speed = Math.min(car.speed + 10, 245);
+                }
+
+                // Moverse lateralmente para adelantar
+                if (Math.abs(distToPlayer) < 400) {
+                    if (Math.abs(car.x - player.x) < 0.3) {
+                        car.x += (car.x > player.x ? 0.015 : -0.015);
+                    }
+                }
+            });
+
+            // Calcular posición del jugador
+            updatePosition();
+        }
+
+        function updatePosition() {
+            let pos = 1;
+            cars.forEach(car => {
+                // Comparar posición considerando vueltas
+                const playerDist = (lap - 1) * trackLength + player.z;
+                const carDist = car.z; // Simplificado, asumimos misma vuelta
+
+                if (car.z > player.z) {
+                    pos++;
+                }
+            });
+            position = pos;
+        }
+
+        // Colisiones con otros coches
+        function checkCollisions() {
+            const playerSegment = Math.floor(player.z / SEGMENT_LENGTH);
+
+            cars.forEach(car => {
+                const carSegment = Math.floor(car.z / SEGMENT_LENGTH);
+
+                // Si están cerca
+                if (Math.abs(player.z - car.z) < 200) {
+                    if (Math.abs(player.x - car.x) < 0.3) {
+                        // Colisión!
+                        player.speed *= 0.5;
+
+                        // Empujar al lado
+                        if (player.x < car.x) {
+                            player.x -= 0.1;
+                        } else {
+                            player.x += 0.1;
+                        }
+                    }
+                }
+            });
+        }
+
+        // Encontrar segmento por posición Z
+        function findSegment(z) {
+            if (segments.length === 0) return null;
+            const index = Math.floor(z / SEGMENT_LENGTH) % segments.length;
+            return segments[index < 0 ? segments.length + index : index];
+        }
+
+        // Renderizar
+        function render() {
+            // Fondo
+            drawBackground();
+
+            // Debug: mostrar que render está funcionando
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Arial';
+            ctx.fillText('Segments: ' + segments.length + ' | TrackLen: ' + trackLength, 10, HEIGHT - 10);
+
+            // Verificar que hay segmentos
+            if (segments.length === 0) {
+                ctx.fillStyle = '#ff0000';
+                ctx.font = '30px Arial';
+                ctx.fillText('ERROR: No hay segmentos', 200, 300);
+                return;
+            }
+
+            const baseSegment = findSegment(player.z);
+            if (!baseSegment) {
+                ctx.fillStyle = '#ff0000';
+                ctx.font = '20px Arial';
+                ctx.fillText('ERROR: baseSegment null', 200, 320);
+                return;
+            }
+
+            const basePercent = (player.z % SEGMENT_LENGTH) / SEGMENT_LENGTH;
+            const playerSegment = findSegment(player.z + CAMERA_HEIGHT);
+            if (!playerSegment) return;
+
+            const playerY = playerSegment.p1.world.y + (playerSegment.p2.world.y - playerSegment.p1.world.y) * basePercent;
+            let maxY = HEIGHT;
+
+            let x = 0;
+            let dx = -(baseSegment.curve * basePercent);
+
+            // Dibujar carretera de atrás hacia adelante
+            for (let n = 0; n < DRAW_DISTANCE; n++) {
+                const segmentIndex = (Math.floor(player.z / SEGMENT_LENGTH) + n) % segments.length;
+                const segment = segments[segmentIndex];
+                const looped = segmentIndex < Math.floor(player.z / SEGMENT_LENGTH);
+                const fog = Math.pow(n / DRAW_DISTANCE, 2);
+
+                segment.looped = looped;
+                segment.fog = fog;
+
+                project(segment.p1, player.x * ROAD_WIDTH - x, playerY + CAMERA_HEIGHT, player.z - (looped ? trackLength : 0), CAMERA_DEPTH, WIDTH, HEIGHT, ROAD_WIDTH);
+                project(segment.p2, player.x * ROAD_WIDTH - x - dx, playerY + CAMERA_HEIGHT, player.z - (looped ? trackLength : 0), CAMERA_DEPTH, WIDTH, HEIGHT, ROAD_WIDTH);
+
+                x += dx;
+                dx += segment.curve;
+
+                if (segment.p1.camera.z <= CAMERA_DEPTH || segment.p2.screen.y >= segment.p1.screen.y || segment.p2.screen.y >= maxY) {
+                    continue;
+                }
+
+                // Colores alternados
+                const grassColor = Math.floor(segmentIndex / RUMBLE_LENGTH) % 2 ? COLORS.GRASS.light : COLORS.GRASS.dark;
+                const rumbleColor = Math.floor(segmentIndex / RUMBLE_LENGTH) % 2 ? COLORS.RUMBLE.light : COLORS.RUMBLE.dark;
+                const laneColor = Math.floor(segmentIndex / RUMBLE_LENGTH) % 2 ? COLORS.LANE : null;
+
+                // Color de la carretera (especial para línea de meta)
+                let segmentColor;
+                if (segment.isStart) {
+                    segmentColor = Math.floor(segmentIndex) % 2 ? '#ffffff' : '#000000';
+                } else {
+                    segmentColor = Math.floor(segmentIndex / RUMBLE_LENGTH) % 2 ? COLORS.ROAD.light : COLORS.ROAD.dark;
+                }
+
+                drawSegment(
+                    segment.p1.screen.x, segment.p1.screen.y, segment.p1.screen.w,
+                    segment.p2.screen.x, segment.p2.screen.y, segment.p2.screen.w,
+                    segmentColor, rumbleColor, grassColor, laneColor
+                );
+
+                maxY = segment.p2.screen.y;
+            }
+
+            // Dibujar sprites y coches (de adelante hacia atrás para z-order correcto)
+            for (let n = DRAW_DISTANCE - 1; n >= 0; n--) {
+                const segmentIndex = (Math.floor(player.z / SEGMENT_LENGTH) + n) % segments.length;
+                const segment = segments[segmentIndex];
+
+                // Sprites
+                segment.sprites.forEach(sprite => {
+                    const spriteScale = segment.p1.screen.scale;
+                    const spriteX = segment.p1.screen.x + (spriteScale * sprite.offset * ROAD_WIDTH * WIDTH / 2);
+
+                    drawSprite(sprite, spriteScale * 3000, spriteX, segment.p1.screen.y, maxY);
+                });
+            }
+
+            // DIBUJAR COCHES RIVALES - Método corregido
+            cars.forEach(car => {
+                // Calcular distancia del coche al jugador
+                let carZ = car.z - player.z;
+
+                // Ajustar si el coche dio la vuelta
+                if (carZ < -trackLength / 2) carZ += trackLength;
+                if (carZ > trackLength / 2) carZ -= trackLength;
+
+                // Dibujar coches que están DELANTE y dentro del rango visible
+                if (carZ > 50 && carZ < 8000) {
+                    // Escala basada en distancia (más lejos = más pequeño)
+                    const scale = 1 / (carZ / 800);  // Escala más grande
+
+                    // Posición X en pantalla
+                    const screenX = WIDTH / 2 + (car.x - player.x) * 900 * scale;
+
+                    // Posición Y en pantalla (en el horizonte cuando lejos, abajo cuando cerca)
+                    const horizon = HEIGHT / 2;
+                    const screenY = horizon + (HEIGHT - horizon - 80) * scale;
+
+                    // Tamaño del coche - 20% más pequeño
+                    const carScale = Math.max(0.08, Math.min(scale * 1.4, 0.77));
+
+                    // Dibujar si está en pantalla
+                    if (screenX > -100 && screenX < WIDTH + 100 && screenY > horizon - 50) {
+                        drawCar(screenX, screenY, carScale, car.color, false, car.name);
+                    }
+                }
+            });
+
+            // Dibujar coche del jugador
+            drawCar(WIDTH / 2, HEIGHT - 20, 1.2, '#ff3300', true);
+
+            // Efecto turbo
+            if (player.turbo && player.speed > 0) {
+                drawTurboEffect();
+            }
+
+            // Barra de turbo
+            drawTurboBar();
+        }
+
+        function drawTurboEffect() {
+            ctx.fillStyle = '#ff6600';
+            ctx.globalAlpha = 0.6;
+
+            // Llamas del escape
+            for (let i = 0; i < 3; i++) {
+                const x = WIDTH / 2 + (Math.random() - 0.5) * 30 - 50;
+                const y = HEIGHT - 30 + Math.random() * 20;
+                const size = 10 + Math.random() * 15;
+
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+
+                const x2 = WIDTH / 2 + (Math.random() - 0.5) * 30 + 50;
+                ctx.beginPath();
+                ctx.arc(x2, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.globalAlpha = 1;
+        }
+
+        function drawTurboBar() {
+            const barWidth = 150;
+            const barHeight = 15;
+            const x = WIDTH - barWidth - 20;
+            const y = HEIGHT - barHeight - 20;
+
+            // Fondo
+            ctx.fillStyle = '#333';
+            ctx.fillRect(x, y, barWidth, barHeight);
+
+            // Barra
+            const fillWidth = (player.turboFuel / 100) * barWidth;
+            const gradient = ctx.createLinearGradient(x, y, x + fillWidth, y);
+            gradient.addColorStop(0, '#ff6600');
+            gradient.addColorStop(1, '#ffcc00');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(x, y, fillWidth, barHeight);
+
+            // Borde
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, barWidth, barHeight);
+
+            // Texto
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px "Press Start 2P"';
+            ctx.fillText('TURBO', x, y - 5);
+        }
+
+        // Actualizar HUD
+        function updateHUD() {
+            document.getElementById('speed').textContent = Math.round(player.speed);
+            document.getElementById('lap').textContent = Math.min(lap, TOTAL_LAPS);
+            document.getElementById('position').textContent = position;
+            document.getElementById('time').textContent = formatTime(raceTime);
+        }
+
+        function formatTime(time) {
+            const mins = Math.floor(time / 60);
+            const secs = Math.floor(time % 60);
+            const ms = Math.floor((time % 1) * 100);
+            return `${mins}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+        }
+
+        // Mostrar mensaje de vuelta completada
+        function showLapComplete() {
+            const elem = document.getElementById('lapComplete');
+            elem.style.display = 'block';
+            setTimeout(() => {
+                elem.style.display = 'none';
+            }, 2000);
+        }
+
+        // Controles
+        const keys = {};
+        document.addEventListener('keydown', e => {
+            keys[e.code] = true;
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
+                e.preventDefault();
+            }
+        });
+        document.addEventListener('keyup', e => keys[e.code] = false);
+
+        // Iniciar carrera
+        function startRace() {
+            document.getElementById('startScreen').style.display = 'none';
+
+            // Countdown
+            let count = 3;
+            const countdownElem = document.getElementById('countdown');
+            countdownElem.style.display = 'block';
+
+            const countInterval = setInterval(() => {
+                if (count > 0) {
+                    countdownElem.textContent = count;
+                    count--;
+                } else if (count === 0) {
+                    countdownElem.textContent = 'GO!';
+                    countdownElem.style.color = '#00ff00';
+                    count--;
+
+                    // Iniciar juego
+                    createTrack();
+                    createCars();
+                    player.z = 0;
+                    player.x = 0;
+                    player.speed = 0;
+                    player.turboFuel = 100;
+                    lap = 1;
+                    raceTime = 0;
+                    lapTime = 0;
+                    bestLapTime = Infinity;
+                    gameState = 'playing';
+                    lastTime = performance.now();
+                    gameLoop();
+                } else {
+                    countdownElem.style.display = 'none';
+                    countdownElem.style.color = '#ff0000';
+                    clearInterval(countInterval);
+                }
+            }, 1000);
+        }
+
+        // Terminar carrera
+        function endRace() {
+            gameState = 'finished';
+
+            document.getElementById('finalPosition').textContent = position + 'o';
+            document.getElementById('finalTime').textContent = formatTime(raceTime);
+            document.getElementById('bestLap').textContent = bestLapTime < Infinity ? formatTime(bestLapTime) : '--:--';
+
+            if (position === 1) {
+                document.getElementById('resultTitle').textContent = '!VICTORIA!';
+                document.getElementById('resultTitle').style.color = '#ffd700';
+                document.getElementById('resultText').textContent = 'Has ganado la carrera!';
+            } else {
+                document.getElementById('resultTitle').textContent = 'CARRERA TERMINADA';
+                document.getElementById('resultTitle').style.color = '#ff6600';
+                document.getElementById('resultText').textContent = 'Sigue intentandolo!';
+            }
+
+            document.getElementById('gameOverScreen').style.display = 'flex';
+        }
+
+        function restartRace() {
+            document.getElementById('gameOverScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'flex';
+            gameState = 'menu';
+        }
+
+        // Game loop
+        let lastTime = 0;
+        function gameLoop(currentTime) {
+            if (gameState !== 'playing') return;
+
+            // Primer frame - inicializar tiempo
+            if (!currentTime) {
+                lastTime = performance.now();
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            try {
+                const dt = Math.min(Math.max((currentTime - lastTime) / 1000, 0), 0.1);
+                lastTime = currentTime;
+
+                if (dt > 0) {
+                    raceTime += dt;
+                    lapTime += dt;
+
+                    updatePlayer(dt);
+                    updateCars(dt);
+                    checkCollisions();
+                }
+
+                render();
+                updateHUD();
+
+            } catch (error) {
+                console.error('Error en gameLoop:', error);
+                // Dibujar error en pantalla
+                ctx.fillStyle = '#ff0000';
+                ctx.font = '16px Arial';
+                ctx.fillText('ERROR: ' + error.message, 50, 400);
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Preview del coche
+        function drawCarPreview() {
+            const previewCanvas = document.getElementById('carPreview');
+            const previewCtx = previewCanvas.getContext('2d');
+            previewCanvas.width = 120;
+            previewCanvas.height = 80;
+
+            // Fondo
+            previewCtx.fillStyle = '#1a1a2e';
+            previewCtx.fillRect(0, 0, 120, 80);
+
+            // Coche simplificado
+            previewCtx.fillStyle = '#ff3300';
+            previewCtx.beginPath();
+            previewCtx.moveTo(20, 60);
+            previewCtx.lineTo(100, 60);
+            previewCtx.lineTo(90, 30);
+            previewCtx.lineTo(30, 30);
+            previewCtx.closePath();
+            previewCtx.fill();
+
+            previewCtx.fillStyle = '#cc2200';
+            previewCtx.beginPath();
+            previewCtx.moveTo(35, 30);
+            previewCtx.lineTo(85, 30);
+            previewCtx.lineTo(75, 15);
+            previewCtx.lineTo(45, 15);
+            previewCtx.closePath();
+            previewCtx.fill();
+
+            previewCtx.fillStyle = '#333';
+            previewCtx.fillRect(40, 18, 40, 12);
+
+            previewCtx.fillStyle = '#111';
+            previewCtx.fillRect(15, 50, 15, 20);
+            previewCtx.fillRect(90, 50, 15, 20);
+        }
+
+        drawCarPreview();
+    </script>
+</body>
+</html>
