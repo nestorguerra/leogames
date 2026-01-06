@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leo Racing - Arcade Racing 90s</title>
+    <title>El Karting de Cantabria - Carreras en Patinete Eléctrico</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         * {
@@ -205,14 +205,14 @@
         <div class="lap-complete" id="lapComplete">VUELTA COMPLETADA!</div>
 
         <div id="startScreen">
-            <h1>LEO RACING</h1>
-            <h2>ARCADE RACING 1998</h2>
+            <h1>KARTING DE CANTABRIA</h1>
+            <h2>🛴 CARRERAS EN PATINETE ELÉCTRICO 🛴</h2>
 
             <canvas id="carPreview" class="car-preview"></canvas>
 
             <div style="color: #fff; font-size: 10px; margin: 20px 0;">
-                <div style="color: #ffff00;">CIRCUITO: COSTA DEL SOL</div>
-                <div style="margin-top: 10px;">3 VUELTAS - LEO vs JORGE, ALEX, ISA</div>
+                <div style="color: #ffff00;">CIRCUITO: COSTA DE CANTABRIA</div>
+                <div style="margin-top: 10px;">3 VUELTAS - LEO 🛴 vs SIMON, GORDITO, GUILLE 🚗</div>
             </div>
 
             <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; align-items: center;">
@@ -221,8 +221,8 @@
             </div>
 
             <div class="controls-info">
-                ← → GIRAR | ↑ ACELERAR | ↓ FRENAR<br>
-                ESPACIO: TURBO
+                ← → GIRAR PATINETE | ↑ ACELERAR | ↓ FRENAR<br>
+                ESPACIO: TURBO ⚡
             </div>
         </div>
 
@@ -394,35 +394,43 @@
             }
         }
 
-        // Crear coches rivales (3 amigos: Alex, Jorge, Isa)
+        // Crear coches rivales (3 amigos: Simon, Gordito, Guille)
         function createCars() {
             cars = [];
+            // Cada rival tiene características únicas de velocidad
             const carData = [
-                { color: '#ff0000', name: 'JORGE' },
-                { color: '#0000ff', name: 'ALEX' },
-                { color: '#00ff00', name: 'ISA' }
+                { color: '#ff0000', name: 'SIMON', baseSpeed: 220, speedVariation: 25 },    // SIMON: rápido pero inconsistente
+                { color: '#0000ff', name: 'GORDITO', baseSpeed: 195, speedVariation: 10 },  // GORDITO: más lento pero constante
+                { color: '#00ff00', name: 'GUILLE', baseSpeed: 210, speedVariation: 20 }    // GUILLE: equilibrado
             ];
 
             // Todos parten DELANTE del jugador para que se vean
             // Cada uno con su estilo de conducción diferente
             const drivingStyles = [
-                { preferredX: -0.4, style: 'inside' },    // JORGE: prefiere interior
-                { preferredX: 0.4, style: 'outside' },   // ALEX: prefiere exterior
-                { preferredX: 0, style: 'center' }       // ISA: prefiere centro
+                { preferredX: -0.4, style: 'inside' },    // SIMON: prefiere interior (agresivo)
+                { preferredX: 0.4, style: 'outside' },    // GORDITO: prefiere exterior (seguro)
+                { preferredX: 0, style: 'center' }        // GUILLE: prefiere centro
             ];
 
             for (let i = 0; i < 3; i++) {
+                // Factor aleatorio para velocidad base (hace cada carrera diferente)
+                const randomSpeedFactor = 0.9 + Math.random() * 0.2; // Entre 90% y 110%
+
                 cars.push({
                     z: 200 + (i * 80),  // MUY cerca: 200, 280, 360
                     x: drivingStyles[i].preferredX,
                     speed: 0,  // Todos empiezan parados
-                    targetSpeed: 215 + Math.random() * 15,
+                    baseSpeed: carData[i].baseSpeed * randomSpeedFactor,
+                    targetSpeed: carData[i].baseSpeed * randomSpeedFactor,
+                    speedVariation: carData[i].speedVariation,
                     color: carData[i].color,
                     name: carData[i].name,
                     passed: false,
-                    aggression: 0.9 + Math.random() * 0.2,
-                    preferredX: drivingStyles[i].preferredX,  // Trayectoria preferida
-                    style: drivingStyles[i].style
+                    aggression: 0.85 + Math.random() * 0.3,
+                    preferredX: drivingStyles[i].preferredX,
+                    style: drivingStyles[i].style,
+                    // Temporizador para cambios de velocidad aleatorios
+                    speedChangeTimer: Math.random() * 3
                 });
             }
         }
@@ -583,7 +591,7 @@
             }
         }
 
-        // Dibujar coche (jugador o rival)
+        // Dibujar vehículo (patinete del jugador o coche rival)
         function drawCar(x, y, scale, color, isPlayer, carName) {
             const carWidth = 160 * scale;
             const carHeight = 80 * scale;
@@ -592,167 +600,120 @@
             y = y - carHeight;
 
             if (isPlayer) {
-                // Coche del jugador - FERRARI STYLE mejorado
+                // PATINETE ELÉCTRICO DE LEO - Vista desde atrás
 
-                // Sombra grande
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                // Sombra
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
                 ctx.beginPath();
-                ctx.ellipse(x + carWidth / 2, y + carHeight + 8 * scale, carWidth / 1.8, 12 * scale, 0, 0, Math.PI * 2);
+                ctx.ellipse(x + carWidth / 2, y + carHeight + 5 * scale, 50 * scale, 8 * scale, 0, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Ruedas traseras con llantas (primero para que queden detrás)
-                // Rueda izquierda
+                // Rueda trasera
                 ctx.fillStyle = '#1a1a1a';
-                ctx.fillRect(x - 8 * scale, y + carHeight - 30 * scale, 22 * scale, 35 * scale);
-                ctx.fillStyle = '#333';
                 ctx.beginPath();
-                ctx.arc(x + 3 * scale, y + carHeight - 12 * scale, 8 * scale, 0, Math.PI * 2);
+                ctx.arc(x + carWidth / 2, y + carHeight - 5 * scale, 18 * scale, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.fillStyle = '#666';
-                ctx.beginPath();
-                ctx.arc(x + 3 * scale, y + carHeight - 12 * scale, 4 * scale, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Rueda derecha
-                ctx.fillStyle = '#1a1a1a';
-                ctx.fillRect(x + carWidth - 14 * scale, y + carHeight - 30 * scale, 22 * scale, 35 * scale);
-                ctx.fillStyle = '#333';
-                ctx.beginPath();
-                ctx.arc(x + carWidth - 3 * scale, y + carHeight - 12 * scale, 8 * scale, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#666';
-                ctx.beginPath();
-                ctx.arc(x + carWidth - 3 * scale, y + carHeight - 12 * scale, 4 * scale, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Cuerpo principal con degradado
-                const bodyGradient = ctx.createLinearGradient(x, y, x + carWidth, y);
-                bodyGradient.addColorStop(0, '#cc0000');
-                bodyGradient.addColorStop(0.3, '#ff2200');
-                bodyGradient.addColorStop(0.5, '#ff4400');
-                bodyGradient.addColorStop(0.7, '#ff2200');
-                bodyGradient.addColorStop(1, '#cc0000');
-                ctx.fillStyle = bodyGradient;
-                ctx.beginPath();
-                ctx.moveTo(x + 8 * scale, y + carHeight);
-                ctx.lineTo(x + carWidth - 8 * scale, y + carHeight);
-                ctx.lineTo(x + carWidth - 15 * scale, y + 25 * scale);
-                ctx.lineTo(x + 15 * scale, y + 25 * scale);
-                ctx.closePath();
-                ctx.fill();
-
-                // Línea decorativa lateral
-                ctx.fillStyle = '#ffcc00';
-                ctx.fillRect(x + 12 * scale, y + carHeight - 20 * scale, carWidth - 24 * scale, 3 * scale);
-
-                // Difusor trasero
-                ctx.fillStyle = '#222';
-                ctx.fillRect(x + 25 * scale, y + carHeight - 8 * scale, carWidth - 50 * scale, 8 * scale);
-                // Líneas del difusor
+                // Llanta
                 ctx.fillStyle = '#444';
-                for (let i = 0; i < 5; i++) {
-                    ctx.fillRect(x + 30 * scale + i * 18 * scale, y + carHeight - 6 * scale, 2 * scale, 6 * scale);
-                }
-
-                // Techo/cabina con degradado
-                const roofGradient = ctx.createLinearGradient(x, y, x + carWidth, y);
-                roofGradient.addColorStop(0, '#990000');
-                roofGradient.addColorStop(0.5, '#cc1100');
-                roofGradient.addColorStop(1, '#990000');
-                ctx.fillStyle = roofGradient;
                 ctx.beginPath();
-                ctx.moveTo(x + 28 * scale, y + 25 * scale);
-                ctx.lineTo(x + carWidth - 28 * scale, y + 25 * scale);
-                ctx.lineTo(x + carWidth - 38 * scale, y + 3 * scale);
-                ctx.lineTo(x + 38 * scale, y + 3 * scale);
-                ctx.closePath();
+                ctx.arc(x + carWidth / 2, y + carHeight - 5 * scale, 10 * scale, 0, Math.PI * 2);
+                ctx.fill();
+                // Centro de la llanta
+                ctx.fillStyle = '#00aaff';
+                ctx.beginPath();
+                ctx.arc(x + carWidth / 2, y + carHeight - 5 * scale, 5 * scale, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Ventana trasera con reflejo
-                const windowGradient = ctx.createLinearGradient(x + 40 * scale, y, x + carWidth - 40 * scale, y + 20 * scale);
-                windowGradient.addColorStop(0, '#1a1a2e');
-                windowGradient.addColorStop(0.3, '#2a3a5a');
-                windowGradient.addColorStop(1, '#0a0a1a');
-                ctx.fillStyle = windowGradient;
-                ctx.beginPath();
-                ctx.moveTo(x + 33 * scale, y + 22 * scale);
-                ctx.lineTo(x + carWidth - 33 * scale, y + 22 * scale);
-                ctx.lineTo(x + carWidth - 40 * scale, y + 6 * scale);
-                ctx.lineTo(x + 40 * scale, y + 6 * scale);
-                ctx.closePath();
-                ctx.fill();
+                // Plataforma/deck del patinete
+                const deckGradient = ctx.createLinearGradient(x + 30 * scale, y, x + carWidth - 30 * scale, y);
+                deckGradient.addColorStop(0, '#222');
+                deckGradient.addColorStop(0.5, '#444');
+                deckGradient.addColorStop(1, '#222');
+                ctx.fillStyle = deckGradient;
+                ctx.fillRect(x + 40 * scale, y + carHeight - 25 * scale, carWidth - 80 * scale, 8 * scale);
 
-                // Reflejo en ventana
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-                ctx.beginPath();
-                ctx.moveTo(x + 45 * scale, y + 8 * scale);
-                ctx.lineTo(x + 60 * scale, y + 8 * scale);
-                ctx.lineTo(x + 55 * scale, y + 18 * scale);
-                ctx.lineTo(x + 42 * scale, y + 18 * scale);
-                ctx.closePath();
-                ctx.fill();
+                // Grip tape (superficie antideslizante)
+                ctx.fillStyle = '#111';
+                ctx.fillRect(x + 45 * scale, y + carHeight - 24 * scale, carWidth - 90 * scale, 6 * scale);
 
-                // Luces traseras LED con brillo
-                // Luz izquierda
+                // Tubo vertical del patinete
+                ctx.fillStyle = '#333';
+                ctx.fillRect(x + carWidth/2 - 4 * scale, y + 15 * scale, 8 * scale, carHeight - 40 * scale);
+
+                // Manillar
+                ctx.fillStyle = '#222';
+                ctx.fillRect(x + carWidth/2 - 35 * scale, y + 10 * scale, 70 * scale, 6 * scale);
+                // Puños del manillar
+                ctx.fillStyle = '#ff6600';
+                ctx.fillRect(x + carWidth/2 - 40 * scale, y + 8 * scale, 12 * scale, 10 * scale);
+                ctx.fillRect(x + carWidth/2 + 28 * scale, y + 8 * scale, 12 * scale, 10 * scale);
+
+                // Pantalla/display LED
+                ctx.fillStyle = '#00ff00';
+                ctx.shadowColor = '#00ff00';
+                ctx.shadowBlur = 10 * scale;
+                ctx.fillRect(x + carWidth/2 - 8 * scale, y + 18 * scale, 16 * scale, 8 * scale);
+                ctx.shadowBlur = 0;
+
+                // Luz trasera LED
                 ctx.fillStyle = '#ff0000';
                 ctx.shadowColor = '#ff0000';
                 ctx.shadowBlur = 15 * scale;
-                ctx.fillRect(x + 12 * scale, y + carHeight - 18 * scale, 18 * scale, 6 * scale);
-                ctx.fillStyle = '#ff6666';
-                ctx.fillRect(x + 14 * scale, y + carHeight - 17 * scale, 4 * scale, 4 * scale);
-
-                // Luz derecha
-                ctx.fillStyle = '#ff0000';
-                ctx.fillRect(x + carWidth - 30 * scale, y + carHeight - 18 * scale, 18 * scale, 6 * scale);
-                ctx.fillStyle = '#ff6666';
-                ctx.fillRect(x + carWidth - 28 * scale, y + carHeight - 17 * scale, 4 * scale, 4 * scale);
+                ctx.fillRect(x + carWidth/2 - 12 * scale, y + carHeight - 30 * scale, 24 * scale, 4 * scale);
                 ctx.shadowBlur = 0;
 
-                // Matrícula
-                ctx.fillStyle = '#fff';
-                ctx.fillRect(x + carWidth/2 - 12 * scale, y + carHeight - 12 * scale, 24 * scale, 8 * scale);
-                ctx.fillStyle = '#000';
-                ctx.font = `${6 * scale}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.fillText('LEO', x + carWidth/2, y + carHeight - 6 * scale);
+                // LEO montado en el patinete (vista desde atrás)
+                // Piernas
+                ctx.fillStyle = '#2244aa'; // Pantalones azules
+                ctx.fillRect(x + carWidth/2 - 15 * scale, y + carHeight - 55 * scale, 10 * scale, 32 * scale);
+                ctx.fillRect(x + carWidth/2 + 5 * scale, y + carHeight - 55 * scale, 10 * scale, 32 * scale);
 
-                // Alerón grande con soportes
-                ctx.fillStyle = '#1a1a1a';
-                // Soportes
-                ctx.fillRect(x + 30 * scale, y - 2 * scale, 6 * scale, 12 * scale);
-                ctx.fillRect(x + carWidth - 36 * scale, y - 2 * scale, 6 * scale, 12 * scale);
-                // Alerón principal
-                const spoilerGradient = ctx.createLinearGradient(x, y - 10 * scale, x, y);
-                spoilerGradient.addColorStop(0, '#333');
-                spoilerGradient.addColorStop(1, '#111');
-                ctx.fillStyle = spoilerGradient;
+                // Zapatos
+                ctx.fillStyle = '#ff3300';
+                ctx.fillRect(x + carWidth/2 - 17 * scale, y + carHeight - 25 * scale, 14 * scale, 6 * scale);
+                ctx.fillRect(x + carWidth/2 + 3 * scale, y + carHeight - 25 * scale, 14 * scale, 6 * scale);
+
+                // Cuerpo/camiseta
+                ctx.fillStyle = '#ff6600'; // Camiseta naranja
                 ctx.beginPath();
-                ctx.moveTo(x + 15 * scale, y - 3 * scale);
-                ctx.lineTo(x + carWidth - 15 * scale, y - 3 * scale);
-                ctx.lineTo(x + carWidth - 20 * scale, y - 12 * scale);
-                ctx.lineTo(x + 20 * scale, y - 12 * scale);
+                ctx.moveTo(x + carWidth/2 - 20 * scale, y + carHeight - 55 * scale);
+                ctx.lineTo(x + carWidth/2 + 20 * scale, y + carHeight - 55 * scale);
+                ctx.lineTo(x + carWidth/2 + 25 * scale, y + carHeight - 90 * scale);
+                ctx.lineTo(x + carWidth/2 - 25 * scale, y + carHeight - 90 * scale);
                 ctx.closePath();
                 ctx.fill();
-                // Borde rojo del alerón
-                ctx.fillStyle = '#ff0000';
-                ctx.fillRect(x + 18 * scale, y - 12 * scale, carWidth - 36 * scale, 2 * scale);
 
-                // Tubos de escape con fuego
-                ctx.fillStyle = '#555';
+                // Brazos extendidos hacia el manillar
+                ctx.fillStyle = '#ffcc99'; // Color piel
+                ctx.fillRect(x + carWidth/2 - 38 * scale, y + 12 * scale, 15 * scale, 8 * scale);
+                ctx.fillRect(x + carWidth/2 + 23 * scale, y + 12 * scale, 15 * scale, 8 * scale);
+
+                // Cabeza
+                ctx.fillStyle = '#ffcc99';
                 ctx.beginPath();
-                ctx.arc(x + 35 * scale, y + carHeight + 2 * scale, 4 * scale, 0, Math.PI * 2);
+                ctx.arc(x + carWidth/2, y + carHeight - 100 * scale, 15 * scale, 0, Math.PI * 2);
                 ctx.fill();
+
+                // Pelo
+                ctx.fillStyle = '#4a3000';
                 ctx.beginPath();
-                ctx.arc(x + carWidth - 35 * scale, y + carHeight + 2 * scale, 4 * scale, 0, Math.PI * 2);
+                ctx.arc(x + carWidth/2, y + carHeight - 105 * scale, 14 * scale, Math.PI, 0);
                 ctx.fill();
-                // Interior oscuro
-                ctx.fillStyle = '#222';
+
+                // Casco (seguridad!)
+                ctx.fillStyle = '#ff3300';
                 ctx.beginPath();
-                ctx.arc(x + 35 * scale, y + carHeight + 2 * scale, 2.5 * scale, 0, Math.PI * 2);
+                ctx.ellipse(x + carWidth/2, y + carHeight - 108 * scale, 18 * scale, 12 * scale, 0, Math.PI, 0);
                 ctx.fill();
-                ctx.beginPath();
-                ctx.arc(x + carWidth - 35 * scale, y + carHeight + 2 * scale, 2.5 * scale, 0, Math.PI * 2);
-                ctx.fill();
+                // Línea decorativa del casco
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(x + carWidth/2 - 2 * scale, y + carHeight - 118 * scale, 4 * scale, 14 * scale);
+
+                // Nombre "LEO" en la espalda
+                ctx.fillStyle = '#fff';
+                ctx.font = `bold ${10 * scale}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.fillText('LEO', x + carWidth/2, y + carHeight - 65 * scale);
 
             } else {
                 // Coches rivales (vista desde atrás, mejorado)
@@ -941,12 +902,24 @@
             }
         }
 
-        // Actualizar coches rivales (IA competitiva - SIEMPRE VISIBLES)
+        // Actualizar coches rivales (IA competitiva con velocidades realistas)
         function updateCars(dt) {
             cars.forEach(car => {
-                // Acelerar hacia velocidad objetivo
-                if (car.speed < car.targetSpeed) {
-                    car.speed += 0.5 * car.aggression * dt * 60;
+                // Sistema de velocidad variable realista
+                car.speedChangeTimer -= dt;
+                if (car.speedChangeTimer <= 0) {
+                    // Cambiar velocidad objetivo con variación aleatoria
+                    const variation = (Math.random() - 0.5) * 2 * car.speedVariation;
+                    car.targetSpeed = car.baseSpeed + variation;
+                    // Próximo cambio entre 1 y 4 segundos
+                    car.speedChangeTimer = 1 + Math.random() * 3;
+                }
+
+                // Acelerar/frenar hacia velocidad objetivo (suave y realista)
+                const speedDiff = car.targetSpeed - car.speed;
+                if (Math.abs(speedDiff) > 0.5) {
+                    const accelRate = speedDiff > 0 ? 0.4 : 0.6; // Frena más rápido que acelera
+                    car.speed += speedDiff * accelRate * car.aggression * dt;
                 }
 
                 // Mover
@@ -969,23 +942,23 @@
 
                 // Reaccionar a las curvas según su estilo
                 if (car.style === 'inside') {
-                    // JORGE: toma las curvas por dentro, corta más
+                    // SIMON: toma las curvas por dentro, corta más (agresivo)
                     car.x -= segment.curve * 0.012 * car.aggression;
                 } else if (car.style === 'outside') {
-                    // ALEX: toma las curvas por fuera, más amplio
+                    // GORDITO: toma las curvas por fuera, más amplio (seguro)
                     car.x -= segment.curve * 0.003 * car.aggression;
                 } else {
-                    // ISA: línea central, equilibrado
+                    // GUILLE: línea central, equilibrado
                     car.x -= segment.curve * 0.008 * car.aggression;
                 }
 
                 // Límites de la pista según su línea preferida
                 if (car.style === 'inside') {
-                    car.x = Math.max(-0.6, Math.min(-0.15, car.x));  // JORGE: siempre a la izquierda
+                    car.x = Math.max(-0.6, Math.min(-0.15, car.x));  // SIMON: siempre a la izquierda
                 } else if (car.style === 'outside') {
-                    car.x = Math.max(0.15, Math.min(0.6, car.x));    // ALEX: siempre a la derecha
+                    car.x = Math.max(0.15, Math.min(0.6, car.x));    // GORDITO: siempre a la derecha
                 } else {
-                    car.x = Math.max(-0.15, Math.min(0.15, car.x));  // ISA: siempre en el centro
+                    car.x = Math.max(-0.15, Math.min(0.15, car.x));  // GUILLE: siempre en el centro
                 }
 
                 // Distancia al jugador (positivo = delante, negativo = detrás)
@@ -999,28 +972,23 @@
                 if (distToPlayer > 3000) {
                     // Muy adelante - FRENAR MUCHO para que te alcancen
                     car.speed *= 0.98;
-                    car.targetSpeed = 180;
+                    car.targetSpeed = car.baseSpeed * 0.8;
                 } else if (distToPlayer > 1500) {
                     // Adelante pero visible - frenar un poco
                     car.speed *= 0.995;
                 } else if (distToPlayer < -1500) {
                     // Muy atrás - acelerar mucho para alcanzar
-                    car.speed = Math.min(car.speed + 1 * dt * 60, 260);
-                    car.targetSpeed = 240;
+                    car.speed = Math.min(car.speed + 1 * dt * 60, car.baseSpeed * 1.2);
+                    car.targetSpeed = car.baseSpeed * 1.1;
                 } else if (distToPlayer < -500) {
                     // Detrás - acelerar para alcanzar
-                    car.speed = Math.min(car.speed + 0.5 * dt * 60, 250);
-                } else {
-                    // Cerca del jugador - competir!
-                    // Variar velocidad para adelantamientos
-                    if (Math.random() > 0.98) {
-                        car.targetSpeed = 205 + Math.random() * 25;
-                    }
+                    car.speed = Math.min(car.speed + 0.5 * dt * 60, car.baseSpeed * 1.15);
                 }
 
-                // Boost ocasional cuando están cerca
-                if (Math.abs(distToPlayer) < 1000 && Math.random() > 0.99) {
-                    car.speed = Math.min(car.speed + 10, 245);
+                // Boost ocasional cuando están cerca (más raro para Gordito)
+                const boostChance = car.name === 'GORDITO' ? 0.995 : 0.99;
+                if (Math.abs(distToPlayer) < 1000 && Math.random() > boostChance) {
+                    car.speed = Math.min(car.speed + 8, car.baseSpeed * 1.15);
                 }
 
                 // Moverse lateralmente para adelantar
@@ -1407,7 +1375,7 @@
             requestAnimationFrame(gameLoop);
         }
 
-        // Preview del coche
+        // Preview del patinete
         function drawCarPreview() {
             const previewCanvas = document.getElementById('carPreview');
             const previewCtx = previewCanvas.getContext('2d');
@@ -1418,31 +1386,53 @@
             previewCtx.fillStyle = '#1a1a2e';
             previewCtx.fillRect(0, 0, 120, 80);
 
-            // Coche simplificado
+            // Rueda trasera
+            previewCtx.fillStyle = '#1a1a1a';
+            previewCtx.beginPath();
+            previewCtx.arc(60, 65, 12, 0, Math.PI * 2);
+            previewCtx.fill();
+            previewCtx.fillStyle = '#00aaff';
+            previewCtx.beginPath();
+            previewCtx.arc(60, 65, 5, 0, Math.PI * 2);
+            previewCtx.fill();
+
+            // Plataforma
+            previewCtx.fillStyle = '#333';
+            previewCtx.fillRect(35, 52, 50, 5);
+
+            // Tubo vertical
+            previewCtx.fillStyle = '#444';
+            previewCtx.fillRect(57, 20, 6, 35);
+
+            // Manillar
+            previewCtx.fillStyle = '#333';
+            previewCtx.fillRect(40, 15, 40, 4);
+            // Puños naranjas
+            previewCtx.fillStyle = '#ff6600';
+            previewCtx.fillRect(36, 13, 8, 8);
+            previewCtx.fillRect(76, 13, 8, 8);
+
+            // Display LED
+            previewCtx.fillStyle = '#00ff00';
+            previewCtx.fillRect(55, 22, 10, 5);
+
+            // Leo (simplificado)
+            // Piernas
+            previewCtx.fillStyle = '#2244aa';
+            previewCtx.fillRect(52, 38, 6, 15);
+            previewCtx.fillRect(62, 38, 6, 15);
+            // Cuerpo
+            previewCtx.fillStyle = '#ff6600';
+            previewCtx.fillRect(50, 25, 20, 15);
+            // Cabeza con casco
+            previewCtx.fillStyle = '#ffcc99';
+            previewCtx.beginPath();
+            previewCtx.arc(60, 18, 8, 0, Math.PI * 2);
+            previewCtx.fill();
             previewCtx.fillStyle = '#ff3300';
             previewCtx.beginPath();
-            previewCtx.moveTo(20, 60);
-            previewCtx.lineTo(100, 60);
-            previewCtx.lineTo(90, 30);
-            previewCtx.lineTo(30, 30);
-            previewCtx.closePath();
+            previewCtx.ellipse(60, 14, 10, 6, 0, Math.PI, 0);
             previewCtx.fill();
-
-            previewCtx.fillStyle = '#cc2200';
-            previewCtx.beginPath();
-            previewCtx.moveTo(35, 30);
-            previewCtx.lineTo(85, 30);
-            previewCtx.lineTo(75, 15);
-            previewCtx.lineTo(45, 15);
-            previewCtx.closePath();
-            previewCtx.fill();
-
-            previewCtx.fillStyle = '#333';
-            previewCtx.fillRect(40, 18, 40, 12);
-
-            previewCtx.fillStyle = '#111';
-            previewCtx.fillRect(15, 50, 15, 20);
-            previewCtx.fillRect(90, 50, 15, 20);
         }
 
         drawCarPreview();
