@@ -282,9 +282,11 @@
                     <p>← → ↑ ↓ : MOVER AVIÓN</p>
                     <p>ESPACIO : DISPARAR</p>
                     <p>P : PAUSAR</p>
+                    <p>M : MÚSICA ON/OFF</p>
                     <br>
-                    <p>🎯 7 NIVELES DE ACCIÓN:</p>
+                    <p>🎯 20 NIVELES DE ACCIÓN:</p>
                     <p>DESTRUYE PTEROSAURIOS</p>
+                    <p>🎵 BANDA SONORA RETRO</p>
                     <p>RECOGE HUEVOS = VIDA</p>
                     <p>9 ARMAS DIFERENTES</p>
                     <p>BOSS FINAL: MEGA QUETZALCOATLUS</p>
@@ -380,22 +382,41 @@
             bomb: { name: 'BOMBAS', delay: 600, damage: 80, color: '#ff0000', sound: 'missile' }
         };
 
-        // Configuración de los 7 niveles
+        // Configuración de los 20 niveles (cada nivel +5% de dificultad)
         const levelConfig = {
-            1: { name: 'CIELOS TRANQUILOS', kills: 8, spawnDelay: 2000, types: ['pteranodon', 'dimorphodon'], multiplier: 1.0 },
-            2: { name: 'ZONA DE CAZA', kills: 12, spawnDelay: 1800, types: ['pteranodon', 'dimorphodon', 'rhamphorhynchus'], multiplier: 1.15 },
-            3: { name: 'TERRITORIO HOSTIL', kills: 15, spawnDelay: 1500, types: ['pteranodon', 'dimorphodon', 'rhamphorhynchus', 'anhanguera'], multiplier: 1.3 },
-            4: { name: 'NIDO DE GIGANTES', kills: 18, spawnDelay: 1300, types: ['dimorphodon', 'rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 1.5 },
-            5: { name: 'TORMENTA PREHISTÓRICA', kills: 20, spawnDelay: 1100, types: ['pteranodon', 'dimorphodon', 'rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 1.7 },
-            6: { name: 'INFIERNO JURÁSICO', kills: 25, spawnDelay: 900, types: ['rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 2.0 },
-            7: { name: 'REY DE LOS CIELOS', kills: 1, spawnDelay: 5000, types: ['boss'], multiplier: 2.5, boss: true }
+            1:  { name: 'CIELOS TRANQUILOS', kills: 6, spawnDelay: 2200, types: ['pteranodon', 'dimorphodon'], multiplier: 1.0 },
+            2:  { name: 'PRIMEROS VUELOS', kills: 8, spawnDelay: 2100, types: ['pteranodon', 'dimorphodon'], multiplier: 1.05 },
+            3:  { name: 'ZONA DE CAZA', kills: 10, spawnDelay: 2000, types: ['pteranodon', 'dimorphodon', 'rhamphorhynchus'], multiplier: 1.10 },
+            4:  { name: 'TERRITORIO SALVAJE', kills: 12, spawnDelay: 1900, types: ['pteranodon', 'dimorphodon', 'rhamphorhynchus'], multiplier: 1.16 },
+            5:  { name: 'CIELOS PELIGROSOS', kills: 14, spawnDelay: 1800, types: ['pteranodon', 'dimorphodon', 'rhamphorhynchus', 'anhanguera'], multiplier: 1.22 },
+            6:  { name: 'NIDO DE BESTIAS', kills: 16, spawnDelay: 1700, types: ['dimorphodon', 'rhamphorhynchus', 'anhanguera'], multiplier: 1.28 },
+            7:  { name: 'TORMENTA CRETÁCICA', kills: 18, spawnDelay: 1600, types: ['pteranodon', 'rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 1.34 },
+            8:  { name: 'VALLE DE SOMBRAS', kills: 20, spawnDelay: 1500, types: ['dimorphodon', 'rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 1.41 },
+            9:  { name: 'FURIA ANCESTRAL', kills: 22, spawnDelay: 1400, types: ['pteranodon', 'dimorphodon', 'rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 1.48 },
+            10: { name: 'MEDIO CAMINO', kills: 24, spawnDelay: 1350, types: ['rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 1.55, miniboss: true },
+            11: { name: 'CIELOS ROJOS', kills: 26, spawnDelay: 1300, types: ['pteranodon', 'dimorphodon', 'rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 1.63 },
+            12: { name: 'INFIERNO VOLADOR', kills: 28, spawnDelay: 1250, types: ['dimorphodon', 'rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 1.71 },
+            13: { name: 'PESADILLA JURÁSICA', kills: 30, spawnDelay: 1200, types: ['rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 1.80 },
+            14: { name: 'DOMINIO OSCURO', kills: 32, spawnDelay: 1150, types: ['anhanguera', 'quetzalcoatlus'], multiplier: 1.89 },
+            15: { name: 'APOCALIPSIS AÉREO', kills: 34, spawnDelay: 1100, types: ['pteranodon', 'dimorphodon', 'rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 1.98, miniboss: true },
+            16: { name: 'CAOS PREHISTÓRICO', kills: 36, spawnDelay: 1050, types: ['rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 2.08 },
+            17: { name: 'ÚLTIMOS CIELOS', kills: 38, spawnDelay: 1000, types: ['anhanguera', 'quetzalcoatlus'], multiplier: 2.18 },
+            18: { name: 'HORA FINAL', kills: 40, spawnDelay: 950, types: ['quetzalcoatlus'], multiplier: 2.29 },
+            19: { name: 'EXTINCIÓN MASIVA', kills: 45, spawnDelay: 900, types: ['rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 2.41 },
+            20: { name: 'REY DE LOS CIELOS', kills: 1, spawnDelay: 5000, types: ['boss'], multiplier: 2.53, boss: true }
         };
 
         let levelKills = 0; // Kills en el nivel actual
-        let boss = null; // Boss del nivel 7
+        let boss = null; // Boss del nivel 20
 
         // ===== SISTEMA DE AUDIO =====
         let audioCtx = null;
+        let musicPlaying = false;
+        let musicNodes = [];
+        let musicInterval = null;
+        let bassInterval = null;
+        let drumInterval = null;
+        let currentBeat = 0;
 
         function initAudio() {
             if (!audioCtx) {
@@ -404,6 +425,263 @@
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
+        }
+
+        // ===== BANDA SONORA ESTILO RETRO ELECTRÓNICO =====
+        // Secuencias de notas (frecuencias en Hz) - Estilo synthwave/chiptune
+        const musicSequences = {
+            // Melodía principal - energética y épica
+            melody: [
+                [329.63, 392.00, 493.88, 587.33], // E4, G4, B4, D5
+                [293.66, 369.99, 440.00, 523.25], // D4, F#4, A4, C5
+                [261.63, 329.63, 392.00, 493.88], // C4, E4, G4, B4
+                [246.94, 311.13, 369.99, 440.00], // B3, D#4, F#4, A4
+                [329.63, 415.30, 493.88, 622.25], // E4, G#4, B4, D#5
+                [293.66, 349.23, 440.00, 523.25], // D4, F4, A4, C5
+                [349.23, 440.00, 523.25, 659.25], // F4, A4, C5, E5
+                [392.00, 493.88, 587.33, 783.99]  // G4, B4, D5, G5
+            ],
+            // Línea de bajo - pulsante
+            bass: [
+                82.41, 82.41, 110.00, 110.00,  // E2, E2, A2, A2
+                73.42, 73.42, 98.00, 98.00,    // D2, D2, G2, G2
+                65.41, 65.41, 82.41, 82.41,    // C2, C2, E2, E2
+                61.74, 61.74, 73.42, 73.42,    // B1, B1, D2, D2
+                82.41, 82.41, 103.83, 103.83,  // E2, E2, G#2, G#2
+                73.42, 73.42, 87.31, 87.31,    // D2, D2, F2, F2
+                87.31, 87.31, 110.00, 110.00,  // F2, F2, A2, A2
+                98.00, 98.00, 123.47, 123.47   // G2, G2, B2, B2
+            ],
+            // Arpegios rápidos
+            arpeggio: [
+                [164.81, 207.65, 246.94, 329.63], // E3, G#3, B3, E4
+                [146.83, 185.00, 220.00, 293.66], // D3, F#3, A3, D4
+                [130.81, 164.81, 196.00, 261.63], // C3, E3, G3, C4
+                [123.47, 155.56, 185.00, 246.94]  // B2, D#3, F#3, B3
+            ]
+        };
+
+        // Melodía especial para el boss
+        const bossSequence = {
+            melody: [
+                [220.00, 277.18, 329.63, 415.30], // A3, C#4, E4, G#4 - menor
+                [196.00, 246.94, 293.66, 392.00], // G3, B3, D4, G4
+                [174.61, 220.00, 261.63, 329.63], // F3, A3, C4, E4
+                [164.81, 207.65, 246.94, 311.13]  // E3, G#3, B3, D#4
+            ],
+            bass: [55.00, 55.00, 49.00, 49.00, 43.65, 43.65, 41.20, 41.20] // A1, G1, F1, E1
+        };
+
+        function startMusic() {
+            if (musicPlaying || !audioCtx) return;
+            musicPlaying = true;
+            currentBeat = 0;
+
+            // Crear nodo master de volumen para la música
+            const masterGain = audioCtx.createGain();
+            masterGain.gain.value = 0.15;
+            masterGain.connect(audioCtx.destination);
+            musicNodes.push(masterGain);
+
+            // Tempo base (BPM)
+            const bpm = 140;
+            const beatDuration = 60000 / bpm;
+
+            // Melody/Lead - cada 2 beats
+            musicInterval = setInterval(() => {
+                if (!musicPlaying || gamePaused) return;
+                playMelodyNote(masterGain);
+                currentBeat = (currentBeat + 1) % 32;
+            }, beatDuration * 2);
+
+            // Bass line - cada beat
+            bassInterval = setInterval(() => {
+                if (!musicPlaying || gamePaused) return;
+                playBassNote(masterGain);
+            }, beatDuration);
+
+            // Drums - cada beat
+            drumInterval = setInterval(() => {
+                if (!musicPlaying || gamePaused) return;
+                playDrum(masterGain);
+            }, beatDuration / 2);
+        }
+
+        function stopMusic() {
+            musicPlaying = false;
+            if (musicInterval) clearInterval(musicInterval);
+            if (bassInterval) clearInterval(bassInterval);
+            if (drumInterval) clearInterval(drumInterval);
+            musicNodes.forEach(node => {
+                try { node.disconnect(); } catch(e) {}
+            });
+            musicNodes = [];
+        }
+
+        function playMelodyNote(masterGain) {
+            if (!audioCtx || audioCtx.state !== 'running') return;
+
+            try {
+                const isBossLevel = level === 20;
+                const seq = isBossLevel ? bossSequence.melody : musicSequences.melody;
+                const noteIndex = Math.floor(currentBeat / 4) % seq.length;
+                const chord = seq[noteIndex];
+                const noteInChord = currentBeat % 4;
+                const freq = chord[noteInChord];
+
+                // Lead synth (sawtooth con filtro)
+                const osc1 = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const filter = audioCtx.createBiquadFilter();
+                const gain = audioCtx.createGain();
+
+                osc1.type = 'sawtooth';
+                osc2.type = 'square';
+                osc1.frequency.value = freq;
+                osc2.frequency.value = freq * 1.005; // Slight detune for thickness
+
+                filter.type = 'lowpass';
+                filter.frequency.value = 2000 + Math.sin(Date.now() / 500) * 1000; // Filter modulation
+                filter.Q.value = 2;
+
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+
+                osc1.connect(filter);
+                osc2.connect(filter);
+                filter.connect(gain);
+                gain.connect(masterGain);
+
+                osc1.start();
+                osc2.start();
+                osc1.stop(audioCtx.currentTime + 0.35);
+                osc2.stop(audioCtx.currentTime + 0.35);
+
+                // Arpeggio layer (every 2nd beat)
+                if (currentBeat % 2 === 0) {
+                    const arpSeq = musicSequences.arpeggio;
+                    const arpChord = arpSeq[noteIndex % arpSeq.length];
+                    for (let i = 0; i < 4; i++) {
+                        setTimeout(() => {
+                            if (!musicPlaying) return;
+                            const arpOsc = audioCtx.createOscillator();
+                            const arpGain = audioCtx.createGain();
+                            arpOsc.type = 'square';
+                            arpOsc.frequency.value = arpChord[i] * 2;
+                            arpGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                            arpGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                            arpOsc.connect(arpGain);
+                            arpGain.connect(masterGain);
+                            arpOsc.start();
+                            arpOsc.stop(audioCtx.currentTime + 0.12);
+                        }, i * 50);
+                    }
+                }
+            } catch(e) {}
+        }
+
+        function playBassNote(masterGain) {
+            if (!audioCtx || audioCtx.state !== 'running') return;
+
+            try {
+                const isBossLevel = level === 20;
+                const bassSeq = isBossLevel ? bossSequence.bass : musicSequences.bass;
+                const bassIndex = currentBeat % bassSeq.length;
+                const freq = bassSeq[bassIndex];
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter();
+
+                osc.type = 'sawtooth';
+                osc.frequency.value = freq;
+
+                filter.type = 'lowpass';
+                filter.frequency.value = 400;
+
+                gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.1, audioCtx.currentTime + 0.15);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(masterGain);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.18);
+            } catch(e) {}
+        }
+
+        function playDrum(masterGain) {
+            if (!audioCtx || audioCtx.state !== 'running') return;
+
+            try {
+                const beatInBar = currentBeat % 8;
+
+                // Kick drum (beats 0, 4)
+                if (beatInBar === 0 || beatInBar === 4) {
+                    const kick = audioCtx.createOscillator();
+                    const kickGain = audioCtx.createGain();
+                    kick.type = 'sine';
+                    kick.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    kick.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.1);
+                    kickGain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                    kickGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    kick.connect(kickGain);
+                    kickGain.connect(masterGain);
+                    kick.start();
+                    kick.stop(audioCtx.currentTime + 0.15);
+                }
+
+                // Snare (beats 2, 6)
+                if (beatInBar === 2 || beatInBar === 6) {
+                    // Noise for snare
+                    const bufferSize = audioCtx.sampleRate * 0.1;
+                    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                    const output = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                    const noise = audioCtx.createBufferSource();
+                    noise.buffer = buffer;
+
+                    const noiseGain = audioCtx.createGain();
+                    const noiseFilter = audioCtx.createBiquadFilter();
+                    noiseFilter.type = 'highpass';
+                    noiseFilter.frequency.value = 1000;
+
+                    noiseGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+
+                    noise.connect(noiseFilter);
+                    noiseFilter.connect(noiseGain);
+                    noiseGain.connect(masterGain);
+                    noise.start();
+                }
+
+                // Hi-hat (every beat, quieter on off-beats)
+                const hihatVol = (beatInBar % 2 === 0) ? 0.15 : 0.08;
+                const bufferSize = audioCtx.sampleRate * 0.03;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const output = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+                const hihat = audioCtx.createBufferSource();
+                hihat.buffer = buffer;
+
+                const hihatGain = audioCtx.createGain();
+                const hihatFilter = audioCtx.createBiquadFilter();
+                hihatFilter.type = 'highpass';
+                hihatFilter.frequency.value = 8000;
+
+                hihatGain.gain.setValueAtTime(hihatVol, audioCtx.currentTime);
+                hihatGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.03);
+
+                hihat.connect(hihatFilter);
+                hihatFilter.connect(hihatGain);
+                hihatGain.connect(masterGain);
+                hihat.start();
+            } catch(e) {}
         }
 
         function playSound(type) {
@@ -2102,13 +2380,14 @@
                     speed: 2
                 });
             } else {
-                // Armas disponibles según nivel
+                // Armas disponibles según nivel (20 niveles)
                 let weaponTypes = ['double', 'spread'];
-                if (level >= 2) weaponTypes.push('laser');
-                if (level >= 3) weaponTypes.push('missile', 'plasma');
-                if (level >= 4) weaponTypes.push('flame');
-                if (level >= 5) weaponTypes.push('lightning');
-                if (level >= 6) weaponTypes.push('bomb');
+                if (level >= 3) weaponTypes.push('laser');
+                if (level >= 5) weaponTypes.push('missile');
+                if (level >= 7) weaponTypes.push('plasma');
+                if (level >= 10) weaponTypes.push('flame');
+                if (level >= 13) weaponTypes.push('lightning');
+                if (level >= 16) weaponTypes.push('bomb');
 
                 powerups.push({
                     type: 'weapon',
@@ -2405,26 +2684,50 @@
         function drawBackground() {
             // Cielo degradado dinámico según nivel
             const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            if (level <= 2) {
-                // Cielo diurno
+            if (level <= 3) {
+                // Cielo diurno brillante
                 gradient.addColorStop(0, '#1a1a4a');
                 gradient.addColorStop(0.3, '#2a3a6a');
                 gradient.addColorStop(0.6, '#4a6a9a');
                 gradient.addColorStop(1, '#6a9aca');
-            } else if (level <= 4) {
-                // Atardecer
+            } else if (level <= 6) {
+                // Atardecer dorado
                 gradient.addColorStop(0, '#1a0a2a');
                 gradient.addColorStop(0.3, '#4a2a4a');
                 gradient.addColorStop(0.6, '#8a4a3a');
                 gradient.addColorStop(1, '#ca7a4a');
-            } else if (level <= 6) {
-                // Tormenta
+            } else if (level <= 9) {
+                // Anochecer púrpura
+                gradient.addColorStop(0, '#0a0a2a');
+                gradient.addColorStop(0.3, '#2a1a4a');
+                gradient.addColorStop(0.6, '#4a2a6a');
+                gradient.addColorStop(1, '#3a1a4a');
+            } else if (level <= 12) {
+                // Noche con tormenta
                 gradient.addColorStop(0, '#0a0a1a');
                 gradient.addColorStop(0.3, '#1a1a3a');
                 gradient.addColorStop(0.6, '#2a2a4a');
                 gradient.addColorStop(1, '#3a3a5a');
+            } else if (level <= 15) {
+                // Cielo verde tóxico
+                gradient.addColorStop(0, '#0a1a0a');
+                gradient.addColorStop(0.3, '#1a2a1a');
+                gradient.addColorStop(0.6, '#2a3a2a');
+                gradient.addColorStop(1, '#1a3a1a');
+            } else if (level <= 18) {
+                // Cielo naranja apocalíptico
+                gradient.addColorStop(0, '#1a0a00');
+                gradient.addColorStop(0.3, '#3a1a0a');
+                gradient.addColorStop(0.6, '#5a2a1a');
+                gradient.addColorStop(1, '#4a2a1a');
+            } else if (level === 19) {
+                // Cielo casi negro con grietas rojas
+                gradient.addColorStop(0, '#0a0000');
+                gradient.addColorStop(0.3, '#1a0505');
+                gradient.addColorStop(0.6, '#2a0a0a');
+                gradient.addColorStop(1, '#1a0505');
             } else {
-                // Boss - cielo rojo
+                // Boss - cielo rojo sangre
                 gradient.addColorStop(0, '#1a0000');
                 gradient.addColorStop(0.3, '#3a0a0a');
                 gradient.addColorStop(0.6, '#5a1a1a');
@@ -2434,8 +2737,8 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Sol/Luna según nivel
-            if (level <= 2) {
-                // Sol
+            if (level <= 3) {
+                // Sol brillante
                 ctx.fillStyle = '#ffdd44';
                 ctx.shadowColor = '#ffaa00';
                 ctx.shadowBlur = 30;
@@ -2443,17 +2746,48 @@
                 ctx.arc(500, 80, 40, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.shadowBlur = 0;
-            } else if (level >= 7) {
-                // Luna roja sangrienta
-                ctx.fillStyle = '#aa2222';
-                ctx.shadowColor = '#ff0000';
+            } else if (level <= 6) {
+                // Sol al atardecer
+                ctx.fillStyle = '#ff6633';
+                ctx.shadowColor = '#ff4400';
                 ctx.shadowBlur = 40;
                 ctx.beginPath();
-                ctx.arc(500, 100, 50, 0, Math.PI * 2);
+                ctx.arc(520, 120, 50, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            } else if (level <= 12) {
+                // Luna normal
+                ctx.fillStyle = '#ddddcc';
+                ctx.shadowColor = '#aaaaaa';
+                ctx.shadowBlur = 25;
+                ctx.beginPath();
+                ctx.arc(480, 90, 35, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#2a2a3a';
+                ctx.beginPath();
+                ctx.arc(495, 85, 30, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            } else if (level <= 15) {
+                // Luna verde tóxica
+                ctx.fillStyle = '#44aa44';
+                ctx.shadowColor = '#00ff00';
+                ctx.shadowBlur = 35;
+                ctx.beginPath();
+                ctx.arc(500, 100, 40, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            } else if (level >= 20) {
+                // Luna roja sangrienta (Boss)
+                ctx.fillStyle = '#aa2222';
+                ctx.shadowColor = '#ff0000';
+                ctx.shadowBlur = 50;
+                ctx.beginPath();
+                ctx.arc(500, 100, 55, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.fillStyle = '#1a0000';
                 ctx.beginPath();
-                ctx.arc(520, 90, 45, 0, Math.PI * 2);
+                ctx.arc(525, 90, 50, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.shadowBlur = 0;
             }
@@ -2527,8 +2861,8 @@
             }
             ctx.globalAlpha = 1;
 
-            // Rayos en niveles de tormenta
-            if (level >= 5 && level < 7 && Math.random() < 0.005) {
+            // Rayos en niveles de tormenta (niveles 10-19)
+            if (level >= 10 && level < 20 && Math.random() < (0.003 + (level - 10) * 0.001)) {
                 ctx.strokeStyle = '#aaaaff';
                 ctx.lineWidth = 2;
                 ctx.shadowColor = '#ffffff';
@@ -2709,9 +3043,9 @@
             // Función para verificar progreso de nivel
             function checkLevelProgress() {
                 const config = levelConfig[level];
-                if (levelKills >= config.kills && level < 7) {
+                if (levelKills >= config.kills && level < 20) {
                     levelUp();
-                } else if (level === 7 && !boss && levelKills >= 1) {
+                } else if (level === 20 && !boss && levelKills >= 1) {
                     victory();
                 }
             }
@@ -2921,7 +3255,7 @@
 
         // ===== SUBIR DE NIVEL =====
         function levelUp() {
-            if (level >= 7) return; // Ya en nivel máximo
+            if (level >= 20) return; // Ya en nivel máximo
 
             level++;
             levelKills = 0; // Reset kills del nivel
@@ -3112,6 +3446,7 @@
         // ===== GAME OVER =====
         function gameOver() {
             gameRunning = false;
+            stopMusic(); // Detener música
             playSound('gameover');
 
             document.getElementById('finalScore').textContent = score;
@@ -3122,6 +3457,7 @@
         // ===== VICTORIA =====
         function victory() {
             gameRunning = false;
+            stopMusic(); // Detener música
             playSound('levelup');
 
             document.getElementById('victoryScore').textContent = score;
@@ -3132,6 +3468,7 @@
         // ===== INICIAR JUEGO =====
         function startGame() {
             initAudio();
+            startMusic(); // Iniciar banda sonora
 
             // Reset estado
             player = {
@@ -3190,6 +3527,17 @@
                 if (gameRunning) {
                     gamePaused = !gamePaused;
                     document.getElementById('pausedOverlay').style.display = gamePaused ? 'block' : 'none';
+                }
+            }
+
+            // Toggle música
+            if (e.key === 'm' || e.key === 'M') {
+                if (gameRunning) {
+                    if (musicPlaying) {
+                        stopMusic();
+                    } else {
+                        startMusic();
+                    }
                 }
             }
 
