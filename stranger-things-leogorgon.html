@@ -371,19 +371,52 @@
         let audioCtx = null;
         let musicPlaying = false;
         let musicOscillators = [];
+        let audioEnabled = false;
 
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    console.log('AudioContext creado:', audioCtx.state);
+                }
+
+                // Forzar resume del audio context
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume().then(() => {
+                        console.log('AudioContext resumed:', audioCtx.state);
+                        audioEnabled = true;
+                        // Sonido de confirmación al iniciar
+                        playStartSound();
+                    });
+                } else {
+                    audioEnabled = true;
+                    playStartSound();
+                }
+            } catch (e) {
+                console.error('Error inicializando audio:', e);
             }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+        }
+
+        // Sonido de inicio del juego (confirmación de audio)
+        function playStartSound() {
+            if (!audioCtx || audioCtx.state !== 'running') return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.2);
+            console.log('Sonido de inicio reproducido');
         }
 
         // Sonido de ataque del Demogorgon (rugido grave)
         function playAttackSound() {
-            if (!audioCtx) return;
+            if (!audioCtx || audioCtx.state !== 'running') return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             const filter = audioCtx.createBiquadFilter();
@@ -408,7 +441,7 @@
 
         // Sonido de devorar víctima (crunch + grito)
         function playEatSound() {
-            if (!audioCtx) return;
+            if (!audioCtx || audioCtx.state !== 'running') return;
 
             // Grito agudo
             const osc1 = audioCtx.createOscillator();
@@ -447,7 +480,7 @@
 
         // Sonido de recibir daño
         function playHurtSound() {
-            if (!audioCtx) return;
+            if (!audioCtx || audioCtx.state !== 'running') return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
 
@@ -467,7 +500,7 @@
 
         // Sonido de objeto lanzado por niños
         function playThrowSound() {
-            if (!audioCtx) return;
+            if (!audioCtx || audioCtx.state !== 'running') return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
 
@@ -486,7 +519,7 @@
 
         // Sonido de poder psíquico de Eleven
         function playPsychicSound() {
-            if (!audioCtx) return;
+            if (!audioCtx || audioCtx.state !== 'running') return;
             const osc1 = audioCtx.createOscillator();
             const osc2 = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
@@ -519,7 +552,7 @@
 
         // Sonido de cambio de habitación (puerta)
         function playDoorSound() {
-            if (!audioCtx) return;
+            if (!audioCtx || audioCtx.state !== 'running') return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
 
@@ -539,7 +572,7 @@
         // Sonido de paso/movimiento
         let lastStepTime = 0;
         function playStepSound() {
-            if (!audioCtx) return;
+            if (!audioCtx || audioCtx.state !== 'running') return;
             const now = Date.now();
             if (now - lastStepTime < 250) return;
             lastStepTime = now;
@@ -565,7 +598,7 @@
 
         // Sonido de Game Over
         function playGameOverSound() {
-            if (!audioCtx) return;
+            if (!audioCtx || audioCtx.state !== 'running') return;
             const notes = [200, 180, 150, 100];
             notes.forEach((freq, i) => {
                 setTimeout(() => {
@@ -585,7 +618,7 @@
 
         // Sonido de Victoria
         function playVictorySound() {
-            if (!audioCtx) return;
+            if (!audioCtx || audioCtx.state !== 'running') return;
             const notes = [262, 330, 392, 523, 659, 784];
             notes.forEach((freq, i) => {
                 setTimeout(() => {
@@ -668,7 +701,7 @@
 
         // Sonido de niño asustado (grito corto)
         function playScaredSound() {
-            if (!audioCtx) return;
+            if (!audioCtx || audioCtx.state !== 'running') return;
             if (Math.random() > 0.3) return; // No siempre suena
 
             const osc = audioCtx.createOscillator();
@@ -686,7 +719,7 @@
 
         // Sonido de carga de poder de Eleven
         function playChargingSound() {
-            if (!audioCtx) return;
+            if (!audioCtx || audioCtx.state !== 'running') return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sine';
