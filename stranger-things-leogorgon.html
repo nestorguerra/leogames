@@ -323,7 +323,9 @@
                 </div>
             </div>
 
+            <button class="btn" onclick="testSound()" style="background: linear-gradient(180deg, #006600 0%, #004400 100%); border-color: #00ff00; margin-bottom: 10px;">🔊 PROBAR SONIDO</button>
             <button class="btn" onclick="startGame()">ENTRAR AL UPSIDE DOWN</button>
+            <p id="soundStatus" style="font-size: 8px; color: #666; margin-top: 10px;">Pulsa "PROBAR SONIDO" primero</p>
 
             <p class="controls-info">
                 WASD o FLECHAS = MOVER | ESPACIO = ATACAR | M = MINIMAPA
@@ -412,6 +414,58 @@
             osc.start();
             osc.stop(audioCtx.currentTime + 0.2);
             console.log('Sonido de inicio reproducido');
+        }
+
+        // Función para probar el sonido (botón verde)
+        function testSound() {
+            const statusEl = document.getElementById('soundStatus');
+
+            try {
+                // Crear o reanudar AudioContext
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
+                // Forzar resume
+                audioCtx.resume().then(() => {
+                    console.log('AudioContext state:', audioCtx.state);
+
+                    if (audioCtx.state === 'running') {
+                        // Reproducir sonido de prueba (melodía corta)
+                        const notes = [523, 659, 784, 1047]; // Do Mi Sol Do alto
+                        notes.forEach((freq, i) => {
+                            setTimeout(() => {
+                                const osc = audioCtx.createOscillator();
+                                const gain = audioCtx.createGain();
+                                osc.type = 'square';
+                                osc.frequency.value = freq;
+                                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                                osc.connect(gain);
+                                gain.connect(audioCtx.destination);
+                                osc.start();
+                                osc.stop(audioCtx.currentTime + 0.15);
+                            }, i * 100);
+                        });
+
+                        statusEl.textContent = '✓ SONIDO ACTIVADO - ¡Deberías oír 4 notas!';
+                        statusEl.style.color = '#00ff00';
+                        audioEnabled = true;
+                    } else {
+                        statusEl.textContent = '✗ Audio bloqueado: ' + audioCtx.state;
+                        statusEl.style.color = '#ff0000';
+                    }
+                }).catch(err => {
+                    statusEl.textContent = '✗ Error: ' + err.message;
+                    statusEl.style.color = '#ff0000';
+                    console.error('Error resuming audio:', err);
+                });
+
+            } catch (e) {
+                statusEl.textContent = '✗ Error: ' + e.message;
+                statusEl.style.color = '#ff0000';
+                console.error('Error en testSound:', e);
+            }
         }
 
         // Sonido de ataque del Demogorgon (rugido grave)
