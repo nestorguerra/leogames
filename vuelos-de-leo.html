@@ -630,79 +630,200 @@
             const x = player.x;
             const y = player.y;
 
-            // Llamas del motor
-            const flameHeight = 15 + Math.random() * 10;
+            // Estela de movimiento
+            ctx.fillStyle = 'rgba(100, 150, 255, 0.1)';
+            for (let i = 1; i <= 3; i++) {
+                ctx.beginPath();
+                ctx.ellipse(x, y + i * 15, 15 - i * 3, 8, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Llamas del motor mejoradas
+            const flameHeight = 20 + Math.random() * 15;
+            // Llama exterior
+            ctx.fillStyle = '#ff3300';
+            ctx.shadowColor = '#ff6600';
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.moveTo(x - 12, y + 28);
+            ctx.quadraticCurveTo(x - 8, y + 35, x, y + 28 + flameHeight);
+            ctx.quadraticCurveTo(x + 8, y + 35, x + 12, y + 28);
+            ctx.fill();
+
+            // Llama media
             ctx.fillStyle = '#ff6600';
             ctx.beginPath();
-            ctx.moveTo(x - 8, y + 25);
-            ctx.lineTo(x, y + 25 + flameHeight);
-            ctx.lineTo(x + 8, y + 25);
+            ctx.moveTo(x - 8, y + 28);
+            ctx.quadraticCurveTo(x - 4, y + 32, x, y + 28 + flameHeight * 0.75);
+            ctx.quadraticCurveTo(x + 4, y + 32, x + 8, y + 28);
             ctx.fill();
 
+            // Llama interior
             ctx.fillStyle = '#ffff00';
             ctx.beginPath();
-            ctx.moveTo(x - 4, y + 25);
-            ctx.lineTo(x, y + 25 + flameHeight * 0.6);
-            ctx.lineTo(x + 4, y + 25);
+            ctx.moveTo(x - 4, y + 28);
+            ctx.lineTo(x, y + 28 + flameHeight * 0.5);
+            ctx.lineTo(x + 4, y + 28);
             ctx.fill();
 
-            // Cuerpo principal (fuselaje)
-            ctx.fillStyle = '#3366cc';
+            // Centro blanco
+            ctx.fillStyle = '#ffffff';
             ctx.beginPath();
-            ctx.moveTo(x, y - 30);
-            ctx.lineTo(x + 12, y + 10);
-            ctx.lineTo(x + 10, y + 25);
-            ctx.lineTo(x - 10, y + 25);
-            ctx.lineTo(x - 12, y + 10);
+            ctx.moveTo(x - 2, y + 28);
+            ctx.lineTo(x, y + 28 + flameHeight * 0.3);
+            ctx.lineTo(x + 2, y + 28);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Sombra del avión
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.beginPath();
+            ctx.ellipse(x + 3, y + 35, 25, 8, 0.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Alas principales con degradado
+            const wingGrad = ctx.createLinearGradient(x - 40, y, x + 40, y);
+            wingGrad.addColorStop(0, '#2255aa');
+            wingGrad.addColorStop(0.3, '#4488dd');
+            wingGrad.addColorStop(0.5, '#66aaff');
+            wingGrad.addColorStop(0.7, '#4488dd');
+            wingGrad.addColorStop(1, '#2255aa');
+            ctx.fillStyle = wingGrad;
+
+            // Ala izquierda
+            ctx.beginPath();
+            ctx.moveTo(x - 12, y - 2);
+            ctx.lineTo(x - 45, y + 12);
+            ctx.lineTo(x - 42, y + 18);
+            ctx.lineTo(x - 38, y + 22);
+            ctx.lineTo(x - 10, y + 12);
             ctx.closePath();
             ctx.fill();
 
-            // Alas principales
-            ctx.fillStyle = '#4477dd';
+            // Ala derecha
             ctx.beginPath();
-            ctx.moveTo(x - 10, y);
-            ctx.lineTo(x - 35, y + 15);
-            ctx.lineTo(x - 30, y + 20);
-            ctx.lineTo(x - 8, y + 10);
+            ctx.moveTo(x + 12, y - 2);
+            ctx.lineTo(x + 45, y + 12);
+            ctx.lineTo(x + 42, y + 18);
+            ctx.lineTo(x + 38, y + 22);
+            ctx.lineTo(x + 10, y + 12);
             ctx.closePath();
             ctx.fill();
 
-            ctx.beginPath();
-            ctx.moveTo(x + 10, y);
-            ctx.lineTo(x + 35, y + 15);
-            ctx.lineTo(x + 30, y + 20);
-            ctx.lineTo(x + 8, y + 10);
-            ctx.closePath();
-            ctx.fill();
-
-            // Cabina
-            ctx.fillStyle = '#66ffff';
-            ctx.beginPath();
-            ctx.ellipse(x, y - 10, 6, 10, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Cola
-            ctx.fillStyle = '#2255aa';
-            ctx.beginPath();
-            ctx.moveTo(x - 5, y + 20);
-            ctx.lineTo(x - 15, y + 30);
-            ctx.lineTo(x + 15, y + 30);
-            ctx.lineTo(x + 5, y + 20);
-            ctx.closePath();
-            ctx.fill();
-
-            // Detalles metálicos
-            ctx.strokeStyle = '#aaccff';
+            // Detalles de alas (rayas)
+            ctx.strokeStyle = '#ffffff';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(x, y - 25);
+            ctx.moveTo(x - 20, y + 5);
+            ctx.lineTo(x - 35, y + 15);
+            ctx.moveTo(x + 20, y + 5);
+            ctx.lineTo(x + 35, y + 15);
+            ctx.stroke();
+
+            // Cuerpo principal con degradado metálico
+            const bodyGrad = ctx.createLinearGradient(x - 15, y, x + 15, y);
+            bodyGrad.addColorStop(0, '#2244aa');
+            bodyGrad.addColorStop(0.2, '#4477dd');
+            bodyGrad.addColorStop(0.5, '#5588ee');
+            bodyGrad.addColorStop(0.8, '#4477dd');
+            bodyGrad.addColorStop(1, '#2244aa');
+            ctx.fillStyle = bodyGrad;
+            ctx.beginPath();
+            ctx.moveTo(x, y - 35);
+            ctx.lineTo(x + 14, y + 8);
+            ctx.lineTo(x + 12, y + 28);
+            ctx.lineTo(x - 12, y + 28);
+            ctx.lineTo(x - 14, y + 8);
+            ctx.closePath();
+            ctx.fill();
+
+            // Borde del fuselaje
+            ctx.strokeStyle = '#aaccff';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Cola mejorada
+            ctx.fillStyle = '#1a3377';
+            ctx.beginPath();
+            ctx.moveTo(x - 6, y + 22);
+            ctx.lineTo(x - 18, y + 35);
+            ctx.lineTo(x + 18, y + 35);
+            ctx.lineTo(x + 6, y + 22);
+            ctx.closePath();
+            ctx.fill();
+
+            // Aleta vertical
+            ctx.fillStyle = '#2244aa';
+            ctx.beginPath();
+            ctx.moveTo(x, y + 15);
+            ctx.lineTo(x - 3, y + 30);
+            ctx.lineTo(x + 3, y + 30);
+            ctx.closePath();
+            ctx.fill();
+
+            // Cabina con reflejo
+            const cabinGrad = ctx.createRadialGradient(x - 2, y - 14, 0, x, y - 10, 12);
+            cabinGrad.addColorStop(0, '#aaffff');
+            cabinGrad.addColorStop(0.5, '#44dddd');
+            cabinGrad.addColorStop(1, '#227777');
+            ctx.fillStyle = cabinGrad;
+            ctx.beginPath();
+            ctx.ellipse(x, y - 10, 7, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Reflejo en cabina
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.beginPath();
+            ctx.ellipse(x - 2, y - 14, 3, 5, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Marco de cabina
+            ctx.strokeStyle = '#334466';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(x, y - 10, 7, 12, 0, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Punta del avión
+            ctx.fillStyle = '#ff4400';
+            ctx.beginPath();
+            ctx.moveTo(x, y - 35);
+            ctx.lineTo(x - 4, y - 28);
+            ctx.lineTo(x + 4, y - 28);
+            ctx.closePath();
+            ctx.fill();
+
+            // Cañones mejorados
+            ctx.fillStyle = '#222222';
+            ctx.fillRect(x - 22, y + 2, 6, 18);
+            ctx.fillRect(x + 16, y + 2, 6, 18);
+
+            // Destellos en cañones
+            ctx.fillStyle = '#666666';
+            ctx.fillRect(x - 21, y + 3, 2, 16);
+            ctx.fillRect(x + 17, y + 3, 2, 16);
+
+            // Bocas de cañón
+            ctx.fillStyle = '#ffaa00';
+            ctx.beginPath();
+            ctx.arc(x - 19, y + 2, 3, 0, Math.PI * 2);
+            ctx.arc(x + 19, y + 2, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Línea decorativa central
+            ctx.strokeStyle = '#ffcc00';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x, y - 30);
             ctx.lineTo(x, y + 20);
             ctx.stroke();
 
-            // Cañones
-            ctx.fillStyle = '#333333';
-            ctx.fillRect(x - 18, y + 5, 4, 12);
-            ctx.fillRect(x + 14, y + 5, 4, 12);
+            // Marcas en las alas
+            ctx.fillStyle = '#ff0000';
+            ctx.beginPath();
+            ctx.arc(x - 30, y + 12, 4, 0, Math.PI * 2);
+            ctx.arc(x + 30, y + 12, 4, 0, Math.PI * 2);
+            ctx.fill();
 
             ctx.restore();
         }
@@ -714,84 +835,251 @@
 
             const type = pterosaurTypes[enemy.type];
             const wingFlap = Math.sin(Date.now() / 100 + enemy.id) * 15;
+            const wingRotation = Math.sin(Date.now() / 100 + enemy.id) * 0.3;
 
-            // Alas
-            ctx.fillStyle = type.color;
+            // Sombra del pterosaurio
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
             ctx.beginPath();
-            // Ala izquierda
-            ctx.moveTo(-5, 0);
-            ctx.quadraticCurveTo(-type.width/2 - 10, -10 + wingFlap, -type.width/2, 5 + wingFlap);
-            ctx.quadraticCurveTo(-type.width/3, 10, -5, 5);
+            ctx.ellipse(5, 35, type.width/2, 10, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Ala derecha
+            // Crear degradado para las alas
+            const wingGradLeft = ctx.createLinearGradient(-type.width/2, 0, -5, 0);
+            wingGradLeft.addColorStop(0, shadeColor(type.color, -40));
+            wingGradLeft.addColorStop(0.5, type.color);
+            wingGradLeft.addColorStop(1, shadeColor(type.color, 20));
+
+            const wingGradRight = ctx.createLinearGradient(5, 0, type.width/2, 0);
+            wingGradRight.addColorStop(0, shadeColor(type.color, 20));
+            wingGradRight.addColorStop(0.5, type.color);
+            wingGradRight.addColorStop(1, shadeColor(type.color, -40));
+
+            // Ala izquierda con membrana
+            ctx.fillStyle = wingGradLeft;
             ctx.beginPath();
-            ctx.moveTo(5, 0);
-            ctx.quadraticCurveTo(type.width/2 + 10, -10 + wingFlap, type.width/2, 5 + wingFlap);
-            ctx.quadraticCurveTo(type.width/3, 10, 5, 5);
+            ctx.moveTo(-5, -5);
+            ctx.bezierCurveTo(-type.width/3, -15 + wingFlap, -type.width/2 - 5, -10 + wingFlap, -type.width/2, 5 + wingFlap);
+            ctx.bezierCurveTo(-type.width/2 + 5, 12 + wingFlap/2, -type.width/3, 15, -5, 8);
+            ctx.closePath();
             ctx.fill();
 
-            // Cuerpo
-            ctx.fillStyle = type.color;
+            // Venas del ala izquierda
+            ctx.strokeStyle = shadeColor(type.color, -30);
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(-8, 0);
+            ctx.quadraticCurveTo(-type.width/3, 0 + wingFlap/2, -type.width/2 + 5, 5 + wingFlap);
+            ctx.moveTo(-10, -2);
+            ctx.quadraticCurveTo(-type.width/4, -8 + wingFlap/2, -type.width/2 + 10, -5 + wingFlap);
+            ctx.stroke();
+
+            // Ala derecha con membrana
+            ctx.fillStyle = wingGradRight;
+            ctx.beginPath();
+            ctx.moveTo(5, -5);
+            ctx.bezierCurveTo(type.width/3, -15 + wingFlap, type.width/2 + 5, -10 + wingFlap, type.width/2, 5 + wingFlap);
+            ctx.bezierCurveTo(type.width/2 - 5, 12 + wingFlap/2, type.width/3, 15, 5, 8);
+            ctx.closePath();
+            ctx.fill();
+
+            // Venas del ala derecha
+            ctx.beginPath();
+            ctx.moveTo(8, 0);
+            ctx.quadraticCurveTo(type.width/3, 0 + wingFlap/2, type.width/2 - 5, 5 + wingFlap);
+            ctx.moveTo(10, -2);
+            ctx.quadraticCurveTo(type.width/4, -8 + wingFlap/2, type.width/2 - 10, -5 + wingFlap);
+            ctx.stroke();
+
+            // Cuerpo con degradado
+            const bodyGrad = ctx.createRadialGradient(0, 5, 0, 0, 5, 18);
+            bodyGrad.addColorStop(0, shadeColor(type.color, 30));
+            bodyGrad.addColorStop(0.5, type.color);
+            bodyGrad.addColorStop(1, shadeColor(type.color, -30));
+            ctx.fillStyle = bodyGrad;
             ctx.beginPath();
             ctx.ellipse(0, 5, 12, 18, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Cabeza y cresta
+            // Textura del cuerpo (escamas)
+            ctx.fillStyle = shadeColor(type.color, -20);
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.arc(-3 + (i % 2) * 6, -2 + i * 4, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Cuello
+            ctx.fillStyle = type.color;
+            ctx.beginPath();
+            ctx.moveTo(-6, -5);
+            ctx.quadraticCurveTo(-4, -12, 0, -15);
+            ctx.quadraticCurveTo(4, -12, 6, -5);
+            ctx.fill();
+
+            // Cabeza con degradado
+            const headGrad = ctx.createRadialGradient(-2, -17, 0, 0, -15, 12);
+            headGrad.addColorStop(0, shadeColor(type.color, 40));
+            headGrad.addColorStop(1, shadeColor(type.color, -20));
+            ctx.fillStyle = headGrad;
             ctx.beginPath();
             ctx.ellipse(0, -15, 8, 10, 0, 0, Math.PI * 2);
             ctx.fill();
 
             // Cresta (varía según tipo)
             if (enemy.type === 'pteranodon' || enemy.type === 'quetzalcoatlus') {
+                const crestaGrad = ctx.createLinearGradient(-20, -25, 0, -15);
+                crestaGrad.addColorStop(0, shadeColor(type.color, -40));
+                crestaGrad.addColorStop(1, type.color);
+                ctx.fillStyle = crestaGrad;
                 ctx.beginPath();
                 ctx.moveTo(0, -20);
-                ctx.lineTo(-20, -25);
-                ctx.lineTo(0, -15);
+                ctx.quadraticCurveTo(-10, -28, -25, -28);
+                ctx.quadraticCurveTo(-15, -22, 0, -15);
+                ctx.fill();
+                // Borde de la cresta
+                ctx.strokeStyle = shadeColor(type.color, 30);
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            } else if (enemy.type === 'dimorphodon') {
+                // Dimorphodon tiene cabeza más grande y colores vibrantes
+                ctx.fillStyle = '#ff4444';
+                ctx.beginPath();
+                ctx.ellipse(0, -16, 9, 11, 0, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (enemy.type === 'rhamphorhynchus') {
+                // Cola larga con rombo al final
+                ctx.strokeStyle = type.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, 23);
+                ctx.quadraticCurveTo(5, 35, 0, 45);
+                ctx.stroke();
+                ctx.fillStyle = type.color;
+                ctx.beginPath();
+                ctx.moveTo(0, 42);
+                ctx.lineTo(-6, 48);
+                ctx.lineTo(0, 55);
+                ctx.lineTo(6, 48);
+                ctx.closePath();
                 ctx.fill();
             }
 
-            // Pico
-            ctx.fillStyle = '#ffcc00';
+            // Pico con degradado metálico
+            const beakGrad = ctx.createLinearGradient(0, -15, 0, 8);
+            beakGrad.addColorStop(0, '#ffdd66');
+            beakGrad.addColorStop(0.5, '#ffaa22');
+            beakGrad.addColorStop(1, '#cc7700');
+            ctx.fillStyle = beakGrad;
             ctx.beginPath();
-            ctx.moveTo(0, -15);
-            ctx.lineTo(-3, -10);
-            ctx.lineTo(0, 5);
-            ctx.lineTo(3, -10);
+            ctx.moveTo(0, -12);
+            ctx.lineTo(-4, -8);
+            ctx.lineTo(-2, 8);
+            ctx.lineTo(0, 10);
+            ctx.lineTo(2, 8);
+            ctx.lineTo(4, -8);
             ctx.closePath();
             ctx.fill();
 
-            // Ojos
-            ctx.fillStyle = '#ff0000';
+            // Línea del pico
+            ctx.strokeStyle = '#996600';
+            ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.arc(-4, -18, 3, 0, Math.PI * 2);
-            ctx.arc(4, -18, 3, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.fillStyle = '#000000';
-            ctx.beginPath();
-            ctx.arc(-4, -18, 1.5, 0, Math.PI * 2);
-            ctx.arc(4, -18, 1.5, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Patas
-            ctx.strokeStyle = type.color;
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(-5, 20);
-            ctx.lineTo(-8, 30);
-            ctx.moveTo(5, 20);
-            ctx.lineTo(8, 30);
+            ctx.moveTo(0, -10);
+            ctx.lineTo(0, 8);
             ctx.stroke();
 
-            // Barra de vida
-            const healthPercent = enemy.health / pterosaurTypes[enemy.type].health;
-            ctx.fillStyle = '#330000';
-            ctx.fillRect(-20, -35, 40, 6);
-            ctx.fillStyle = healthPercent > 0.5 ? '#00ff00' : healthPercent > 0.25 ? '#ffff00' : '#ff0000';
-            ctx.fillRect(-20, -35, 40 * healthPercent, 6);
+            // Fosas nasales
+            ctx.fillStyle = '#663300';
+            ctx.beginPath();
+            ctx.ellipse(-2, -6, 1, 1.5, 0, 0, Math.PI * 2);
+            ctx.ellipse(2, -6, 1, 1.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Ojos con brillo
+            ctx.fillStyle = '#ffff00';
+            ctx.shadowColor = '#ff0000';
+            ctx.shadowBlur = 5;
+            ctx.beginPath();
+            ctx.arc(-4, -18, 3.5, 0, Math.PI * 2);
+            ctx.arc(4, -18, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Pupilas verticales (reptil)
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.ellipse(-4, -18, 1, 2.5, 0, 0, Math.PI * 2);
+            ctx.ellipse(4, -18, 1, 2.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Reflejo en los ojos
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.beginPath();
+            ctx.arc(-5, -19, 1, 0, Math.PI * 2);
+            ctx.arc(3, -19, 1, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Patas con garras
+            ctx.strokeStyle = shadeColor(type.color, -20);
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(-5, 20);
+            ctx.lineTo(-8, 28);
+            ctx.moveTo(5, 20);
+            ctx.lineTo(8, 28);
+            ctx.stroke();
+
+            // Garras
+            ctx.strokeStyle = '#333333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(-10, 27);
+            ctx.lineTo(-8, 32);
+            ctx.moveTo(-8, 28);
+            ctx.lineTo(-6, 33);
+            ctx.moveTo(10, 27);
+            ctx.lineTo(8, 32);
+            ctx.moveTo(8, 28);
+            ctx.lineTo(6, 33);
+            ctx.stroke();
+
+            // Barra de vida mejorada
+            const healthPercent = enemy.health / (pterosaurTypes[enemy.type].health * levelConfig[level].multiplier);
+            const barWidth = 40;
+            ctx.fillStyle = '#220000';
+            ctx.fillRect(-barWidth/2 - 1, -38, barWidth + 2, 8);
+
+            const healthGrad = ctx.createLinearGradient(-barWidth/2, -37, -barWidth/2 + barWidth * healthPercent, -37);
+            if (healthPercent > 0.5) {
+                healthGrad.addColorStop(0, '#00ff00');
+                healthGrad.addColorStop(1, '#00aa00');
+            } else if (healthPercent > 0.25) {
+                healthGrad.addColorStop(0, '#ffff00');
+                healthGrad.addColorStop(1, '#ffaa00');
+            } else {
+                healthGrad.addColorStop(0, '#ff0000');
+                healthGrad.addColorStop(1, '#aa0000');
+            }
+            ctx.fillStyle = healthGrad;
+            ctx.fillRect(-barWidth/2, -37, barWidth * healthPercent, 6);
+
+            // Borde de la barra
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(-barWidth/2 - 1, -38, barWidth + 2, 8);
 
             ctx.restore();
+        }
+
+        // Función auxiliar para oscurecer/aclarar colores
+        function shadeColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = Math.min(255, Math.max(0, (num >> 16) + amt));
+            const G = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amt));
+            const B = Math.min(255, Math.max(0, (num & 0x0000FF) + amt));
+            return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
         }
 
         // ===== DIBUJAR HUEVO CON ALAS =====
@@ -800,39 +1088,152 @@
             ctx.translate(powerup.x, powerup.y);
 
             const wingFlap = Math.sin(Date.now() / 80) * 20;
+            const pulse = Math.sin(Date.now() / 200) * 0.1 + 1;
+            const glow = Math.sin(Date.now() / 150) * 0.3 + 0.7;
 
-            // Alas pequeñas
-            ctx.fillStyle = '#ffffff';
+            // Aura mágica exterior
+            const auraGrad = ctx.createRadialGradient(0, 0, 15, 0, 0, 40 * pulse);
+            auraGrad.addColorStop(0, 'rgba(255, 200, 100, 0.4)');
+            auraGrad.addColorStop(0.5, 'rgba(255, 150, 50, 0.2)');
+            auraGrad.addColorStop(1, 'rgba(255, 100, 0, 0)');
+            ctx.fillStyle = auraGrad;
             ctx.beginPath();
-            ctx.ellipse(-18, wingFlap/3, 15, 8, -0.3 + wingFlap/50, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(18, wingFlap/3, 15, 8, 0.3 - wingFlap/50, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Huevo
-            ctx.fillStyle = '#ffeecc';
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 15, 20, 0, 0, Math.PI * 2);
+            ctx.arc(0, 0, 40 * pulse, 0, Math.PI * 2);
             ctx.fill();
 
-            // Brillo
-            ctx.fillStyle = '#ffffff';
+            // Partículas de brillo
+            for (let i = 0; i < 6; i++) {
+                const angle = (Date.now() / 1000 + i * Math.PI / 3) % (Math.PI * 2);
+                const dist = 25 + Math.sin(Date.now() / 300 + i) * 5;
+                ctx.fillStyle = `rgba(255, 255, 200, ${0.5 + Math.random() * 0.3})`;
+                ctx.beginPath();
+                ctx.arc(Math.cos(angle) * dist, Math.sin(angle) * dist, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Alas con plumas detalladas
+            // Ala izquierda
+            const wingGradL = ctx.createLinearGradient(-30, 0, -10, 0);
+            wingGradL.addColorStop(0, '#ffffff');
+            wingGradL.addColorStop(0.5, '#ffeedd');
+            wingGradL.addColorStop(1, '#ffddcc');
+
+            ctx.fillStyle = wingGradL;
             ctx.beginPath();
-            ctx.ellipse(-5, -8, 4, 6, -0.3, 0, Math.PI * 2);
+            ctx.moveTo(-8, -5);
+            ctx.quadraticCurveTo(-20, -15 + wingFlap/2, -28, -5 + wingFlap/3);
+            ctx.quadraticCurveTo(-30, 5 + wingFlap/3, -25, 10 + wingFlap/4);
+            ctx.quadraticCurveTo(-18, 8, -8, 5);
+            ctx.closePath();
             ctx.fill();
 
-            // Cruz de vida
-            ctx.fillStyle = '#ff0000';
-            ctx.fillRect(-3, -10, 6, 20);
-            ctx.fillRect(-10, -3, 20, 6);
+            // Plumas del ala izquierda
+            ctx.strokeStyle = '#ddccbb';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(-12, 0);
+            ctx.quadraticCurveTo(-18, -3 + wingFlap/4, -25, 0 + wingFlap/3);
+            ctx.moveTo(-14, 3);
+            ctx.quadraticCurveTo(-20, 3 + wingFlap/4, -26, 6 + wingFlap/3);
+            ctx.stroke();
 
-            // Aura
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            // Ala derecha
+            const wingGradR = ctx.createLinearGradient(10, 0, 30, 0);
+            wingGradR.addColorStop(0, '#ffddcc');
+            wingGradR.addColorStop(0.5, '#ffeedd');
+            wingGradR.addColorStop(1, '#ffffff');
+
+            ctx.fillStyle = wingGradR;
+            ctx.beginPath();
+            ctx.moveTo(8, -5);
+            ctx.quadraticCurveTo(20, -15 + wingFlap/2, 28, -5 + wingFlap/3);
+            ctx.quadraticCurveTo(30, 5 + wingFlap/3, 25, 10 + wingFlap/4);
+            ctx.quadraticCurveTo(18, 8, 8, 5);
+            ctx.closePath();
+            ctx.fill();
+
+            // Plumas del ala derecha
+            ctx.beginPath();
+            ctx.moveTo(12, 0);
+            ctx.quadraticCurveTo(18, -3 + wingFlap/4, 25, 0 + wingFlap/3);
+            ctx.moveTo(14, 3);
+            ctx.quadraticCurveTo(20, 3 + wingFlap/4, 26, 6 + wingFlap/3);
+            ctx.stroke();
+
+            // Sombra del huevo
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            ctx.beginPath();
+            ctx.ellipse(2, 22, 12, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Huevo con degradado
+            const eggGrad = ctx.createRadialGradient(-5, -8, 0, 0, 0, 22);
+            eggGrad.addColorStop(0, '#fffef8');
+            eggGrad.addColorStop(0.3, '#fff5e6');
+            eggGrad.addColorStop(0.7, '#ffe4cc');
+            eggGrad.addColorStop(1, '#ffd4aa');
+            ctx.fillStyle = eggGrad;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 16, 22, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Borde del huevo
+            ctx.strokeStyle = '#ddbb99';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Manchas del huevo (estilo prehistórico)
+            ctx.fillStyle = 'rgba(200, 150, 100, 0.3)';
+            ctx.beginPath();
+            ctx.ellipse(6, 5, 4, 3, 0.3, 0, Math.PI * 2);
+            ctx.ellipse(-4, 10, 3, 2, -0.2, 0, Math.PI * 2);
+            ctx.ellipse(3, -8, 2, 3, 0.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Brillo principal
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.beginPath();
+            ctx.ellipse(-6, -10, 5, 7, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Brillo secundario
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.beginPath();
+            ctx.ellipse(-3, -4, 2, 3, -0.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cruz de vida con degradado y brillo
+            const crossGrad = ctx.createLinearGradient(-10, 0, 10, 0);
+            crossGrad.addColorStop(0, '#cc0000');
+            crossGrad.addColorStop(0.5, '#ff4444');
+            crossGrad.addColorStop(1, '#cc0000');
+            ctx.fillStyle = crossGrad;
+            ctx.shadowColor = '#ff0000';
+            ctx.shadowBlur = 8 * glow;
+            ctx.beginPath();
+            ctx.roundRect(-4, -12, 8, 24, 2);
+            ctx.roundRect(-12, -4, 24, 8, 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Centro brillante de la cruz
+            ctx.fillStyle = '#ff8888';
+            ctx.beginPath();
+            ctx.arc(0, 0, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Anillo exterior mágico
+            ctx.strokeStyle = `rgba(255, 200, 100, ${glow * 0.6})`;
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.arc(0, 0, 25 + Math.sin(Date.now() / 200) * 5, 0, Math.PI * 2);
+            ctx.arc(0, 0, 28 + Math.sin(Date.now() / 200) * 3, 0, Math.PI * 2);
             ctx.stroke();
+
+            // Texto flotante
+            ctx.fillStyle = `rgba(0, 255, 0, ${glow})`;
+            ctx.font = '8px Press Start 2P';
+            ctx.textAlign = 'center';
+            ctx.fillText('+30', 0, -30);
 
             ctx.restore();
         }
@@ -843,20 +1244,155 @@
             ctx.translate(powerup.x, powerup.y);
 
             const pulse = Math.sin(Date.now() / 150) * 3;
+            const rotation = Date.now() / 2000;
+            const glow = Math.sin(Date.now() / 200) * 0.3 + 0.7;
+            const weaponColor = weapons[powerup.weaponType].color;
 
-            // Caja
-            ctx.fillStyle = '#444488';
-            ctx.fillRect(-18 - pulse, -15 - pulse, 36 + pulse*2, 30 + pulse*2);
+            // Aura del arma
+            const auraGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, 35 + pulse);
+            auraGrad.addColorStop(0, weaponColor + '66');
+            auraGrad.addColorStop(0.5, weaponColor + '33');
+            auraGrad.addColorStop(1, weaponColor + '00');
+            ctx.fillStyle = auraGrad;
+            ctx.beginPath();
+            ctx.arc(0, 0, 35 + pulse, 0, Math.PI * 2);
+            ctx.fill();
 
-            ctx.strokeStyle = '#8888ff';
+            // Anillos giratorios
+            ctx.strokeStyle = weaponColor + '88';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, 0, 28, rotation, rotation + Math.PI);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(0, 0, 28, rotation + Math.PI, rotation + Math.PI * 2);
+            ctx.stroke();
+
+            // Caja con degradado metálico
+            const boxGrad = ctx.createLinearGradient(-20, -18, 20, 18);
+            boxGrad.addColorStop(0, '#2a2a5a');
+            boxGrad.addColorStop(0.3, '#4a4a8a');
+            boxGrad.addColorStop(0.5, '#5a5aaa');
+            boxGrad.addColorStop(0.7, '#4a4a8a');
+            boxGrad.addColorStop(1, '#2a2a5a');
+            ctx.fillStyle = boxGrad;
+
+            // Caja redondeada
+            ctx.beginPath();
+            ctx.roundRect(-20 - pulse/2, -17 - pulse/2, 40 + pulse, 34 + pulse, 5);
+            ctx.fill();
+
+            // Borde brillante
+            ctx.strokeStyle = weaponColor;
             ctx.lineWidth = 3;
-            ctx.strokeRect(-18 - pulse, -15 - pulse, 36 + pulse*2, 30 + pulse*2);
+            ctx.shadowColor = weaponColor;
+            ctx.shadowBlur = 10 * glow;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
 
-            // Símbolo de arma
-            ctx.fillStyle = weapons[powerup.weaponType].color;
-            ctx.font = '16px Press Start 2P';
+            // Decoración de esquinas
+            ctx.fillStyle = weaponColor;
+            ctx.beginPath();
+            ctx.arc(-15, -12, 3, 0, Math.PI * 2);
+            ctx.arc(15, -12, 3, 0, Math.PI * 2);
+            ctx.arc(-15, 12, 3, 0, Math.PI * 2);
+            ctx.arc(15, 12, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Icono del arma según tipo
+            ctx.fillStyle = weaponColor;
+            ctx.shadowColor = weaponColor;
+            ctx.shadowBlur = 8;
+
+            switch(powerup.weaponType) {
+                case 'double':
+                    // Dos balas
+                    ctx.fillRect(-8, -8, 4, 16);
+                    ctx.fillRect(4, -8, 4, 16);
+                    break;
+                case 'spread':
+                    // Tres líneas en abanico
+                    ctx.save();
+                    for (let angle = -25; angle <= 25; angle += 25) {
+                        ctx.rotate(angle * Math.PI / 180);
+                        ctx.fillRect(-2, -12, 4, 12);
+                        ctx.rotate(-angle * Math.PI / 180);
+                    }
+                    ctx.restore();
+                    break;
+                case 'laser':
+                    // Rayo láser
+                    ctx.fillRect(-2, -12, 4, 24);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(-1, -10, 2, 20);
+                    break;
+                case 'missile':
+                    // Forma de misil
+                    ctx.beginPath();
+                    ctx.moveTo(0, -12);
+                    ctx.lineTo(6, 4);
+                    ctx.lineTo(4, 8);
+                    ctx.lineTo(-4, 8);
+                    ctx.lineTo(-6, 4);
+                    ctx.closePath();
+                    ctx.fill();
+                    break;
+                case 'plasma':
+                    // Esfera de plasma
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+                case 'flame':
+                    // Llama
+                    ctx.beginPath();
+                    ctx.moveTo(-6, 10);
+                    ctx.quadraticCurveTo(-8, 0, 0, -12);
+                    ctx.quadraticCurveTo(8, 0, 6, 10);
+                    ctx.quadraticCurveTo(0, 5, -6, 10);
+                    ctx.fill();
+                    break;
+                case 'lightning':
+                    // Rayo
+                    ctx.beginPath();
+                    ctx.moveTo(0, -12);
+                    ctx.lineTo(-6, -2);
+                    ctx.lineTo(0, -2);
+                    ctx.lineTo(-3, 12);
+                    ctx.lineTo(6, 0);
+                    ctx.lineTo(0, 0);
+                    ctx.closePath();
+                    ctx.fill();
+                    break;
+                case 'bomb':
+                    // Bomba
+                    ctx.beginPath();
+                    ctx.arc(0, 2, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#ffaa00';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -8);
+                    ctx.lineTo(0, -14);
+                    ctx.stroke();
+                    break;
+                default:
+                    // W genérico
+                    ctx.font = '14px Press Start 2P';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('W', 0, 5);
+            }
+            ctx.shadowBlur = 0;
+
+            // Nombre del arma
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '6px Press Start 2P';
             ctx.textAlign = 'center';
-            ctx.fillText('W', 0, 6);
+            ctx.fillText(weapons[powerup.weaponType].name.substring(0, 8), 0, 28);
 
             ctx.restore();
         }
@@ -867,91 +1403,330 @@
             ctx.translate(bullet.x, bullet.y);
 
             if (bullet.type === 'missile') {
-                // Misil
-                ctx.fillStyle = '#ff6600';
+                // Estela del misil
+                ctx.fillStyle = 'rgba(255, 100, 0, 0.3)';
                 ctx.beginPath();
-                ctx.moveTo(0, -12);
-                ctx.lineTo(5, 5);
-                ctx.lineTo(3, 8);
-                ctx.lineTo(-3, 8);
-                ctx.lineTo(-5, 5);
+                ctx.moveTo(-3, 10);
+                ctx.lineTo(0, 30);
+                ctx.lineTo(3, 10);
+                ctx.fill();
+
+                // Cuerpo del misil con degradado metálico
+                const missileGrad = ctx.createLinearGradient(-6, 0, 6, 0);
+                missileGrad.addColorStop(0, '#aa4400');
+                missileGrad.addColorStop(0.3, '#ff6600');
+                missileGrad.addColorStop(0.5, '#ffaa44');
+                missileGrad.addColorStop(0.7, '#ff6600');
+                missileGrad.addColorStop(1, '#aa4400');
+                ctx.fillStyle = missileGrad;
+                ctx.beginPath();
+                ctx.moveTo(0, -14);
+                ctx.lineTo(6, 4);
+                ctx.lineTo(5, 10);
+                ctx.lineTo(-5, 10);
+                ctx.lineTo(-6, 4);
                 ctx.closePath();
                 ctx.fill();
 
-                // Llama del misil
-                ctx.fillStyle = '#ffff00';
+                // Punta roja
+                ctx.fillStyle = '#ff0000';
                 ctx.beginPath();
-                ctx.moveTo(-2, 8);
-                ctx.lineTo(0, 15 + Math.random() * 5);
-                ctx.lineTo(2, 8);
+                ctx.moveTo(0, -14);
+                ctx.lineTo(-3, -8);
+                ctx.lineTo(3, -8);
+                ctx.closePath();
                 ctx.fill();
+
+                // Aletas
+                ctx.fillStyle = '#666666';
+                ctx.beginPath();
+                ctx.moveTo(-5, 6);
+                ctx.lineTo(-10, 12);
+                ctx.lineTo(-5, 10);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(5, 6);
+                ctx.lineTo(10, 12);
+                ctx.lineTo(5, 10);
+                ctx.fill();
+
+                // Llama del misil con capas
+                const flameHeight = 12 + Math.random() * 8;
+                ctx.fillStyle = '#ff3300';
+                ctx.beginPath();
+                ctx.moveTo(-4, 10);
+                ctx.quadraticCurveTo(-3, 15, 0, 10 + flameHeight);
+                ctx.quadraticCurveTo(3, 15, 4, 10);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffaa00';
+                ctx.beginPath();
+                ctx.moveTo(-2, 10);
+                ctx.quadraticCurveTo(-1, 13, 0, 10 + flameHeight * 0.7);
+                ctx.quadraticCurveTo(1, 13, 2, 10);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(-1, 10);
+                ctx.lineTo(0, 10 + flameHeight * 0.4);
+                ctx.lineTo(1, 10);
+                ctx.fill();
+
             } else if (bullet.type === 'laser') {
-                // Láser
-                ctx.fillStyle = '#ff00ff';
+                // Aura del láser
+                ctx.fillStyle = 'rgba(255, 0, 255, 0.2)';
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 8, 20, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Rayo principal con degradado
+                const laserGrad = ctx.createLinearGradient(-3, 0, 3, 0);
+                laserGrad.addColorStop(0, '#aa00aa');
+                laserGrad.addColorStop(0.3, '#ff00ff');
+                laserGrad.addColorStop(0.5, '#ff88ff');
+                laserGrad.addColorStop(0.7, '#ff00ff');
+                laserGrad.addColorStop(1, '#aa00aa');
+                ctx.fillStyle = laserGrad;
                 ctx.shadowColor = '#ff00ff';
-                ctx.shadowBlur = 10;
-                ctx.fillRect(-2, -15, 4, 30);
+                ctx.shadowBlur = 15;
+                ctx.fillRect(-3, -18, 6, 36);
+
+                // Núcleo brillante
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(-1, -16, 2, 32);
+
+                // Partículas de energía
+                for (let i = 0; i < 3; i++) {
+                    ctx.fillStyle = `rgba(255, 200, 255, ${0.5 + Math.random() * 0.3})`;
+                    ctx.beginPath();
+                    ctx.arc((Math.random() - 0.5) * 8, (Math.random() - 0.5) * 30, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
             } else if (bullet.type === 'plasma') {
-                // Plasma - esfera brillante que atraviesa
-                ctx.fillStyle = '#00ffaa';
+                // Estela de plasma
+                ctx.fillStyle = 'rgba(0, 255, 170, 0.2)';
+                for (let i = 1; i <= 3; i++) {
+                    ctx.beginPath();
+                    ctx.arc(0, i * 8, 10 - i * 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Aura exterior
+                const plasmaAura = ctx.createRadialGradient(0, 0, 4, 0, 0, 14);
+                plasmaAura.addColorStop(0, 'rgba(0, 255, 170, 0.8)');
+                plasmaAura.addColorStop(0.5, 'rgba(0, 255, 170, 0.4)');
+                plasmaAura.addColorStop(1, 'rgba(0, 255, 170, 0)');
+                ctx.fillStyle = plasmaAura;
+                ctx.beginPath();
+                ctx.arc(0, 0, 14, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Esfera principal
+                const plasmaGrad = ctx.createRadialGradient(-2, -2, 0, 0, 0, 10);
+                plasmaGrad.addColorStop(0, '#ffffff');
+                plasmaGrad.addColorStop(0.3, '#aaffee');
+                plasmaGrad.addColorStop(0.6, '#00ffaa');
+                plasmaGrad.addColorStop(1, '#00aa66');
+                ctx.fillStyle = plasmaGrad;
                 ctx.shadowColor = '#00ffaa';
                 ctx.shadowBlur = 20;
                 ctx.beginPath();
-                ctx.arc(0, 0, 8, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#ffffff';
-                ctx.beginPath();
-                ctx.arc(0, 0, 4, 0, Math.PI * 2);
-                ctx.fill();
-            } else if (bullet.type === 'flame') {
-                // Llama
-                const size = bullet.life ? bullet.life / 2 : 5;
-                ctx.fillStyle = `rgba(255, ${50 + Math.random() * 100}, 0, ${bullet.life ? bullet.life / 20 : 1})`;
-                ctx.beginPath();
-                ctx.arc(0, 0, size, 0, Math.PI * 2);
-                ctx.fill();
-            } else if (bullet.type === 'lightning') {
-                // Rayo
-                ctx.strokeStyle = '#aaaaff';
-                ctx.shadowColor = '#aaaaff';
-                ctx.shadowBlur = 15;
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.moveTo(0, -20);
-                for (let i = 0; i < 4; i++) {
-                    ctx.lineTo((Math.random() - 0.5) * 15, -20 + i * 10);
-                }
-                ctx.lineTo(0, 20);
-                ctx.stroke();
-            } else if (bullet.type === 'bomb') {
-                // Bomba
-                ctx.fillStyle = '#333333';
-                ctx.beginPath();
                 ctx.arc(0, 0, 10, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.fillStyle = '#ff0000';
+
+                // Anillo de energía
+                ctx.strokeStyle = '#88ffdd';
+                ctx.lineWidth = 2;
+                const ringPhase = Date.now() / 100;
                 ctx.beginPath();
-                ctx.arc(0, -5, 4, 0, Math.PI * 2);
+                ctx.arc(0, 0, 12, ringPhase, ringPhase + Math.PI);
+                ctx.stroke();
+
+            } else if (bullet.type === 'flame') {
+                // Llama mejorada con capas
+                const size = bullet.life ? bullet.life / 2 : 5;
+                const alpha = bullet.life ? bullet.life / 20 : 1;
+
+                // Partículas de humo
+                ctx.fillStyle = `rgba(100, 50, 0, ${alpha * 0.3})`;
+                ctx.beginPath();
+                ctx.arc((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4, size * 0.6, 0, Math.PI * 2);
                 ctx.fill();
-                // Mecha
-                ctx.strokeStyle = '#ffaa00';
+
+                // Llama exterior
+                ctx.fillStyle = `rgba(255, 50, 0, ${alpha * 0.6})`;
+                ctx.beginPath();
+                ctx.arc(0, 0, size * 1.2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Llama media
+                ctx.fillStyle = `rgba(255, ${100 + Math.random() * 50}, 0, ${alpha * 0.8})`;
+                ctx.beginPath();
+                ctx.arc(0, 0, size * 0.9, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Núcleo amarillo
+                ctx.fillStyle = `rgba(255, 255, ${100 + Math.random() * 100}, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(0, 0, size * 0.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Centro blanco
+                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(0, 0, size * 0.2, 0, Math.PI * 2);
+                ctx.fill();
+
+            } else if (bullet.type === 'lightning') {
+                // Aura eléctrica
+                ctx.fillStyle = 'rgba(150, 150, 255, 0.2)';
+                ctx.beginPath();
+                ctx.arc(0, 0, 15, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Rayo principal con múltiples ramas
+                ctx.strokeStyle = '#ffffff';
+                ctx.shadowColor = '#aaaaff';
+                ctx.shadowBlur = 20;
+                ctx.lineWidth = 4;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                let px = 0, py = -25;
+                ctx.moveTo(px, py);
+                for (let i = 0; i < 6; i++) {
+                    px += (Math.random() - 0.5) * 20;
+                    py += 8;
+                    ctx.lineTo(px, py);
+
+                    // Ramificaciones
+                    if (Math.random() > 0.5) {
+                        ctx.moveTo(px, py);
+                        ctx.lineTo(px + (Math.random() - 0.5) * 20, py + 5);
+                        ctx.moveTo(px, py);
+                    }
+                }
+                ctx.lineTo((Math.random() - 0.5) * 5, 25);
+                ctx.stroke();
+
+                // Rayo secundario más fino
+                ctx.strokeStyle = '#aaaaff';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.moveTo(0, -10);
-                ctx.lineTo(0, -15);
+                ctx.moveTo(0, -25);
+                for (let i = 0; i < 5; i++) {
+                    ctx.lineTo((Math.random() - 0.5) * 12, -25 + i * 12);
+                }
+                ctx.lineTo(0, 25);
                 ctx.stroke();
-                // Chispa
-                ctx.fillStyle = '#ffff00';
+
+                // Chispas
+                ctx.fillStyle = '#ffffff';
+                for (let i = 0; i < 4; i++) {
+                    ctx.beginPath();
+                    ctx.arc((Math.random() - 0.5) * 20, (Math.random() - 0.5) * 40, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+            } else if (bullet.type === 'bomb') {
+                // Sombra de la bomba
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
                 ctx.beginPath();
-                ctx.arc(0, -15, 3 + Math.random() * 2, 0, Math.PI * 2);
+                ctx.ellipse(2, 14, 8, 4, 0, 0, Math.PI * 2);
                 ctx.fill();
-            } else {
-                // Bala normal
-                ctx.fillStyle = bullet.color || '#ffff00';
-                ctx.shadowColor = bullet.color || '#ffff00';
-                ctx.shadowBlur = 5;
+
+                // Cuerpo de la bomba con degradado metálico
+                const bombGrad = ctx.createRadialGradient(-3, -3, 0, 0, 0, 12);
+                bombGrad.addColorStop(0, '#666666');
+                bombGrad.addColorStop(0.3, '#444444');
+                bombGrad.addColorStop(0.7, '#222222');
+                bombGrad.addColorStop(1, '#111111');
+                ctx.fillStyle = bombGrad;
                 ctx.beginPath();
-                ctx.ellipse(0, 0, 3, 8, 0, 0, Math.PI * 2);
+                ctx.arc(0, 0, 12, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Brillo metálico
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.beginPath();
+                ctx.ellipse(-4, -4, 4, 3, -0.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Banda roja de peligro
+                ctx.fillStyle = '#cc0000';
+                ctx.beginPath();
+                ctx.arc(0, 0, 12, -0.3, 0.3);
+                ctx.arc(0, 0, 8, 0.3, -0.3, true);
+                ctx.closePath();
+                ctx.fill();
+
+                // Tapa superior
+                ctx.fillStyle = '#555555';
+                ctx.beginPath();
+                ctx.ellipse(0, -10, 5, 3, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Mecha
+                ctx.strokeStyle = '#886644';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(0, -12);
+                ctx.quadraticCurveTo(3, -16, 0, -20);
+                ctx.stroke();
+
+                // Chispa animada
+                const sparkSize = 4 + Math.random() * 4;
+                ctx.fillStyle = '#ffff00';
+                ctx.shadowColor = '#ffaa00';
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(0, -20, sparkSize, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Partículas de la chispa
+                ctx.fillStyle = '#ff6600';
+                for (let i = 0; i < 3; i++) {
+                    ctx.beginPath();
+                    ctx.arc((Math.random() - 0.5) * 10, -20 + (Math.random() - 0.5) * 6, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+            } else {
+                // Bala normal mejorada
+                const bulletColor = bullet.color || '#ffff00';
+
+                // Estela
+                ctx.fillStyle = bulletColor + '44';
+                ctx.beginPath();
+                ctx.moveTo(-2, 0);
+                ctx.lineTo(0, 15);
+                ctx.lineTo(2, 0);
+                ctx.fill();
+
+                // Aura
+                ctx.fillStyle = bulletColor + '33';
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 6, 12, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Bala principal con degradado
+                const bulletGrad = ctx.createRadialGradient(-1, -3, 0, 0, 0, 8);
+                bulletGrad.addColorStop(0, '#ffffff');
+                bulletGrad.addColorStop(0.3, shadeColor(bulletColor, 30));
+                bulletGrad.addColorStop(0.7, bulletColor);
+                bulletGrad.addColorStop(1, shadeColor(bulletColor, -30));
+                ctx.fillStyle = bulletGrad;
+                ctx.shadowColor = bulletColor;
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 4, 10, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Núcleo brillante
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.ellipse(-1, -3, 1.5, 3, 0, 0, Math.PI * 2);
                 ctx.fill();
             }
 
@@ -1013,99 +1788,304 @@
 
             const wingFlap = Math.sin(Date.now() / 150 + enemy.id) * 25;
             const rage = enemy.state === 'rage';
-            const baseColor = rage ? '#ff0000' : '#8B0000';
+            const pulse = Math.sin(Date.now() / 200) * 0.2 + 1;
+            const baseColor = rage ? '#cc0000' : '#8B0000';
 
-            // Aura de poder
+            // Sombra gigante del boss
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.beginPath();
+            ctx.ellipse(10, 80, 100, 30, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Aura de poder épica
             if (rage) {
-                ctx.fillStyle = 'rgba(255, 0, 0, 0.2)';
+                // Aura exterior pulsante
+                const auraGrad = ctx.createRadialGradient(0, 0, 50, 0, 0, 150 * pulse);
+                auraGrad.addColorStop(0, 'rgba(255, 0, 0, 0.3)');
+                auraGrad.addColorStop(0.5, 'rgba(255, 100, 0, 0.2)');
+                auraGrad.addColorStop(1, 'rgba(255, 0, 0, 0)');
+                ctx.fillStyle = auraGrad;
                 ctx.beginPath();
-                ctx.arc(0, 0, 120 + Math.sin(Date.now() / 100) * 10, 0, Math.PI * 2);
+                ctx.arc(0, 0, 150 * pulse, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Partículas de energía
+                for (let i = 0; i < 8; i++) {
+                    const angle = (Date.now() / 500 + i * Math.PI / 4) % (Math.PI * 2);
+                    const dist = 80 + Math.sin(Date.now() / 200 + i) * 20;
+                    ctx.fillStyle = `rgba(255, ${150 + Math.random() * 100}, 0, ${0.5 + Math.random() * 0.3})`;
+                    ctx.beginPath();
+                    ctx.arc(Math.cos(angle) * dist, Math.sin(angle) * dist, 5 + Math.random() * 5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            } else {
+                // Aura normal oscura
+                const auraGrad = ctx.createRadialGradient(0, 0, 30, 0, 0, 100);
+                auraGrad.addColorStop(0, 'rgba(139, 0, 0, 0.2)');
+                auraGrad.addColorStop(1, 'rgba(139, 0, 0, 0)');
+                ctx.fillStyle = auraGrad;
+                ctx.beginPath();
+                ctx.arc(0, 0, 100, 0, Math.PI * 2);
                 ctx.fill();
             }
 
-            // Alas gigantes
-            ctx.fillStyle = baseColor;
-            ctx.beginPath();
-            ctx.moveTo(-10, 0);
-            ctx.quadraticCurveTo(-100, -30 + wingFlap, -90, 20 + wingFlap);
-            ctx.quadraticCurveTo(-50, 30, -10, 10);
-            ctx.fill();
+            // Alas gigantes con degradado y membrana
+            const wingGradL = ctx.createLinearGradient(-110, 0, -10, 0);
+            wingGradL.addColorStop(0, shadeColor(baseColor, -40));
+            wingGradL.addColorStop(0.3, baseColor);
+            wingGradL.addColorStop(0.7, shadeColor(baseColor, 20));
+            wingGradL.addColorStop(1, shadeColor(baseColor, 40));
 
-            ctx.beginPath();
-            ctx.moveTo(10, 0);
-            ctx.quadraticCurveTo(100, -30 + wingFlap, 90, 20 + wingFlap);
-            ctx.quadraticCurveTo(50, 30, 10, 10);
-            ctx.fill();
+            const wingGradR = ctx.createLinearGradient(10, 0, 110, 0);
+            wingGradR.addColorStop(0, shadeColor(baseColor, 40));
+            wingGradR.addColorStop(0.3, shadeColor(baseColor, 20));
+            wingGradR.addColorStop(0.7, baseColor);
+            wingGradR.addColorStop(1, shadeColor(baseColor, -40));
 
-            // Cuerpo masivo
-            ctx.fillStyle = baseColor;
+            // Ala izquierda
+            ctx.fillStyle = wingGradL;
             ctx.beginPath();
-            ctx.ellipse(0, 10, 30, 50, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Cabeza con cresta enorme
-            ctx.beginPath();
-            ctx.ellipse(0, -40, 20, 25, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Cresta gigante
-            ctx.fillStyle = rage ? '#ff4400' : '#660000';
-            ctx.beginPath();
-            ctx.moveTo(0, -55);
-            ctx.lineTo(-50, -70);
-            ctx.lineTo(-10, -50);
+            ctx.moveTo(-12, -10);
+            ctx.bezierCurveTo(-50, -40 + wingFlap, -110, -35 + wingFlap, -100, 15 + wingFlap);
+            ctx.bezierCurveTo(-90, 35 + wingFlap, -50, 40, -12, 15);
             ctx.closePath();
             ctx.fill();
 
-            // Pico enorme
-            ctx.fillStyle = '#ffaa00';
+            // Venas del ala izquierda
+            ctx.strokeStyle = shadeColor(baseColor, -50);
+            ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(0, -40);
-            ctx.lineTo(-8, -25);
-            ctx.lineTo(0, 20);
-            ctx.lineTo(8, -25);
+            ctx.moveTo(-15, 0);
+            ctx.quadraticCurveTo(-50, -10 + wingFlap/2, -90, 10 + wingFlap);
+            ctx.moveTo(-20, -5);
+            ctx.quadraticCurveTo(-60, -25 + wingFlap/2, -95, -5 + wingFlap);
+            ctx.moveTo(-15, 8);
+            ctx.quadraticCurveTo(-45, 15 + wingFlap/2, -80, 25 + wingFlap);
+            ctx.stroke();
+
+            // Ala derecha
+            ctx.fillStyle = wingGradR;
+            ctx.beginPath();
+            ctx.moveTo(12, -10);
+            ctx.bezierCurveTo(50, -40 + wingFlap, 110, -35 + wingFlap, 100, 15 + wingFlap);
+            ctx.bezierCurveTo(90, 35 + wingFlap, 50, 40, 12, 15);
             ctx.closePath();
             ctx.fill();
 
-            // Ojos rojos brillantes
-            ctx.fillStyle = rage ? '#ffff00' : '#ff0000';
-            ctx.shadowColor = ctx.fillStyle;
-            ctx.shadowBlur = 15;
+            // Venas del ala derecha
             ctx.beginPath();
-            ctx.arc(-10, -45, 6, 0, Math.PI * 2);
-            ctx.arc(10, -45, 6, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
+            ctx.moveTo(15, 0);
+            ctx.quadraticCurveTo(50, -10 + wingFlap/2, 90, 10 + wingFlap);
+            ctx.moveTo(20, -5);
+            ctx.quadraticCurveTo(60, -25 + wingFlap/2, 95, -5 + wingFlap);
+            ctx.moveTo(15, 8);
+            ctx.quadraticCurveTo(45, 15 + wingFlap/2, 80, 25 + wingFlap);
+            ctx.stroke();
 
-            // Pupilas
-            ctx.fillStyle = '#000';
+            // Cuerpo masivo con degradado
+            const bodyGrad = ctx.createRadialGradient(-5, 0, 0, 0, 10, 55);
+            bodyGrad.addColorStop(0, shadeColor(baseColor, 50));
+            bodyGrad.addColorStop(0.4, shadeColor(baseColor, 20));
+            bodyGrad.addColorStop(0.7, baseColor);
+            bodyGrad.addColorStop(1, shadeColor(baseColor, -30));
+            ctx.fillStyle = bodyGrad;
             ctx.beginPath();
-            ctx.arc(-10, -45, 3, 0, Math.PI * 2);
-            ctx.arc(10, -45, 3, 0, Math.PI * 2);
+            ctx.ellipse(0, 10, 32, 55, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Garras
-            ctx.strokeStyle = '#440000';
-            ctx.lineWidth = 5;
-            for (let i = -1; i <= 1; i++) {
-                ctx.beginPath();
-                ctx.moveTo(i * 15, 55);
-                ctx.lineTo(i * 20, 75);
-                ctx.stroke();
+            // Escamas del cuerpo
+            ctx.fillStyle = shadeColor(baseColor, -25);
+            for (let row = 0; row < 6; row++) {
+                for (let col = -1; col <= 1; col++) {
+                    ctx.beginPath();
+                    ctx.arc(col * 10, -20 + row * 12, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
             }
 
-            // Barra de vida del boss (grande)
-            const healthPercent = enemy.health / enemy.maxHealth;
-            ctx.fillStyle = '#330000';
-            ctx.fillRect(-80, -90, 160, 12);
-            ctx.fillStyle = healthPercent > 0.5 ? '#00ff00' : healthPercent > 0.25 ? '#ffff00' : '#ff0000';
-            ctx.fillRect(-80, -90, 160 * healthPercent, 12);
+            // Cuello musculoso
+            const neckGrad = ctx.createLinearGradient(-15, -30, 15, -30);
+            neckGrad.addColorStop(0, shadeColor(baseColor, -20));
+            neckGrad.addColorStop(0.5, shadeColor(baseColor, 30));
+            neckGrad.addColorStop(1, shadeColor(baseColor, -20));
+            ctx.fillStyle = neckGrad;
+            ctx.beginPath();
+            ctx.moveTo(-15, -15);
+            ctx.quadraticCurveTo(-12, -35, 0, -45);
+            ctx.quadraticCurveTo(12, -35, 15, -15);
+            ctx.closePath();
+            ctx.fill();
 
-            // Nombre del boss
+            // Cabeza con degradado
+            const headGrad = ctx.createRadialGradient(-5, -50, 0, 0, -45, 30);
+            headGrad.addColorStop(0, shadeColor(baseColor, 50));
+            headGrad.addColorStop(0.5, shadeColor(baseColor, 20));
+            headGrad.addColorStop(1, shadeColor(baseColor, -20));
+            ctx.fillStyle = headGrad;
+            ctx.beginPath();
+            ctx.ellipse(0, -45, 22, 28, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cresta gigante con degradado
+            const crestaGrad = ctx.createLinearGradient(-60, -80, 0, -50);
+            crestaGrad.addColorStop(0, rage ? '#ff2200' : '#550000');
+            crestaGrad.addColorStop(0.5, rage ? '#ff6600' : '#770000');
+            crestaGrad.addColorStop(1, rage ? '#ffaa00' : baseColor);
+            ctx.fillStyle = crestaGrad;
+            ctx.beginPath();
+            ctx.moveTo(0, -60);
+            ctx.quadraticCurveTo(-30, -85, -60, -80);
+            ctx.quadraticCurveTo(-40, -70, -20, -60);
+            ctx.quadraticCurveTo(-10, -55, 0, -50);
+            ctx.closePath();
+            ctx.fill();
+
+            // Borde brillante de la cresta
+            ctx.strokeStyle = rage ? '#ffff00' : '#aa4400';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, -60);
+            ctx.quadraticCurveTo(-30, -85, -60, -80);
+            ctx.stroke();
+
+            // Pico enorme con degradado metálico
+            const beakGrad = ctx.createLinearGradient(0, -50, 0, 25);
+            beakGrad.addColorStop(0, '#ffcc44');
+            beakGrad.addColorStop(0.3, '#ffaa00');
+            beakGrad.addColorStop(0.7, '#cc7700');
+            beakGrad.addColorStop(1, '#995500');
+            ctx.fillStyle = beakGrad;
+            ctx.beginPath();
+            ctx.moveTo(0, -45);
+            ctx.lineTo(-10, -30);
+            ctx.lineTo(-6, 20);
+            ctx.lineTo(0, 28);
+            ctx.lineTo(6, 20);
+            ctx.lineTo(10, -30);
+            ctx.closePath();
+            ctx.fill();
+
+            // Dientes del pico
             ctx.fillStyle = '#ffffff';
-            ctx.font = '8px Press Start 2P';
+            for (let i = 0; i < 4; i++) {
+                ctx.beginPath();
+                ctx.moveTo(-6 + i * 3, -10);
+                ctx.lineTo(-5 + i * 3, -5);
+                ctx.lineTo(-4 + i * 3, -10);
+                ctx.fill();
+            }
+
+            // Ojos épicos con brillo
+            const eyeGlow = rage ? '#ffff00' : '#ff3300';
+            ctx.fillStyle = eyeGlow;
+            ctx.shadowColor = eyeGlow;
+            ctx.shadowBlur = rage ? 25 : 15;
+            ctx.beginPath();
+            ctx.arc(-12, -50, 7, 0, Math.PI * 2);
+            ctx.arc(12, -50, 7, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Iris
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = rage ? '#ff6600' : '#ff0000';
+            ctx.beginPath();
+            ctx.arc(-12, -50, 5, 0, Math.PI * 2);
+            ctx.arc(12, -50, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Pupilas verticales
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.ellipse(-12, -50, 1.5, 4, 0, 0, Math.PI * 2);
+            ctx.ellipse(12, -50, 1.5, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Reflejos en ojos
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.beginPath();
+            ctx.arc(-14, -52, 2, 0, Math.PI * 2);
+            ctx.arc(10, -52, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Patas musculosas con garras
+            ctx.fillStyle = shadeColor(baseColor, -10);
+            ctx.beginPath();
+            ctx.moveTo(-15, 55);
+            ctx.quadraticCurveTo(-20, 65, -18, 75);
+            ctx.lineTo(-12, 75);
+            ctx.quadraticCurveTo(-10, 65, -8, 55);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(15, 55);
+            ctx.quadraticCurveTo(20, 65, 18, 75);
+            ctx.lineTo(12, 75);
+            ctx.quadraticCurveTo(10, 65, 8, 55);
+            ctx.closePath();
+            ctx.fill();
+
+            // Garras afiladas
+            ctx.fillStyle = '#222222';
+            for (let leg = -1; leg <= 1; leg += 2) {
+                for (let claw = -1; claw <= 1; claw++) {
+                    ctx.beginPath();
+                    ctx.moveTo(leg * 15 + claw * 4, 75);
+                    ctx.lineTo(leg * 15 + claw * 6, 85);
+                    ctx.lineTo(leg * 15 + claw * 2, 75);
+                    ctx.fill();
+                }
+            }
+
+            // Barra de vida del boss (grande y épica)
+            const healthPercent = enemy.health / enemy.maxHealth;
+            const barWidth = 160;
+
+            // Fondo de la barra
+            ctx.fillStyle = '#110000';
+            ctx.fillRect(-barWidth/2 - 2, -105, barWidth + 4, 16);
+
+            // Marco decorativo
+            ctx.strokeStyle = '#ffaa00';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(-barWidth/2 - 2, -105, barWidth + 4, 16);
+
+            // Degradado de vida
+            const healthGrad = ctx.createLinearGradient(-barWidth/2, -103, -barWidth/2 + barWidth * healthPercent, -103);
+            if (healthPercent > 0.5) {
+                healthGrad.addColorStop(0, '#00ff00');
+                healthGrad.addColorStop(0.5, '#44ff44');
+                healthGrad.addColorStop(1, '#00aa00');
+            } else if (healthPercent > 0.25) {
+                healthGrad.addColorStop(0, '#ffff00');
+                healthGrad.addColorStop(0.5, '#ffdd00');
+                healthGrad.addColorStop(1, '#ffaa00');
+            } else {
+                healthGrad.addColorStop(0, '#ff0000');
+                healthGrad.addColorStop(0.5, '#ff4444');
+                healthGrad.addColorStop(1, '#aa0000');
+            }
+            ctx.fillStyle = healthGrad;
+            ctx.fillRect(-barWidth/2, -103, barWidth * healthPercent, 12);
+
+            // Brillo en la barra de vida
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.fillRect(-barWidth/2, -103, barWidth * healthPercent, 4);
+
+            // Nombre del boss con sombra
+            ctx.fillStyle = '#000000';
+            ctx.font = '10px Press Start 2P';
             ctx.textAlign = 'center';
-            ctx.fillText('MEGA QUETZALCOATLUS', 0, -100);
+            ctx.fillText('MEGA QUETZALCOATLUS', 2, -112);
+            ctx.fillStyle = rage ? '#ff4400' : '#ffffff';
+            ctx.fillText('MEGA QUETZALCOATLUS', 0, -114);
+
+            // Indicador de rage
+            if (rage) {
+                ctx.fillStyle = '#ff0000';
+                ctx.font = '8px Press Start 2P';
+                ctx.fillText('¡ENFURECIDO!', 0, -125);
+            }
 
             ctx.restore();
         }
@@ -1301,16 +2281,100 @@
 
         // ===== CREAR EXPLOSIÓN =====
         function createExplosion(x, y, size) {
-            for (let i = 0; i < 20; i++) {
+            // Anillo de onda expansiva
+            particles.push({
+                x: x,
+                y: y,
+                vx: 0,
+                vy: 0,
+                life: 15,
+                maxLife: 15,
+                size: 5,
+                type: 'shockwave',
+                maxSize: size * 8
+            });
+
+            // Flash central brillante
+            particles.push({
+                x: x,
+                y: y,
+                vx: 0,
+                vy: 0,
+                life: 10,
+                maxLife: 10,
+                size: size * 3,
+                type: 'flash',
+                color: '#ffffff'
+            });
+
+            // Partículas de fuego principales
+            const fireColors = ['#ff0000', '#ff3300', '#ff6600', '#ff9900', '#ffcc00', '#ffff00'];
+            for (let i = 0; i < 25; i++) {
+                const angle = (Math.PI * 2 / 25) * i + Math.random() * 0.3;
+                const speed = 3 + Math.random() * 8;
                 particles.push({
                     x: x,
                     y: y,
-                    vx: (Math.random() - 0.5) * 10,
-                    vy: (Math.random() - 0.5) * 10,
-                    life: 30,
-                    maxLife: 30,
-                    size: Math.random() * size + 2,
-                    color: ['#ff0000', '#ff6600', '#ffff00', '#ffffff'][Math.floor(Math.random() * 4)]
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 25 + Math.random() * 15,
+                    maxLife: 40,
+                    size: Math.random() * size + 3,
+                    type: 'fire',
+                    color: fireColors[Math.floor(Math.random() * fireColors.length)]
+                });
+            }
+
+            // Chispas rápidas
+            for (let i = 0; i < 15; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 8 + Math.random() * 12;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 15 + Math.random() * 10,
+                    maxLife: 25,
+                    size: 2 + Math.random() * 2,
+                    type: 'spark',
+                    color: '#ffff88'
+                });
+            }
+
+            // Humo oscuro
+            for (let i = 0; i < 12; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 1 + Math.random() * 3;
+                particles.push({
+                    x: x + (Math.random() - 0.5) * 20,
+                    y: y + (Math.random() - 0.5) * 20,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 1, // Humo sube
+                    life: 40 + Math.random() * 20,
+                    maxLife: 60,
+                    size: size * 0.8 + Math.random() * size,
+                    type: 'smoke',
+                    color: '#333333'
+                });
+            }
+
+            // Escombros
+            for (let i = 0; i < 8; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 2 + Math.random() * 5;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed + 2, // Caen
+                    life: 30 + Math.random() * 20,
+                    maxLife: 50,
+                    size: 3 + Math.random() * 4,
+                    type: 'debris',
+                    color: '#664422',
+                    rotation: Math.random() * Math.PI * 2,
+                    rotationSpeed: (Math.random() - 0.5) * 0.3
                 });
             }
         }
@@ -1339,34 +2403,148 @@
 
         // ===== DIBUJAR FONDO =====
         function drawBackground() {
-            // Cielo degradado
+            // Cielo degradado dinámico según nivel
             const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            gradient.addColorStop(0, '#000033');
-            gradient.addColorStop(0.5, '#003366');
-            gradient.addColorStop(1, '#006699');
+            if (level <= 2) {
+                // Cielo diurno
+                gradient.addColorStop(0, '#1a1a4a');
+                gradient.addColorStop(0.3, '#2a3a6a');
+                gradient.addColorStop(0.6, '#4a6a9a');
+                gradient.addColorStop(1, '#6a9aca');
+            } else if (level <= 4) {
+                // Atardecer
+                gradient.addColorStop(0, '#1a0a2a');
+                gradient.addColorStop(0.3, '#4a2a4a');
+                gradient.addColorStop(0.6, '#8a4a3a');
+                gradient.addColorStop(1, '#ca7a4a');
+            } else if (level <= 6) {
+                // Tormenta
+                gradient.addColorStop(0, '#0a0a1a');
+                gradient.addColorStop(0.3, '#1a1a3a');
+                gradient.addColorStop(0.6, '#2a2a4a');
+                gradient.addColorStop(1, '#3a3a5a');
+            } else {
+                // Boss - cielo rojo
+                gradient.addColorStop(0, '#1a0000');
+                gradient.addColorStop(0.3, '#3a0a0a');
+                gradient.addColorStop(0.6, '#5a1a1a');
+                gradient.addColorStop(1, '#2a0a0a');
+            }
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Nubes
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            // Sol/Luna según nivel
+            if (level <= 2) {
+                // Sol
+                ctx.fillStyle = '#ffdd44';
+                ctx.shadowColor = '#ffaa00';
+                ctx.shadowBlur = 30;
+                ctx.beginPath();
+                ctx.arc(500, 80, 40, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            } else if (level >= 7) {
+                // Luna roja sangrienta
+                ctx.fillStyle = '#aa2222';
+                ctx.shadowColor = '#ff0000';
+                ctx.shadowBlur = 40;
+                ctx.beginPath();
+                ctx.arc(500, 100, 50, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#1a0000';
+                ctx.beginPath();
+                ctx.arc(520, 90, 45, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            // Montañas de fondo (parallax lento)
+            const mountainOffset = (Date.now() / 100) % canvas.width;
+            ctx.fillStyle = 'rgba(30, 30, 60, 0.5)';
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+            for (let x = 0; x <= canvas.width + 100; x += 50) {
+                const h = 150 + Math.sin((x + mountainOffset * 0.2) * 0.02) * 80;
+                ctx.lineTo(x, canvas.height - h);
+            }
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.fill();
+
+            // Montañas más cercanas
+            ctx.fillStyle = 'rgba(20, 40, 50, 0.6)';
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+            for (let x = 0; x <= canvas.width + 100; x += 40) {
+                const h = 100 + Math.sin((x + mountainOffset * 0.5) * 0.03) * 60;
+                ctx.lineTo(x, canvas.height - h);
+            }
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.fill();
+
+            // Nubes mejoradas con sombra
             for (const cloud of clouds) {
+                // Sombra de nube
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                ctx.beginPath();
+                ctx.ellipse(cloud.x + 5, cloud.y + 5, cloud.width/2, cloud.height/2, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Nube principal
+                const cloudGrad = ctx.createRadialGradient(cloud.x, cloud.y, 0, cloud.x, cloud.y, cloud.width/2);
+                cloudGrad.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+                cloudGrad.addColorStop(1, 'rgba(255, 255, 255, 0.1)');
+                ctx.fillStyle = cloudGrad;
                 ctx.beginPath();
                 ctx.ellipse(cloud.x, cloud.y, cloud.width/2, cloud.height/2, 0, 0, Math.PI * 2);
+                ctx.ellipse(cloud.x - cloud.width/4, cloud.y + 5, cloud.width/3, cloud.height/2.5, 0, 0, Math.PI * 2);
+                ctx.ellipse(cloud.x + cloud.width/4, cloud.y - 5, cloud.width/3, cloud.height/2.5, 0, 0, Math.PI * 2);
                 ctx.fill();
             }
 
-            // Estrellas (solo en la parte superior)
+            // Estrellas brillantes
             ctx.fillStyle = '#ffffff';
-            for (let i = 0; i < 50; i++) {
-                const x = (i * 137) % canvas.width;
-                const y = (i * 89) % (canvas.height / 2);
-                const twinkle = Math.sin(Date.now() / 500 + i) * 0.5 + 0.5;
-                ctx.globalAlpha = twinkle;
+            for (let i = 0; i < 80; i++) {
+                const x = (i * 137 + 23) % canvas.width;
+                const y = (i * 89 + 17) % (canvas.height / 2);
+                const twinkle = Math.sin(Date.now() / 300 + i * 0.7) * 0.5 + 0.5;
+                const size = (i % 3 === 0) ? 2 : 1;
+                ctx.globalAlpha = twinkle * 0.8;
                 ctx.beginPath();
-                ctx.arc(x, y, 1, 0, Math.PI * 2);
+                ctx.arc(x, y, size, 0, Math.PI * 2);
                 ctx.fill();
+
+                // Algunas estrellas con brillo
+                if (i % 7 === 0 && twinkle > 0.7) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(x - 4, y);
+                    ctx.lineTo(x + 4, y);
+                    ctx.moveTo(x, y - 4);
+                    ctx.lineTo(x, y + 4);
+                    ctx.stroke();
+                }
             }
             ctx.globalAlpha = 1;
+
+            // Rayos en niveles de tormenta
+            if (level >= 5 && level < 7 && Math.random() < 0.005) {
+                ctx.strokeStyle = '#aaaaff';
+                ctx.lineWidth = 2;
+                ctx.shadowColor = '#ffffff';
+                ctx.shadowBlur = 20;
+                ctx.beginPath();
+                let lx = Math.random() * canvas.width;
+                let ly = 0;
+                ctx.moveTo(lx, ly);
+                for (let i = 0; i < 8; i++) {
+                    lx += (Math.random() - 0.5) * 60;
+                    ly += 40 + Math.random() * 30;
+                    ctx.lineTo(lx, ly);
+                }
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
         }
 
         // ===== ACTUALIZAR JUEGO =====
@@ -1653,6 +2831,28 @@
                 p.y += p.vy || 0;
                 p.life--;
 
+                // Actualizar rotación para escombros
+                if (p.rotation !== undefined && p.rotationSpeed) {
+                    p.rotation += p.rotationSpeed;
+                }
+
+                // Agregar gravedad a escombros
+                if (p.type === 'debris') {
+                    p.vy += 0.2;
+                }
+
+                // Desacelerar humo
+                if (p.type === 'smoke') {
+                    p.vx *= 0.98;
+                    p.vy *= 0.98;
+                }
+
+                // Desacelerar fuego
+                if (p.type === 'fire') {
+                    p.vx *= 0.95;
+                    p.vy *= 0.95;
+                }
+
                 // Partículas dañinas del boss
                 if (p.damaging && !player.invulnerable) {
                     if (Math.abs(p.x - player.x) < 25 && Math.abs(p.y - player.y) < 30) {
@@ -1744,15 +2944,134 @@
             // Fondo
             drawBackground();
 
-            // Partículas (detrás de todo)
+            // Partículas mejoradas (detrás de todo)
             for (const p of particles) {
-                ctx.globalAlpha = p.life / p.maxLife;
-                ctx.fillStyle = p.color;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.save();
+                const lifeRatio = p.life / p.maxLife;
+
+                switch(p.type) {
+                    case 'shockwave':
+                        // Onda expansiva
+                        const currentSize = p.maxSize * (1 - lifeRatio);
+                        ctx.strokeStyle = `rgba(255, 200, 100, ${lifeRatio * 0.8})`;
+                        ctx.lineWidth = 4 * lifeRatio;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, currentSize, 0, Math.PI * 2);
+                        ctx.stroke();
+                        // Segunda onda más pequeña
+                        ctx.strokeStyle = `rgba(255, 255, 200, ${lifeRatio * 0.5})`;
+                        ctx.lineWidth = 2 * lifeRatio;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, currentSize * 0.7, 0, Math.PI * 2);
+                        ctx.stroke();
+                        break;
+
+                    case 'flash':
+                        // Flash brillante
+                        const flashGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * lifeRatio);
+                        flashGrad.addColorStop(0, `rgba(255, 255, 255, ${lifeRatio})`);
+                        flashGrad.addColorStop(0.3, `rgba(255, 255, 200, ${lifeRatio * 0.8})`);
+                        flashGrad.addColorStop(0.6, `rgba(255, 200, 100, ${lifeRatio * 0.5})`);
+                        flashGrad.addColorStop(1, 'rgba(255, 100, 0, 0)');
+                        ctx.fillStyle = flashGrad;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size * (2 - lifeRatio), 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+
+                    case 'fire':
+                        // Partícula de fuego con brillo
+                        ctx.globalAlpha = lifeRatio;
+                        const fireGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+                        fireGrad.addColorStop(0, '#ffffff');
+                        fireGrad.addColorStop(0.3, p.color);
+                        fireGrad.addColorStop(1, 'rgba(255, 0, 0, 0)');
+                        ctx.fillStyle = fireGrad;
+                        ctx.shadowColor = p.color;
+                        ctx.shadowBlur = 10;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size * (0.5 + lifeRatio * 0.5), 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+
+                    case 'spark':
+                        // Chispa con estela
+                        ctx.globalAlpha = lifeRatio;
+                        // Estela
+                        ctx.strokeStyle = p.color;
+                        ctx.lineWidth = p.size * 0.5;
+                        ctx.lineCap = 'round';
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p.x - p.vx * 2, p.y - p.vy * 2);
+                        ctx.stroke();
+                        // Punto brillante
+                        ctx.fillStyle = '#ffffff';
+                        ctx.shadowColor = p.color;
+                        ctx.shadowBlur = 5;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+
+                    case 'smoke':
+                        // Humo con degradado
+                        ctx.globalAlpha = lifeRatio * 0.6;
+                        const smokeGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * (2 - lifeRatio));
+                        smokeGrad.addColorStop(0, `rgba(80, 80, 80, ${lifeRatio * 0.5})`);
+                        smokeGrad.addColorStop(0.5, `rgba(50, 50, 50, ${lifeRatio * 0.3})`);
+                        smokeGrad.addColorStop(1, 'rgba(30, 30, 30, 0)');
+                        ctx.fillStyle = smokeGrad;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size * (2 - lifeRatio), 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+
+                    case 'debris':
+                        // Escombros giratorios
+                        ctx.globalAlpha = lifeRatio;
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate(p.rotation || 0);
+                        ctx.fillStyle = p.color;
+                        ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size * 0.6);
+                        // Brillo
+                        ctx.fillStyle = `rgba(255, 255, 200, ${lifeRatio * 0.3})`;
+                        ctx.fillRect(-p.size/2, -p.size/2, p.size * 0.3, p.size * 0.3);
+                        break;
+
+                    default:
+                        // Partícula genérica (para partículas dañinas del boss, etc.)
+                        ctx.globalAlpha = lifeRatio;
+                        if (p.damaging) {
+                            // Partículas del boss
+                            const bossGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+                            bossGrad.addColorStop(0, '#ffffff');
+                            bossGrad.addColorStop(0.3, p.color);
+                            bossGrad.addColorStop(1, 'rgba(255, 0, 0, 0)');
+                            ctx.fillStyle = bossGrad;
+                            ctx.shadowColor = p.color;
+                            ctx.shadowBlur = 15;
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                            ctx.fill();
+                            // Aura de peligro
+                            ctx.strokeStyle = '#ff0000';
+                            ctx.lineWidth = 2;
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, p.size + 3, 0, Math.PI * 2);
+                            ctx.stroke();
+                        } else {
+                            ctx.fillStyle = p.color;
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        break;
+                }
+                ctx.restore();
             }
             ctx.globalAlpha = 1;
+            ctx.shadowBlur = 0;
 
             // Powerups
             for (const powerup of powerups) {
