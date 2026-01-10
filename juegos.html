@@ -519,6 +519,29 @@
                 <a href="leo-racing.html" class="play-btn">▶ JUGAR</a>
             </div>
         </article>
+
+        <!-- Juego 5: Stranger Things LEOGORGON -->
+        <article class="game-card">
+            <div class="game-cover">
+                <canvas id="cover5" width="380" height="280"></canvas>
+                <div class="new-badge">NEW!</div>
+                <div class="rating-badge">TODOS</div>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title" style="color: #ff0000; text-shadow: 0 0 10px #ff0000, 2px 2px 0 #8b0000;">STRANGER THINGS: LEOGORGON</h2>
+                <p class="game-description">
+                    Eres el Demogorgon. Explora la casa de Hawkins,
+                    devora a los niños y enfréntate a Eleven.
+                    ¡Cuidado con sus poderes psíquicos!
+                </p>
+                <div class="game-meta">
+                    <span class="meta-item">👹 DEMOGORGON</span>
+                    <span class="meta-item">👧 15 VICTIMAS</span>
+                    <span class="meta-item">🔮 BOSS: ELEVEN</span>
+                </div>
+                <a href="stranger-things-leogorgon.html" class="play-btn" style="background: linear-gradient(180deg, #8b0000 0%, #5a0000 100%); border-color: #ff0000;">▶ ENTRAR AL UPSIDE DOWN</a>
+            </div>
+        </article>
     </main>
 
     <!-- High Scores decorativo -->
@@ -1236,16 +1259,266 @@
             });
         }
 
+        // ===== PORTADA 5: Stranger Things LEOGORGON =====
+        function drawCover5() {
+            const canvas = document.getElementById('cover5');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            // Fondo del Upside Down
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#0a0000');
+            gradient.addColorStop(0.3, '#1a0a0a');
+            gradient.addColorStop(0.7, '#0a0a1a');
+            gradient.addColorStop(1, '#000000');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const time = Date.now() / 1000;
+
+            // Partículas flotantes del Upside Down
+            ctx.fillStyle = 'rgba(139, 0, 0, 0.4)';
+            for (let i = 0; i < 30; i++) {
+                const x = (Math.sin(time * 0.5 + i * 0.7) * 0.5 + 0.5) * canvas.width;
+                const y = (Math.cos(time * 0.3 + i * 0.5) * 0.5 + 0.5) * canvas.height;
+                ctx.beginPath();
+                ctx.arc(x, y, 1 + Math.sin(time + i) * 1, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Enredaderas/tentáculos en el fondo
+            ctx.strokeStyle = 'rgba(60, 20, 20, 0.6)';
+            ctx.lineWidth = 3;
+            for (let i = 0; i < 8; i++) {
+                ctx.beginPath();
+                const startX = i * 50;
+                ctx.moveTo(startX, 0);
+                for (let y = 0; y < 100; y += 10) {
+                    ctx.lineTo(startX + Math.sin(y * 0.1 + time + i) * 15, y);
+                }
+                ctx.stroke();
+            }
+
+            // Casa de Hawkins silueta
+            ctx.fillStyle = '#1a1a2a';
+            // Base de la casa
+            ctx.fillRect(20, 140, 120, 80);
+            // Techo
+            ctx.beginPath();
+            ctx.moveTo(10, 140);
+            ctx.lineTo(80, 90);
+            ctx.lineTo(150, 140);
+            ctx.closePath();
+            ctx.fill();
+            // Ventanas con luz roja
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+            ctx.fillRect(35, 160, 25, 25);
+            ctx.fillRect(100, 160, 25, 25);
+            ctx.fillRect(60, 105, 20, 20);
+
+            // DEMOGORGON (protagonista central)
+            const demoX = 220, demoY = 130;
+
+            // Cuerpo
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.ellipse(demoX, demoY + 20, 30, 45, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Brazos con movimiento
+            const armWave = Math.sin(time * 2) * 8;
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 12;
+            ctx.lineCap = 'round';
+
+            // Brazo izquierdo
+            ctx.beginPath();
+            ctx.moveTo(demoX - 25, demoY + 10);
+            ctx.quadraticCurveTo(demoX - 55, demoY - 5 + armWave, demoX - 65, demoY + 25);
+            ctx.stroke();
+
+            // Brazo derecho
+            ctx.beginPath();
+            ctx.moveTo(demoX + 25, demoY + 10);
+            ctx.quadraticCurveTo(demoX + 55, demoY - 5 - armWave, demoX + 65, demoY + 25);
+            ctx.stroke();
+
+            // Garras
+            ctx.strokeStyle = '#4a2a0a';
+            ctx.lineWidth = 3;
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(demoX - 65 + i * 6, demoY + 25);
+                ctx.lineTo(demoX - 72 + i * 6, demoY + 40);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(demoX + 65 - i * 6, demoY + 25);
+                ctx.lineTo(demoX + 72 - i * 6, demoY + 40);
+                ctx.stroke();
+            }
+
+            // Piernas
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 14;
+            ctx.beginPath();
+            ctx.moveTo(demoX - 15, demoY + 55);
+            ctx.lineTo(demoX - 22, demoY + 85);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(demoX + 15, demoY + 55);
+            ctx.lineTo(demoX + 22, demoY + 85);
+            ctx.stroke();
+
+            // Cabeza flor (pétalos)
+            const petalOpen = 1 + Math.sin(time * 1.5) * 0.15;
+
+            for (let i = 0; i < 5; i++) {
+                const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
+                const petalX = demoX + Math.cos(angle) * 28 * petalOpen;
+                const petalY = demoY - 45 + Math.sin(angle) * 28 * petalOpen;
+
+                ctx.fillStyle = '#a05030';
+                ctx.beginPath();
+                ctx.ellipse(petalX, petalY, 20, 35, angle + Math.PI / 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Detalles de los pétalos
+                ctx.strokeStyle = '#803020';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(demoX + Math.cos(angle) * 8, demoY - 45 + Math.sin(angle) * 8);
+                ctx.lineTo(petalX, petalY);
+                ctx.stroke();
+            }
+
+            // Boca interior
+            ctx.fillStyle = '#1a0505';
+            ctx.beginPath();
+            ctx.arc(demoX, demoY - 45, 18 * petalOpen, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Dientes en círculos
+            ctx.fillStyle = '#f0f0d0';
+            for (let ring = 0; ring < 3; ring++) {
+                const ringRadius = 12 - ring * 3;
+                for (let i = 0; i < 10; i++) {
+                    const angle = (i / 10) * Math.PI * 2;
+                    const toothX = demoX + Math.cos(angle) * ringRadius * petalOpen;
+                    const toothY = demoY - 45 + Math.sin(angle) * ringRadius * petalOpen;
+                    ctx.fillRect(toothX - 1, toothY - 2, 2, 4);
+                }
+            }
+
+            // Niños huyendo (siluetas pequeñas)
+            const kidColors = ['#3b82f6', '#ef4444', '#22c55e', '#f59e0b'];
+            for (let i = 0; i < 4; i++) {
+                const kx = 300 + i * 20;
+                const ky = 165 + Math.sin(time * 3 + i) * 3;
+
+                // Cuerpo
+                ctx.fillStyle = kidColors[i];
+                ctx.fillRect(kx - 5, ky, 10, 15);
+
+                // Cabeza
+                ctx.fillStyle = '#fcd9b6';
+                ctx.beginPath();
+                ctx.arc(kx, ky - 6, 6, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Piernas corriendo
+                ctx.fillStyle = '#1e40af';
+                const legOffset = Math.sin(time * 6 + i * 2) * 4;
+                ctx.fillRect(kx - 4, ky + 15, 3, 8);
+                ctx.fillRect(kx + 1 + legOffset, ky + 15, 3, 8);
+            }
+
+            // ELEVEN (boss) - a la derecha con aura
+            const elevenX = 340, elevenY = 100;
+
+            // Aura psíquica
+            ctx.strokeStyle = 'rgba(255, 0, 255, 0.4)';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 5; i++) {
+                const radius = 25 + i * 8 + Math.sin(time * 2 + i) * 5;
+                ctx.beginPath();
+                ctx.arc(elevenX, elevenY + 10, radius, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Cuerpo de Eleven
+            ctx.fillStyle = '#ffb6c1';
+            ctx.fillRect(elevenX - 10, elevenY + 5, 20, 25);
+
+            // Cabeza
+            ctx.fillStyle = '#fcd9b6';
+            ctx.beginPath();
+            ctx.arc(elevenX, elevenY - 8, 14, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Pelo corto
+            ctx.fillStyle = '#5c3317';
+            ctx.beginPath();
+            ctx.arc(elevenX, elevenY - 12, 12, Math.PI, 0);
+            ctx.fill();
+
+            // Ojos intensos
+            ctx.fillStyle = '#000';
+            ctx.fillRect(elevenX - 5, elevenY - 10, 4, 4);
+            ctx.fillRect(elevenX + 1, elevenY - 10, 4, 4);
+
+            // Sangre de la nariz (poder)
+            ctx.fillStyle = '#8b0000';
+            ctx.fillRect(elevenX - 1, elevenY - 3, 2, 6);
+
+            // Mano extendida con poder
+            ctx.fillStyle = '#fcd9b6';
+            ctx.fillRect(elevenX + 15, elevenY + 5, 15, 6);
+
+            // Energía de la mano
+            ctx.fillStyle = 'rgba(255, 0, 255, 0.6)';
+            ctx.beginPath();
+            ctx.arc(elevenX + 35, elevenY + 8, 8 + Math.sin(time * 4) * 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Piernas
+            ctx.fillStyle = '#4a4a4a';
+            ctx.fillRect(elevenX - 7, elevenY + 30, 5, 12);
+            ctx.fillRect(elevenX + 2, elevenY + 30, 5, 12);
+
+            // Título del juego - Estilo Stranger Things
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+            ctx.fillRect(0, 200, canvas.width, 80);
+
+            // Efecto de letras rojas brillantes
+            ctx.fillStyle = '#ff0000';
+            ctx.font = 'bold 11px "Press Start 2P", monospace';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#ff0000';
+            ctx.shadowBlur = 10;
+            ctx.fillText('STRANGER THINGS', canvas.width/2, 222);
+
+            ctx.font = 'bold 24px "Press Start 2P", monospace';
+            ctx.shadowBlur = 20;
+            ctx.fillText('LEOGORGON', canvas.width/2, 252);
+
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#ff6666';
+            ctx.font = '8px "Press Start 2P", monospace';
+            ctx.fillText('THE UPSIDE DOWN HUNGER', canvas.width/2, 272);
+        }
+
         // Dibujar portadas
         drawCover1();
         drawCover2();
         drawCover3();
         drawCover4();
+        drawCover5();
 
         // Redibujar periódicamente para animación sutil
         setInterval(() => {
             drawCover1();
             drawCover3();
+            drawCover5();
         }, 100);
     </script>
 </body>

@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stranger Things: LEOGORGON</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(180deg, #1a0000 0%, #0a0a1a 50%, #1a0000 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Press Start 2P', cursive;
+            overflow: hidden;
+        }
+
+        #gameContainer {
+            position: relative;
+            background: #000;
+            border: 6px solid #8b0000;
+            border-radius: 10px;
+            box-shadow:
+                0 0 50px rgba(139, 0, 0, 0.7),
+                0 0 100px rgba(139, 0, 0, 0.4),
+                inset 0 0 50px rgba(139, 0, 0, 0.2);
+        }
+
+        #gameCanvas {
+            display: block;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        #startScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #0a0000 0%, #1a0a0a 50%, #0a0000 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        .stranger-title {
+            font-size: 14px;
+            color: #ff0000;
+            text-shadow:
+                0 0 10px #ff0000,
+                0 0 20px #ff0000,
+                0 0 40px #ff0000;
+            letter-spacing: 8px;
+            margin-bottom: 5px;
+            animation: flicker 3s infinite;
+        }
+
+        .main-title {
+            font-size: 42px;
+            color: #ff0000;
+            text-shadow:
+                0 0 10px #ff0000,
+                0 0 20px #ff0000,
+                0 0 40px #ff0000,
+                4px 4px 0 #8b0000;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.5; }
+            94% { opacity: 1; }
+            95% { opacity: 0.7; }
+            96% { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .subtitle {
+            font-size: 10px;
+            color: #ff6666;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        #demogorgonPreview {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 20px;
+            image-rendering: pixelated;
+            animation: breathe 2s infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .story-text {
+            font-size: 8px;
+            color: #aaa;
+            text-align: center;
+            max-width: 600px;
+            line-height: 2;
+            margin-bottom: 20px;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+
+        .stat-box {
+            background: rgba(139, 0, 0, 0.3);
+            border: 2px solid #8b0000;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-title {
+            font-size: 8px;
+            color: #ff6666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            background: linear-gradient(180deg, #8b0000 0%, #5a0000 100%);
+            color: #fff;
+            border: 4px solid #ff0000;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 2px 2px 0 #000;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(180deg, #aa0000 0%, #8b0000 100%);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+            transform: scale(1.05);
+        }
+
+        .btn-back {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 10px 15px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #ff6666;
+            border: 2px solid #8b0000;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: #8b0000;
+            color: #fff;
+        }
+
+        .controls-info {
+            font-size: 8px;
+            color: #666;
+            margin-top: 15px;
+        }
+
+        #hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: none;
+            justify-content: space-between;
+            z-index: 5;
+        }
+
+        .hud-item {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #8b0000;
+            padding: 8px 12px;
+            font-size: 10px;
+            color: #ff0000;
+            text-shadow: 0 0 5px #ff0000;
+        }
+
+        #gameOverScreen, #victoryScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+
+        .game-over-title {
+            font-size: 32px;
+            color: #ff0000;
+            text-shadow: 0 0 20px #ff0000;
+            margin-bottom: 20px;
+        }
+
+        .victory-title {
+            font-size: 28px;
+            color: #ff0000;
+            text-shadow:
+                0 0 20px #ff0000,
+                0 0 40px #ff0000;
+            margin-bottom: 10px;
+        }
+
+        .final-score {
+            font-size: 14px;
+            color: #ff6666;
+            margin-bottom: 30px;
+        }
+
+        .minimap {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 150px;
+            height: 100px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #8b0000;
+            z-index: 5;
+            display: none;
+        }
+
+        /* Scanlines effect */
+        .scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.2) 0px,
+                rgba(0, 0, 0, 0.2) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 100;
+        }
+
+        .upside-down-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(139, 0, 0, 0.2) 100%);
+            z-index: 99;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="900" height="700"></canvas>
+        <div class="scanlines"></div>
+        <div class="upside-down-effect"></div>
+
+        <div id="startScreen">
+            <a href="juegos.html" class="btn-back">← VOLVER</a>
+            <div class="stranger-title">STRANGER THINGS</div>
+            <h1 class="main-title">LEOGORGON</h1>
+            <p class="subtitle">THE UPSIDE DOWN HUNGER</p>
+
+            <canvas id="demogorgonPreview" width="150" height="150"></canvas>
+
+            <p class="story-text">
+                ERES EL DEMOGORGON. HAS ESCAPADO DEL MUNDO DEL REVES Y TIENES HAMBRE.<br>
+                RECORRE LA CASA DE HAWKINS Y DEVORA A TODOS LOS NINOS.<br>
+                CUIDADO CON ELEVEN - TIENE PODERES QUE PUEDEN DESTRUIRTE.
+            </p>
+
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-title">VICTIMAS</div>
+                    <div class="stat-value">15</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">HABITACIONES</div>
+                    <div class="stat-value">15</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">BOSS FINAL</div>
+                    <div class="stat-value">ELEVEN</div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="startGame()">ENTRAR AL UPSIDE DOWN</button>
+
+            <p class="controls-info">
+                WASD o FLECHAS = MOVER | ESPACIO = ATACAR | M = MINIMAPA
+            </p>
+        </div>
+
+        <div id="hud">
+            <div class="hud-item">VIDA: <span id="healthDisplay">100</span></div>
+            <div class="hud-item">VICTIMAS: <span id="victimsDisplay">0</span>/15</div>
+            <div class="hud-item">HABITACION: <span id="roomDisplay">ENTRADA</span></div>
+        </div>
+
+        <canvas id="minimap" class="minimap" width="150" height="100"></canvas>
+
+        <div id="gameOverScreen">
+            <div class="game-over-title">ELEVEN TE DESTRUYO</div>
+            <p class="final-score">Victimas devoradas: <span id="finalVictims">0</span></p>
+            <button class="btn" onclick="restartGame()">REINTENTAR</button>
+            <a href="juegos.html" class="btn" style="text-decoration: none;">VOLVER</a>
+        </div>
+
+        <div id="victoryScreen">
+            <div class="victory-title">EL DEMOGORGON</div>
+            <div class="victory-title" style="font-size: 20px; color: #ff6666;">HA TRIUNFADO</div>
+            <p class="final-score" style="margin-top: 20px;">HAWKINS HA CAIDO<br>TODAS LAS VICTIMAS DEVORADAS</p>
+            <button class="btn" onclick="restartGame()">JUGAR DE NUEVO</button>
+            <a href="juegos.html" class="btn" style="text-decoration: none;">VOLVER</a>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const minimapCanvas = document.getElementById('minimap');
+        const minimapCtx = minimapCanvas.getContext('2d');
+
+        // Game state
+        let gameState = 'menu';
+        let health = 100;
+        let victimsEaten = 0;
+        let currentRoom = 0;
+        let showMinimap = false;
+
+        // Demogorgon sprite from image
+        const demogorgonImg = new Image();
+        demogorgonImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAYAAAA8AXHiAAAACXBIWXMAAAsTAAALEwEAmpwYAAAF8WlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDIgNzkuMTY0NDg4LCAyMDIwLzA3LzEwLTIyOjA2OjUzICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjIuMCAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDI0LTAxLTEwVDEyOjAwOjAwKzAxOjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyNC0wMS0xMFQxMjowMDowMCswMTowMCIgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyNC0wMS0xMFQxMjowMDowMCswMTowMCIgZGM6Zm9ybWF0PSJpbWFnZS9wbmciIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiIHBob3Rvc2hvcDpJQ0NQcm9maWxlPSJzUkdCIElFQzYxOTY2LTIuMSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIj4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0iY3JlYXRlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDowMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiIHN0RXZ0OndoZW49IjIwMjQtMDEtMTBUMTI6MDA6MDArMDE6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyMi4wIChXaW5kb3dzKSIvPiA8L3JkZjpTZXE+IDwveG1wTU06SGlzdG9yeT4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4=';
+
+        // Player (Demogorgon)
+        let player = {
+            x: 450,
+            y: 350,
+            width: 50,
+            height: 60,
+            speed: 4,
+            direction: 0,
+            attacking: false,
+            attackTimer: 0,
+            invincible: false,
+            invincibleTimer: 0,
+            frame: 0
+        };
+
+        // Room definitions (15 rooms)
+        const rooms = [
+            { name: 'ENTRADA', color: '#2a2a3a', connections: [1, 5] },
+            { name: 'SALON', color: '#3a2a2a', connections: [0, 2, 6] },
+            { name: 'COCINA', color: '#2a3a2a', connections: [1, 3, 7] },
+            { name: 'COMEDOR', color: '#3a3a2a', connections: [2, 4, 8] },
+            { name: 'DESPENSA', color: '#2a2a2a', connections: [3, 9] },
+            { name: 'PASILLO 1', color: '#252530', connections: [0, 6, 10] },
+            { name: 'BIBLIOTECA', color: '#352525', connections: [1, 5, 7, 11] },
+            { name: 'ESTUDIO', color: '#253525', connections: [2, 6, 8, 12] },
+            { name: 'LAVANDERIA', color: '#353525', connections: [3, 7, 9, 13] },
+            { name: 'GARAJE', color: '#252525', connections: [4, 8, 14] },
+            { name: 'ESCALERAS', color: '#302530', connections: [5, 11] },
+            { name: 'DORMITORIO 1', color: '#352530', connections: [6, 10, 12] },
+            { name: 'DORMITORIO 2', color: '#303525', connections: [7, 11, 13] },
+            { name: 'BANO', color: '#253035', connections: [8, 12, 14] },
+            { name: 'SOTANO', color: '#1a1a1a', connections: [9, 13] }
+        ];
+
+        // Room layout for minimap
+        const roomPositions = [
+            { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 },
+            { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 1 }, { x: 3, y: 1 }, { x: 4, y: 1 },
+            { x: 0, y: 2 }, { x: 1, y: 2 }, { x: 2, y: 2 }, { x: 3, y: 2 }, { x: 4, y: 2 }
+        ];
+
+        // Doors
+        let doors = [];
+
+        // Children (victims) - 15 total, Eleven is the last one
+        const childNames = [
+            'MIKE', 'DUSTIN', 'LUCAS', 'WILL', 'MAX',
+            'NANCY', 'JONATHAN', 'STEVE', 'ROBIN', 'ERICA',
+            'HOLLY', 'KEITH', 'TROY', 'JAMES', 'ELEVEN'
+        ];
+
+        let children = [];
+        let npcs = []; // Animals and adults
+        let projectiles = []; // Attacks from children
+        let particles = [];
+
+        // Furniture for each room
+        let furniture = [];
+
+        function initGame() {
+            health = 100;
+            victimsEaten = 0;
+            currentRoom = 0;
+            player.x = 450;
+            player.y = 350;
+            player.attacking = false;
+            player.invincible = false;
+
+            // Initialize children across rooms
+            children = childNames.map((name, i) => {
+                const roomIndex = i; // One child per room
+                const isEleven = name === 'ELEVEN';
+                return {
+                    name: name,
+                    room: roomIndex,
+                    x: 200 + Math.random() * 500,
+                    y: 200 + Math.random() * 300,
+                    width: isEleven ? 40 : 30,
+                    height: isEleven ? 50 : 40,
+                    speed: isEleven ? 3 : 1.5 + Math.random(),
+                    health: isEleven ? 500 : 50 + Math.random() * 30,
+                    maxHealth: isEleven ? 500 : 50 + Math.random() * 30,
+                    alive: true,
+                    direction: Math.random() * Math.PI * 2,
+                    moveTimer: 0,
+                    attackCooldown: 0,
+                    isEleven: isEleven,
+                    color: isEleven ? '#ff69b4' : `hsl(${Math.random() * 360}, 70%, 50%)`,
+                    hairColor: isEleven ? '#5c3317' : `hsl(${Math.random() * 60 + 20}, 50%, 30%)`,
+                    shirtColor: `hsl(${Math.random() * 360}, 60%, 40%)`,
+                    scared: false,
+                    powerCharging: false,
+                    powerLevel: 0
+                };
+            });
+
+            // Initialize NPCs (animals and adults) - 2 per room
+            npcs = [];
+            for (let i = 0; i < 15; i++) {
+                // Adult
+                npcs.push({
+                    room: i,
+                    x: 100 + Math.random() * 700,
+                    y: 150 + Math.random() * 400,
+                    width: 35,
+                    height: 55,
+                    speed: 0.8,
+                    type: 'adult',
+                    direction: Math.random() * Math.PI * 2,
+                    moveTimer: 0,
+                    color: `hsl(${Math.random() * 40 + 20}, 40%, 35%)`
+                });
+
+                // Animal (dog or cat)
+                if (Math.random() > 0.3) {
+                    npcs.push({
+                        room: i,
+                        x: 100 + Math.random() * 700,
+                        y: 150 + Math.random() * 400,
+                        width: 25,
+                        height: 20,
+                        speed: 2,
+                        type: Math.random() > 0.5 ? 'dog' : 'cat',
+                        direction: Math.random() * Math.PI * 2,
+                        moveTimer: 0,
+                        color: Math.random() > 0.5 ? '#8B4513' : '#808080'
+                    });
+                }
+            }
+
+            // Initialize furniture
+            furniture = [];
+            rooms.forEach((room, i) => {
+                const numFurniture = 3 + Math.floor(Math.random() * 4);
+                for (let j = 0; j < numFurniture; j++) {
+                    furniture.push({
+                        room: i,
+                        x: 80 + Math.random() * 700,
+                        y: 100 + Math.random() * 450,
+                        width: 40 + Math.random() * 60,
+                        height: 30 + Math.random() * 40,
+                        type: ['sofa', 'table', 'chair', 'bed', 'shelf', 'lamp'][Math.floor(Math.random() * 6)]
+                    });
+                }
+            });
+
+            // Initialize doors based on connections
+            doors = [];
+            rooms.forEach((room, i) => {
+                room.connections.forEach(connectedRoom => {
+                    if (connectedRoom > i) {
+                        doors.push({
+                            room1: i,
+                            room2: connectedRoom,
+                            x1: connectedRoom > i + 4 ? 450 : (connectedRoom === i + 1 ? 850 : 50),
+                            y1: connectedRoom > i + 4 ? 650 : 350,
+                            x2: connectedRoom > i + 4 ? 450 : (connectedRoom === i + 1 ? 50 : 850),
+                            y2: connectedRoom > i + 4 ? 100 : 350
+                        });
+                    }
+                });
+            });
+
+            projectiles = [];
+            particles = [];
+        }
+
+        function drawDemogorgon(x, y, attacking, direction) {
+            const time = Date.now() / 100;
+
+            ctx.save();
+            ctx.translate(x, y);
+
+            // Body
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.ellipse(0, 10, 20, 30, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Arms
+            const armWave = Math.sin(time) * 10;
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+
+            // Left arm
+            ctx.beginPath();
+            ctx.moveTo(-15, 0);
+            ctx.quadraticCurveTo(-35, -10 + armWave, -40, 10);
+            ctx.stroke();
+
+            // Right arm
+            ctx.beginPath();
+            ctx.moveTo(15, 0);
+            ctx.quadraticCurveTo(35, -10 - armWave, 40, 10);
+            ctx.stroke();
+
+            // Claws
+            ctx.strokeStyle = '#4a2a0a';
+            ctx.lineWidth = 3;
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(-40 + i * 5, 10);
+                ctx.lineTo(-45 + i * 5, 25);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(40 - i * 5, 10);
+                ctx.lineTo(45 - i * 5, 25);
+                ctx.stroke();
+            }
+
+            // Legs
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 10;
+            ctx.beginPath();
+            ctx.moveTo(-10, 35);
+            ctx.lineTo(-15, 55);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(10, 35);
+            ctx.lineTo(15, 55);
+            ctx.stroke();
+
+            // Feet claws
+            ctx.strokeStyle = '#4a2a0a';
+            ctx.lineWidth = 3;
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(-15 + i * 5 - 5, 55);
+                ctx.lineTo(-20 + i * 5 - 5, 65);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(15 - i * 5 + 5, 55);
+                ctx.lineTo(20 - i * 5 + 5, 65);
+                ctx.stroke();
+            }
+
+            // Head/face - the iconic flower petal mouth
+            const petalOpen = attacking ? 1.5 : 1 + Math.sin(time * 0.5) * 0.1;
+
+            // Petals
+            for (let i = 0; i < 5; i++) {
+                const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
+                const petalX = Math.cos(angle) * 20 * petalOpen;
+                const petalY = Math.sin(angle) * 20 * petalOpen - 35;
+
+                ctx.fillStyle = '#a05030';
+                ctx.beginPath();
+                ctx.ellipse(petalX, petalY, 15, 25, angle + Math.PI / 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Petal details
+                ctx.strokeStyle = '#803020';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(petalX * 0.3, petalY * 0.3 - 15);
+                ctx.lineTo(petalX, petalY);
+                ctx.stroke();
+            }
+
+            // Inner mouth (dark)
+            ctx.fillStyle = '#1a0a0a';
+            ctx.beginPath();
+            ctx.arc(0, -35, 12 * petalOpen, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Teeth rows
+            ctx.fillStyle = '#f0f0d0';
+            for (let ring = 0; ring < 3; ring++) {
+                const ringRadius = 8 - ring * 2;
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i / 8) * Math.PI * 2;
+                    const toothX = Math.cos(angle) * ringRadius * petalOpen;
+                    const toothY = Math.sin(angle) * ringRadius * petalOpen - 35;
+                    ctx.fillRect(toothX - 1, toothY - 2, 2, 4);
+                }
+            }
+
+            // Attack effect
+            if (attacking) {
+                ctx.strokeStyle = 'rgba(255, 0, 0, 0.6)';
+                ctx.lineWidth = 3;
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i / 8) * Math.PI * 2;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -35);
+                    ctx.lineTo(Math.cos(angle) * 60, Math.sin(angle) * 60 - 35);
+                    ctx.stroke();
+                }
+            }
+
+            ctx.restore();
+
+            // Invincibility flash
+            if (player.invincible && Math.floor(Date.now() / 100) % 2 === 0) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.beginPath();
+                ctx.arc(x, y, 40, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function drawChild(child) {
+            if (!child.alive) return;
+
+            const time = Date.now() / 200;
+            const bobble = Math.sin(time + child.x) * 2;
+
+            ctx.save();
+            ctx.translate(child.x, child.y + bobble);
+
+            if (child.isEleven) {
+                // ELEVEN - special design
+                // Glow effect when charging power
+                if (child.powerCharging) {
+                    ctx.fillStyle = `rgba(255, 0, 255, ${0.3 + child.powerLevel * 0.1})`;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 40 + child.powerLevel * 5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Body - hospital gown initially, then punk style
+                ctx.fillStyle = '#ffb6c1';
+                ctx.fillRect(-12, 5, 24, 25);
+
+                // Head
+                ctx.fillStyle = '#fcd9b6';
+                ctx.beginPath();
+                ctx.arc(0, -5, 15, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Buzzed hair or short hair
+                ctx.fillStyle = child.hairColor;
+                ctx.beginPath();
+                ctx.arc(0, -8, 13, Math.PI, 0);
+                ctx.fill();
+
+                // Nose blood when using powers
+                if (child.powerCharging) {
+                    ctx.fillStyle = '#8b0000';
+                    ctx.fillRect(-2, 0, 4, 8);
+                }
+
+                // Eyes - intense
+                ctx.fillStyle = '#000';
+                ctx.fillRect(-6, -7, 4, 4);
+                ctx.fillRect(2, -7, 4, 4);
+
+                // Legs
+                ctx.fillStyle = '#4a4a4a';
+                ctx.fillRect(-8, 30, 6, 15);
+                ctx.fillRect(2, 30, 6, 15);
+
+                // Power aura
+                if (child.scared) {
+                    ctx.strokeStyle = '#ff00ff';
+                    ctx.lineWidth = 2;
+                    for (let i = 0; i < 6; i++) {
+                        const angle = (i / 6) * Math.PI * 2 + time;
+                        ctx.beginPath();
+                        ctx.arc(Math.cos(angle) * 25, Math.sin(angle) * 25, 5, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+                }
+
+                // Health bar
+                ctx.fillStyle = '#333';
+                ctx.fillRect(-25, -35, 50, 6);
+                ctx.fillStyle = '#ff00ff';
+                ctx.fillRect(-25, -35, (child.health / child.maxHealth) * 50, 6);
+                ctx.strokeStyle = '#fff';
+                ctx.strokeRect(-25, -35, 50, 6);
+
+                // Name
+                ctx.fillStyle = '#ff00ff';
+                ctx.font = '8px "Press Start 2P"';
+                ctx.textAlign = 'center';
+                ctx.fillText('ELEVEN', 0, -42);
+            } else {
+                // Regular kids
+                // Body
+                ctx.fillStyle = child.shirtColor;
+                ctx.fillRect(-10, 0, 20, 20);
+
+                // Head
+                ctx.fillStyle = '#fcd9b6';
+                ctx.beginPath();
+                ctx.arc(0, -8, 12, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Hair
+                ctx.fillStyle = child.hairColor;
+                ctx.beginPath();
+                ctx.arc(0, -12, 10, Math.PI, 0);
+                ctx.fill();
+
+                // Eyes
+                ctx.fillStyle = '#000';
+                if (child.scared) {
+                    // Scared eyes (wide)
+                    ctx.fillRect(-5, -10, 4, 5);
+                    ctx.fillRect(1, -10, 4, 5);
+                } else {
+                    ctx.fillRect(-5, -9, 3, 3);
+                    ctx.fillRect(2, -9, 3, 3);
+                }
+
+                // Mouth
+                if (child.scared) {
+                    ctx.beginPath();
+                    ctx.arc(0, -2, 4, 0, Math.PI);
+                    ctx.stroke();
+                }
+
+                // Legs
+                ctx.fillStyle = '#1e40af';
+                ctx.fillRect(-7, 20, 5, 12);
+                ctx.fillRect(2, 20, 5, 12);
+
+                // Health bar
+                ctx.fillStyle = '#333';
+                ctx.fillRect(-20, -28, 40, 4);
+                ctx.fillStyle = '#00ff00';
+                ctx.fillRect(-20, -28, (child.health / child.maxHealth) * 40, 4);
+            }
+
+            ctx.restore();
+        }
+
+        function drawNPC(npc) {
+            ctx.save();
+            ctx.translate(npc.x, npc.y);
+
+            if (npc.type === 'adult') {
+                // Adult body
+                ctx.fillStyle = npc.color;
+                ctx.fillRect(-12, 0, 24, 35);
+
+                // Head
+                ctx.fillStyle = '#deb887';
+                ctx.beginPath();
+                ctx.arc(0, -10, 14, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Hair/hat
+                ctx.fillStyle = '#4a4a4a';
+                ctx.beginPath();
+                ctx.arc(0, -14, 12, Math.PI, 0);
+                ctx.fill();
+
+                // Legs
+                ctx.fillStyle = '#2a2a2a';
+                ctx.fillRect(-8, 35, 6, 18);
+                ctx.fillRect(2, 35, 6, 18);
+            } else if (npc.type === 'dog') {
+                // Dog body
+                ctx.fillStyle = npc.color;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 15, 8, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Head
+                ctx.beginPath();
+                ctx.arc(12, -3, 8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Ears
+                ctx.beginPath();
+                ctx.ellipse(8, -10, 4, 6, -0.3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(16, -10, 4, 6, 0.3, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Tail
+                ctx.beginPath();
+                ctx.moveTo(-15, 0);
+                ctx.quadraticCurveTo(-25, -10, -20, -15);
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = npc.color;
+                ctx.stroke();
+
+                // Legs
+                ctx.fillRect(-10, 6, 4, 8);
+                ctx.fillRect(-3, 6, 4, 8);
+                ctx.fillRect(3, 6, 4, 8);
+                ctx.fillRect(10, 6, 4, 8);
+            } else if (npc.type === 'cat') {
+                // Cat body
+                ctx.fillStyle = npc.color;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 12, 7, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Head
+                ctx.beginPath();
+                ctx.arc(10, -2, 7, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Ears (triangular)
+                ctx.beginPath();
+                ctx.moveTo(5, -8);
+                ctx.lineTo(8, -15);
+                ctx.lineTo(11, -8);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(11, -8);
+                ctx.lineTo(14, -15);
+                ctx.lineTo(17, -8);
+                ctx.fill();
+
+                // Tail (curved)
+                ctx.beginPath();
+                ctx.moveTo(-12, 0);
+                ctx.quadraticCurveTo(-22, 5, -18, -10);
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = npc.color;
+                ctx.stroke();
+
+                // Legs
+                ctx.fillRect(-8, 5, 3, 7);
+                ctx.fillRect(-2, 5, 3, 7);
+                ctx.fillRect(2, 5, 3, 7);
+                ctx.fillRect(8, 5, 3, 7);
+            }
+
+            ctx.restore();
+        }
+
+        function drawProjectile(proj) {
+            ctx.save();
+            ctx.translate(proj.x, proj.y);
+
+            if (proj.type === 'psychic') {
+                // Eleven's psychic blast
+                ctx.fillStyle = `rgba(255, 0, 255, ${0.8 - proj.life * 0.01})`;
+                ctx.beginPath();
+                ctx.arc(0, 0, 15 + proj.life * 0.2, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(0, 0, 5, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                // Regular thrown objects
+                const colors = { rock: '#666', ball: '#ff4444', book: '#8B4513', toy: '#4444ff' };
+                ctx.fillStyle = colors[proj.type] || '#888';
+                ctx.fillRect(-5, -5, 10, 10);
+            }
+
+            ctx.restore();
+        }
+
+        function drawRoom() {
+            const room = rooms[currentRoom];
+
+            // Floor
+            ctx.fillStyle = room.color;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Floor pattern (tiles)
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 50) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // Walls
+            ctx.fillStyle = '#1a1a2a';
+            ctx.fillRect(0, 0, canvas.width, 50);
+            ctx.fillRect(0, 0, 50, canvas.height);
+            ctx.fillRect(canvas.width - 50, 0, 50, canvas.height);
+            ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+
+            // Wall details
+            ctx.strokeStyle = '#2a2a4a';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+
+            // Draw furniture
+            furniture.filter(f => f.room === currentRoom).forEach(f => {
+                ctx.fillStyle = '#3a3a3a';
+                ctx.fillRect(f.x, f.y, f.width, f.height);
+                ctx.strokeStyle = '#2a2a2a';
+                ctx.strokeRect(f.x, f.y, f.width, f.height);
+            });
+
+            // Draw doors
+            room.connections.forEach(connectedRoom => {
+                ctx.fillStyle = '#4a3020';
+
+                if (connectedRoom === currentRoom + 1) {
+                    // Right door
+                    ctx.fillRect(canvas.width - 50, 300, 50, 100);
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath();
+                    ctx.arc(canvas.width - 15, 350, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (connectedRoom === currentRoom - 1) {
+                    // Left door
+                    ctx.fillRect(0, 300, 50, 100);
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath();
+                    ctx.arc(15, 350, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (connectedRoom === currentRoom + 5) {
+                    // Bottom door
+                    ctx.fillRect(400, canvas.height - 50, 100, 50);
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath();
+                    ctx.arc(450, canvas.height - 15, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (connectedRoom === currentRoom - 5) {
+                    // Top door
+                    ctx.fillRect(400, 0, 100, 50);
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath();
+                    ctx.arc(450, 15, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            // Room name
+            ctx.fillStyle = 'rgba(139, 0, 0, 0.8)';
+            ctx.font = '12px "Press Start 2P"';
+            ctx.textAlign = 'center';
+            ctx.fillText(room.name, canvas.width / 2, 30);
+
+            // Upside down atmosphere effects
+            drawUpsideDownEffects();
+        }
+
+        function drawUpsideDownEffects() {
+            // Floating particles
+            const time = Date.now() / 1000;
+            ctx.fillStyle = 'rgba(139, 0, 0, 0.3)';
+            for (let i = 0; i < 20; i++) {
+                const x = (Math.sin(time + i * 0.5) * 0.5 + 0.5) * canvas.width;
+                const y = (Math.cos(time * 0.7 + i * 0.3) * 0.5 + 0.5) * canvas.height;
+                ctx.beginPath();
+                ctx.arc(x, y, 2 + Math.sin(time + i) * 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Vines/tendrils on walls
+            ctx.strokeStyle = 'rgba(80, 40, 40, 0.5)';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 10; i++) {
+                const startX = (i / 10) * canvas.width;
+                ctx.beginPath();
+                ctx.moveTo(startX, 50);
+                for (let y = 50; y < 150; y += 10) {
+                    ctx.lineTo(startX + Math.sin(y * 0.1 + time) * 10, y);
+                }
+                ctx.stroke();
+            }
+        }
+
+        function drawMinimap() {
+            if (!showMinimap) return;
+
+            minimapCtx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+            minimapCtx.fillRect(0, 0, 150, 100);
+
+            const cellWidth = 28;
+            const cellHeight = 30;
+            const offsetX = 5;
+            const offsetY = 5;
+
+            rooms.forEach((room, i) => {
+                const pos = roomPositions[i];
+                const x = offsetX + pos.x * cellWidth;
+                const y = offsetY + pos.y * cellHeight;
+
+                // Room cell
+                minimapCtx.fillStyle = i === currentRoom ? '#8b0000' : '#333';
+                minimapCtx.fillRect(x, y, cellWidth - 2, cellHeight - 2);
+
+                // Check if child is alive in this room
+                const childInRoom = children.find(c => c.room === i && c.alive);
+                if (childInRoom) {
+                    minimapCtx.fillStyle = childInRoom.isEleven ? '#ff00ff' : '#00ff00';
+                    minimapCtx.beginPath();
+                    minimapCtx.arc(x + cellWidth / 2, y + cellHeight / 2, 4, 0, Math.PI * 2);
+                    minimapCtx.fill();
+                }
+
+                // Connections
+                minimapCtx.strokeStyle = '#555';
+                minimapCtx.lineWidth = 2;
+                room.connections.forEach(conn => {
+                    if (conn > i) {
+                        const connPos = roomPositions[conn];
+                        minimapCtx.beginPath();
+                        minimapCtx.moveTo(x + cellWidth / 2, y + cellHeight / 2);
+                        minimapCtx.lineTo(offsetX + connPos.x * cellWidth + cellWidth / 2,
+                                         offsetY + connPos.y * cellHeight + cellHeight / 2);
+                        minimapCtx.stroke();
+                    }
+                });
+            });
+
+            // Player position marker
+            const playerPos = roomPositions[currentRoom];
+            minimapCtx.fillStyle = '#ff0000';
+            minimapCtx.beginPath();
+            minimapCtx.arc(offsetX + playerPos.x * cellWidth + cellWidth / 2,
+                          offsetY + playerPos.y * cellHeight + cellHeight / 2, 6, 0, Math.PI * 2);
+            minimapCtx.fill();
+        }
+
+        function drawParticles() {
+            particles.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life--;
+                p.vy += 0.1; // gravity
+
+                ctx.fillStyle = `rgba(${p.color}, ${p.life / p.maxLife})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            });
+        }
+
+        function createParticles(x, y, color, count) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8 - 3,
+                    size: 2 + Math.random() * 4,
+                    color: color,
+                    life: 30 + Math.random() * 20,
+                    maxLife: 50
+                });
+            }
+        }
+
+        function update() {
+            if (gameState !== 'playing') return;
+
+            // Update attack timer
+            if (player.attacking) {
+                player.attackTimer--;
+                if (player.attackTimer <= 0) {
+                    player.attacking = false;
+                }
+            }
+
+            // Update invincibility
+            if (player.invincible) {
+                player.invincibleTimer--;
+                if (player.invincibleTimer <= 0) {
+                    player.invincible = false;
+                }
+            }
+
+            // Update children in current room
+            children.filter(c => c.room === currentRoom && c.alive).forEach(child => {
+                // Calculate distance to player
+                const dx = player.x - child.x;
+                const dy = player.y - child.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                // Child behavior
+                if (dist < 200) {
+                    child.scared = true;
+
+                    // Run away from player
+                    const angle = Math.atan2(dy, dx);
+                    child.x -= Math.cos(angle) * child.speed * 1.5;
+                    child.y -= Math.sin(angle) * child.speed * 1.5;
+
+                    // Attack cooldown
+                    child.attackCooldown--;
+
+                    if (child.attackCooldown <= 0) {
+                        // Attack player
+                        if (child.isEleven) {
+                            // Eleven charges and unleashes psychic attack
+                            child.powerCharging = true;
+                            child.powerLevel++;
+
+                            if (child.powerLevel >= 10) {
+                                // Unleash powerful attack
+                                projectiles.push({
+                                    x: child.x,
+                                    y: child.y,
+                                    vx: Math.cos(angle) * 8,
+                                    vy: Math.sin(angle) * 8,
+                                    type: 'psychic',
+                                    damage: 25,
+                                    life: 0
+                                });
+                                child.powerLevel = 0;
+                                child.powerCharging = false;
+                                child.attackCooldown = 60;
+                            }
+                        } else {
+                            // Regular kids throw things
+                            const throwTypes = ['rock', 'ball', 'book', 'toy'];
+                            projectiles.push({
+                                x: child.x,
+                                y: child.y,
+                                vx: Math.cos(angle) * 5,
+                                vy: Math.sin(angle) * 5,
+                                type: throwTypes[Math.floor(Math.random() * throwTypes.length)],
+                                damage: 5 + Math.random() * 5,
+                                life: 0
+                            });
+                            child.attackCooldown = 90 + Math.random() * 60;
+                        }
+                    }
+                } else {
+                    child.scared = false;
+                    child.powerCharging = false;
+
+                    // Random movement
+                    child.moveTimer--;
+                    if (child.moveTimer <= 0) {
+                        child.direction = Math.random() * Math.PI * 2;
+                        child.moveTimer = 60 + Math.random() * 120;
+                    }
+
+                    child.x += Math.cos(child.direction) * child.speed * 0.3;
+                    child.y += Math.sin(child.direction) * child.speed * 0.3;
+                }
+
+                // Keep in bounds
+                child.x = Math.max(70, Math.min(canvas.width - 70, child.x));
+                child.y = Math.max(70, Math.min(canvas.height - 70, child.y));
+
+                // Check if player is attacking and in range
+                if (player.attacking && dist < 60) {
+                    child.health -= child.isEleven ? 10 : 25;
+                    createParticles(child.x, child.y, '255, 0, 0', 10);
+
+                    if (child.health <= 0) {
+                        child.alive = false;
+                        victimsEaten++;
+                        createParticles(child.x, child.y, '139, 0, 0', 30);
+
+                        // Check victory
+                        if (victimsEaten >= 15) {
+                            gameState = 'victory';
+                            document.getElementById('victoryScreen').style.display = 'flex';
+                            document.getElementById('hud').style.display = 'none';
+                        }
+                    }
+                }
+            });
+
+            // Update NPCs
+            npcs.filter(n => n.room === currentRoom).forEach(npc => {
+                npc.moveTimer--;
+                if (npc.moveTimer <= 0) {
+                    npc.direction = Math.random() * Math.PI * 2;
+                    npc.moveTimer = 60 + Math.random() * 120;
+                }
+
+                npc.x += Math.cos(npc.direction) * npc.speed;
+                npc.y += Math.sin(npc.direction) * npc.speed;
+
+                // Keep in bounds
+                npc.x = Math.max(70, Math.min(canvas.width - 70, npc.x));
+                npc.y = Math.max(70, Math.min(canvas.height - 70, npc.y));
+            });
+
+            // Update projectiles
+            projectiles.forEach((proj, i) => {
+                proj.x += proj.vx;
+                proj.y += proj.vy;
+                proj.life++;
+
+                // Check collision with player
+                const dx = player.x - proj.x;
+                const dy = player.y - proj.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 30 && !player.invincible) {
+                    health -= proj.damage;
+                    player.invincible = true;
+                    player.invincibleTimer = 30;
+                    createParticles(player.x, player.y, '139, 0, 0', 15);
+                    projectiles.splice(i, 1);
+
+                    if (health <= 0) {
+                        gameState = 'gameover';
+                        document.getElementById('gameOverScreen').style.display = 'flex';
+                        document.getElementById('finalVictims').textContent = victimsEaten;
+                        document.getElementById('hud').style.display = 'none';
+                    }
+                }
+
+                // Remove if off screen or too old
+                if (proj.x < 0 || proj.x > canvas.width || proj.y < 0 || proj.y > canvas.height || proj.life > 100) {
+                    projectiles.splice(i, 1);
+                }
+            });
+
+            // Check door transitions
+            checkDoorTransition();
+
+            // Update HUD
+            document.getElementById('healthDisplay').textContent = Math.max(0, Math.floor(health));
+            document.getElementById('victimsDisplay').textContent = victimsEaten;
+            document.getElementById('roomDisplay').textContent = rooms[currentRoom].name;
+        }
+
+        function checkDoorTransition() {
+            const room = rooms[currentRoom];
+
+            room.connections.forEach(connectedRoom => {
+                if (connectedRoom === currentRoom + 1 && player.x > canvas.width - 80) {
+                    // Go right
+                    currentRoom = connectedRoom;
+                    player.x = 80;
+                } else if (connectedRoom === currentRoom - 1 && player.x < 80) {
+                    // Go left
+                    currentRoom = connectedRoom;
+                    player.x = canvas.width - 80;
+                } else if (connectedRoom === currentRoom + 5 && player.y > canvas.height - 80) {
+                    // Go down
+                    currentRoom = connectedRoom;
+                    player.y = 80;
+                } else if (connectedRoom === currentRoom - 5 && player.y < 80) {
+                    // Go up
+                    currentRoom = connectedRoom;
+                    player.y = canvas.height - 80;
+                }
+            });
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawRoom();
+
+            // Draw NPCs
+            npcs.filter(n => n.room === currentRoom).forEach(drawNPC);
+
+            // Draw children
+            children.filter(c => c.room === currentRoom).forEach(drawChild);
+
+            // Draw player (Demogorgon)
+            drawDemogorgon(player.x, player.y, player.attacking, player.direction);
+
+            // Draw projectiles
+            projectiles.forEach(drawProjectile);
+
+            // Draw particles
+            drawParticles();
+
+            // Draw minimap
+            drawMinimap();
+        }
+
+        function gameLoop() {
+            update();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Input handling
+        const keys = {};
+
+        document.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+
+            if (e.key === ' ' && gameState === 'playing' && !player.attacking) {
+                player.attacking = true;
+                player.attackTimer = 20;
+            }
+
+            if (e.key.toLowerCase() === 'm' && gameState === 'playing') {
+                showMinimap = !showMinimap;
+                document.getElementById('minimap').style.display = showMinimap ? 'block' : 'none';
+            }
+
+            e.preventDefault();
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+
+        function handleInput() {
+            if (gameState !== 'playing') return;
+
+            let dx = 0, dy = 0;
+
+            if (keys['w'] || keys['arrowup']) dy = -1;
+            if (keys['s'] || keys['arrowdown']) dy = 1;
+            if (keys['a'] || keys['arrowleft']) dx = -1;
+            if (keys['d'] || keys['arrowright']) dx = 1;
+
+            // Normalize diagonal movement
+            if (dx !== 0 && dy !== 0) {
+                dx *= 0.707;
+                dy *= 0.707;
+            }
+
+            player.x += dx * player.speed;
+            player.y += dy * player.speed;
+
+            // Keep in bounds
+            player.x = Math.max(60, Math.min(canvas.width - 60, player.x));
+            player.y = Math.max(60, Math.min(canvas.height - 60, player.y));
+
+            if (dx !== 0 || dy !== 0) {
+                player.direction = Math.atan2(dy, dx);
+            }
+        }
+
+        setInterval(handleInput, 16);
+
+        function startGame() {
+            initGame();
+            gameState = 'playing';
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('hud').style.display = 'flex';
+            document.getElementById('gameOverScreen').style.display = 'none';
+            document.getElementById('victoryScreen').style.display = 'none';
+        }
+
+        function restartGame() {
+            initGame();
+            gameState = 'playing';
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('hud').style.display = 'flex';
+            document.getElementById('gameOverScreen').style.display = 'none';
+            document.getElementById('victoryScreen').style.display = 'none';
+        }
+
+        // Draw preview Demogorgon
+        function drawPreview() {
+            const previewCanvas = document.getElementById('demogorgonPreview');
+            const pCtx = previewCanvas.getContext('2d');
+
+            pCtx.clearRect(0, 0, 150, 150);
+
+            // Background glow
+            const gradient = pCtx.createRadialGradient(75, 75, 0, 75, 75, 75);
+            gradient.addColorStop(0, 'rgba(139, 0, 0, 0.3)');
+            gradient.addColorStop(1, 'transparent');
+            pCtx.fillStyle = gradient;
+            pCtx.fillRect(0, 0, 150, 150);
+
+            pCtx.save();
+            pCtx.translate(75, 85);
+
+            const time = Date.now() / 100;
+
+            // Body
+            pCtx.fillStyle = '#8B4513';
+            pCtx.beginPath();
+            pCtx.ellipse(0, 10, 25, 35, 0, 0, Math.PI * 2);
+            pCtx.fill();
+
+            // Arms
+            const armWave = Math.sin(time) * 10;
+            pCtx.strokeStyle = '#8B4513';
+            pCtx.lineWidth = 10;
+            pCtx.lineCap = 'round';
+
+            pCtx.beginPath();
+            pCtx.moveTo(-20, 0);
+            pCtx.quadraticCurveTo(-45, -10 + armWave, -50, 15);
+            pCtx.stroke();
+
+            pCtx.beginPath();
+            pCtx.moveTo(20, 0);
+            pCtx.quadraticCurveTo(45, -10 - armWave, 50, 15);
+            pCtx.stroke();
+
+            // Legs
+            pCtx.lineWidth = 12;
+            pCtx.beginPath();
+            pCtx.moveTo(-12, 40);
+            pCtx.lineTo(-18, 60);
+            pCtx.stroke();
+            pCtx.beginPath();
+            pCtx.moveTo(12, 40);
+            pCtx.lineTo(18, 60);
+            pCtx.stroke();
+
+            // Flower head
+            const petalOpen = 1 + Math.sin(time * 0.3) * 0.15;
+
+            for (let i = 0; i < 5; i++) {
+                const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
+                const petalX = Math.cos(angle) * 25 * petalOpen;
+                const petalY = Math.sin(angle) * 25 * petalOpen - 45;
+
+                pCtx.fillStyle = '#a05030';
+                pCtx.beginPath();
+                pCtx.ellipse(petalX, petalY, 18, 30, angle + Math.PI / 2, 0, Math.PI * 2);
+                pCtx.fill();
+            }
+
+            // Inner mouth
+            pCtx.fillStyle = '#1a0a0a';
+            pCtx.beginPath();
+            pCtx.arc(0, -45, 15 * petalOpen, 0, Math.PI * 2);
+            pCtx.fill();
+
+            // Teeth
+            pCtx.fillStyle = '#f0f0d0';
+            for (let ring = 0; ring < 3; ring++) {
+                for (let i = 0; i < 10; i++) {
+                    const angle = (i / 10) * Math.PI * 2;
+                    const r = (10 - ring * 3) * petalOpen;
+                    pCtx.fillRect(
+                        Math.cos(angle) * r - 1,
+                        Math.sin(angle) * r - 47,
+                        2, 4
+                    );
+                }
+            }
+
+            pCtx.restore();
+        }
+
+        // Animate preview
+        function animatePreview() {
+            drawPreview();
+            if (gameState === 'menu') {
+                requestAnimationFrame(animatePreview);
+            }
+        }
+
+        // Initialize
+        animatePreview();
+        gameLoop();
+    </script>
+</body>
+</html>
