@@ -283,10 +283,11 @@
                     <p>ESPACIO : DISPARAR</p>
                     <p>P : PAUSAR</p>
                     <br>
-                    <p>🎯 OBJETIVO:</p>
-                    <p>DESTRUYE A LOS PTEROSAURIOS</p>
-                    <p>RECOGE HUEVOS PARA VIDA</p>
-                    <p>CONSIGUE NUEVAS ARMAS</p>
+                    <p>🎯 7 NIVELES DE ACCIÓN:</p>
+                    <p>DESTRUYE PTEROSAURIOS</p>
+                    <p>RECOGE HUEVOS = VIDA</p>
+                    <p>9 ARMAS DIFERENTES</p>
+                    <p>BOSS FINAL: MEGA QUETZALCOATLUS</p>
                 </div>
 
                 <button class="btn btn-play" onclick="startGame()">▶ DESPEGAR</button>
@@ -372,8 +373,26 @@
             double: { name: 'DOBLE', delay: 150, damage: 10, color: '#00ff00', sound: 'shoot' },
             spread: { name: 'DISPERSIÓN', delay: 200, damage: 8, color: '#00ffff', sound: 'shoot' },
             laser: { name: 'LÁSER', delay: 100, damage: 15, color: '#ff00ff', sound: 'laser' },
-            missile: { name: 'MISILES', delay: 400, damage: 30, color: '#ff6600', sound: 'missile' }
+            missile: { name: 'MISILES', delay: 400, damage: 30, color: '#ff6600', sound: 'missile' },
+            plasma: { name: 'PLASMA', delay: 120, damage: 20, color: '#00ffaa', sound: 'laser' },
+            flame: { name: 'LANZALLAMAS', delay: 50, damage: 5, color: '#ff3300', sound: 'shoot' },
+            lightning: { name: 'RAYO', delay: 300, damage: 25, color: '#aaaaff', sound: 'laser' },
+            bomb: { name: 'BOMBAS', delay: 600, damage: 80, color: '#ff0000', sound: 'missile' }
         };
+
+        // Configuración de los 7 niveles
+        const levelConfig = {
+            1: { name: 'CIELOS TRANQUILOS', kills: 8, spawnDelay: 2000, types: ['pteranodon', 'dimorphodon'], multiplier: 1.0 },
+            2: { name: 'ZONA DE CAZA', kills: 12, spawnDelay: 1800, types: ['pteranodon', 'dimorphodon', 'rhamphorhynchus'], multiplier: 1.15 },
+            3: { name: 'TERRITORIO HOSTIL', kills: 15, spawnDelay: 1500, types: ['pteranodon', 'dimorphodon', 'rhamphorhynchus', 'anhanguera'], multiplier: 1.3 },
+            4: { name: 'NIDO DE GIGANTES', kills: 18, spawnDelay: 1300, types: ['dimorphodon', 'rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 1.5 },
+            5: { name: 'TORMENTA PREHISTÓRICA', kills: 20, spawnDelay: 1100, types: ['pteranodon', 'dimorphodon', 'rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 1.7 },
+            6: { name: 'INFIERNO JURÁSICO', kills: 25, spawnDelay: 900, types: ['rhamphorhynchus', 'anhanguera', 'quetzalcoatlus'], multiplier: 2.0 },
+            7: { name: 'REY DE LOS CIELOS', kills: 1, spawnDelay: 5000, types: ['boss'], multiplier: 2.5, boss: true }
+        };
+
+        let levelKills = 0; // Kills en el nivel actual
+        let boss = null; // Boss del nivel 7
 
         // ===== SISTEMA DE AUDIO =====
         let audioCtx = null;
@@ -586,6 +605,16 @@
                 points: 250,
                 color: '#FF8C00',
                 pattern: 'swoop'
+            },
+            boss: {
+                name: 'MEGA QUETZALCOATLUS',
+                width: 180,
+                height: 140,
+                health: 500,
+                speed: 1,
+                points: 5000,
+                color: '#8B0000',
+                pattern: 'boss'
             }
         };
 
@@ -862,6 +891,60 @@
                 ctx.shadowColor = '#ff00ff';
                 ctx.shadowBlur = 10;
                 ctx.fillRect(-2, -15, 4, 30);
+            } else if (bullet.type === 'plasma') {
+                // Plasma - esfera brillante que atraviesa
+                ctx.fillStyle = '#00ffaa';
+                ctx.shadowColor = '#00ffaa';
+                ctx.shadowBlur = 20;
+                ctx.beginPath();
+                ctx.arc(0, 0, 8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(0, 0, 4, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (bullet.type === 'flame') {
+                // Llama
+                const size = bullet.life ? bullet.life / 2 : 5;
+                ctx.fillStyle = `rgba(255, ${50 + Math.random() * 100}, 0, ${bullet.life ? bullet.life / 20 : 1})`;
+                ctx.beginPath();
+                ctx.arc(0, 0, size, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (bullet.type === 'lightning') {
+                // Rayo
+                ctx.strokeStyle = '#aaaaff';
+                ctx.shadowColor = '#aaaaff';
+                ctx.shadowBlur = 15;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(0, -20);
+                for (let i = 0; i < 4; i++) {
+                    ctx.lineTo((Math.random() - 0.5) * 15, -20 + i * 10);
+                }
+                ctx.lineTo(0, 20);
+                ctx.stroke();
+            } else if (bullet.type === 'bomb') {
+                // Bomba
+                ctx.fillStyle = '#333333';
+                ctx.beginPath();
+                ctx.arc(0, 0, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ff0000';
+                ctx.beginPath();
+                ctx.arc(0, -5, 4, 0, Math.PI * 2);
+                ctx.fill();
+                // Mecha
+                ctx.strokeStyle = '#ffaa00';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, -10);
+                ctx.lineTo(0, -15);
+                ctx.stroke();
+                // Chispa
+                ctx.fillStyle = '#ffff00';
+                ctx.beginPath();
+                ctx.arc(0, -15, 3 + Math.random() * 2, 0, Math.PI * 2);
+                ctx.fill();
             } else {
                 // Bala normal
                 ctx.fillStyle = bullet.color || '#ffff00';
@@ -877,20 +960,17 @@
 
         // ===== CREAR ENEMIGO =====
         function spawnEnemy() {
-            const types = Object.keys(pterosaurTypes);
-            let availableTypes;
+            const config = levelConfig[level];
 
-            // Tipos disponibles según nivel
-            if (level === 1) {
-                availableTypes = ['pteranodon', 'dimorphodon'];
-            } else if (level === 2) {
-                availableTypes = ['pteranodon', 'dimorphodon', 'rhamphorhynchus'];
-            } else if (level === 3) {
-                availableTypes = ['pteranodon', 'dimorphodon', 'rhamphorhynchus', 'anhanguera'];
-            } else {
-                availableTypes = types;
+            // Nivel 7 es boss
+            if (config.boss && !boss) {
+                spawnBoss();
+                return;
             }
 
+            if (config.boss) return; // No spawn normal en nivel boss
+
+            const availableTypes = config.types;
             const type = availableTypes[Math.floor(Math.random() * availableTypes.length)];
             const pterType = pterosaurTypes[type];
 
@@ -899,17 +979,140 @@
                 type: type,
                 x: Math.random() * (canvas.width - 100) + 50,
                 y: -50,
-                health: pterType.health * difficultyMultiplier,
-                speed: pterType.speed * difficultyMultiplier,
+                health: pterType.health * config.multiplier,
+                speed: pterType.speed * config.multiplier,
                 pattern: pterType.pattern,
                 phase: Math.random() * Math.PI * 2,
                 targetX: player.x
             });
         }
 
+        // ===== CREAR BOSS =====
+        function spawnBoss() {
+            const bossType = pterosaurTypes.boss;
+            boss = {
+                id: Date.now(),
+                type: 'boss',
+                x: canvas.width / 2,
+                y: -100,
+                health: bossType.health,
+                maxHealth: bossType.health,
+                speed: bossType.speed,
+                pattern: 'boss',
+                phase: 0,
+                attackTimer: 0,
+                state: 'entering' // entering, fighting, rage
+            };
+            enemies.push(boss);
+        }
+
+        // ===== DIBUJAR BOSS =====
+        function drawBoss(enemy) {
+            ctx.save();
+            ctx.translate(enemy.x, enemy.y);
+
+            const wingFlap = Math.sin(Date.now() / 150 + enemy.id) * 25;
+            const rage = enemy.state === 'rage';
+            const baseColor = rage ? '#ff0000' : '#8B0000';
+
+            // Aura de poder
+            if (rage) {
+                ctx.fillStyle = 'rgba(255, 0, 0, 0.2)';
+                ctx.beginPath();
+                ctx.arc(0, 0, 120 + Math.sin(Date.now() / 100) * 10, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Alas gigantes
+            ctx.fillStyle = baseColor;
+            ctx.beginPath();
+            ctx.moveTo(-10, 0);
+            ctx.quadraticCurveTo(-100, -30 + wingFlap, -90, 20 + wingFlap);
+            ctx.quadraticCurveTo(-50, 30, -10, 10);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(10, 0);
+            ctx.quadraticCurveTo(100, -30 + wingFlap, 90, 20 + wingFlap);
+            ctx.quadraticCurveTo(50, 30, 10, 10);
+            ctx.fill();
+
+            // Cuerpo masivo
+            ctx.fillStyle = baseColor;
+            ctx.beginPath();
+            ctx.ellipse(0, 10, 30, 50, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cabeza con cresta enorme
+            ctx.beginPath();
+            ctx.ellipse(0, -40, 20, 25, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cresta gigante
+            ctx.fillStyle = rage ? '#ff4400' : '#660000';
+            ctx.beginPath();
+            ctx.moveTo(0, -55);
+            ctx.lineTo(-50, -70);
+            ctx.lineTo(-10, -50);
+            ctx.closePath();
+            ctx.fill();
+
+            // Pico enorme
+            ctx.fillStyle = '#ffaa00';
+            ctx.beginPath();
+            ctx.moveTo(0, -40);
+            ctx.lineTo(-8, -25);
+            ctx.lineTo(0, 20);
+            ctx.lineTo(8, -25);
+            ctx.closePath();
+            ctx.fill();
+
+            // Ojos rojos brillantes
+            ctx.fillStyle = rage ? '#ffff00' : '#ff0000';
+            ctx.shadowColor = ctx.fillStyle;
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(-10, -45, 6, 0, Math.PI * 2);
+            ctx.arc(10, -45, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Pupilas
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(-10, -45, 3, 0, Math.PI * 2);
+            ctx.arc(10, -45, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Garras
+            ctx.strokeStyle = '#440000';
+            ctx.lineWidth = 5;
+            for (let i = -1; i <= 1; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * 15, 55);
+                ctx.lineTo(i * 20, 75);
+                ctx.stroke();
+            }
+
+            // Barra de vida del boss (grande)
+            const healthPercent = enemy.health / enemy.maxHealth;
+            ctx.fillStyle = '#330000';
+            ctx.fillRect(-80, -90, 160, 12);
+            ctx.fillStyle = healthPercent > 0.5 ? '#00ff00' : healthPercent > 0.25 ? '#ffff00' : '#ff0000';
+            ctx.fillRect(-80, -90, 160 * healthPercent, 12);
+
+            // Nombre del boss
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '8px Press Start 2P';
+            ctx.textAlign = 'center';
+            ctx.fillText('MEGA QUETZALCOATLUS', 0, -100);
+
+            ctx.restore();
+        }
+
         // ===== CREAR POWER-UP =====
         function spawnPowerup() {
-            const isHealth = Math.random() < 0.6;
+            const isHealth = Math.random() < 0.5;
 
             if (isHealth) {
                 powerups.push({
@@ -919,7 +1122,14 @@
                     speed: 2
                 });
             } else {
-                const weaponTypes = ['double', 'spread', 'laser', 'missile'];
+                // Armas disponibles según nivel
+                let weaponTypes = ['double', 'spread'];
+                if (level >= 2) weaponTypes.push('laser');
+                if (level >= 3) weaponTypes.push('missile', 'plasma');
+                if (level >= 4) weaponTypes.push('flame');
+                if (level >= 5) weaponTypes.push('lightning');
+                if (level >= 6) weaponTypes.push('bomb');
+
                 powerups.push({
                     type: 'weapon',
                     weaponType: weaponTypes[Math.floor(Math.random() * weaponTypes.length)],
@@ -1011,6 +1221,64 @@
                         color: weapon.color,
                         type: 'missile',
                         target: findNearestEnemy()
+                    });
+                    break;
+
+                case 'plasma':
+                    // Plasma atraviesa enemigos
+                    bullets.push({
+                        x: player.x,
+                        y: player.y - 30,
+                        vx: 0,
+                        vy: -14,
+                        damage: weapon.damage * player.weaponLevel,
+                        color: weapon.color,
+                        type: 'plasma',
+                        piercing: true
+                    });
+                    break;
+
+                case 'flame':
+                    // Lanzallamas - muchas partículas
+                    for (let i = 0; i < 3; i++) {
+                        bullets.push({
+                            x: player.x + (Math.random() - 0.5) * 20,
+                            y: player.y - 20,
+                            vx: (Math.random() - 0.5) * 3,
+                            vy: -10 - Math.random() * 4,
+                            damage: weapon.damage * player.weaponLevel,
+                            color: weapon.color,
+                            type: 'flame',
+                            life: 20
+                        });
+                    }
+                    break;
+
+                case 'lightning':
+                    // Rayo que hace cadena
+                    bullets.push({
+                        x: player.x,
+                        y: player.y - 30,
+                        vx: 0,
+                        vy: -16,
+                        damage: weapon.damage * player.weaponLevel,
+                        color: weapon.color,
+                        type: 'lightning',
+                        chainCount: 3
+                    });
+                    break;
+
+                case 'bomb':
+                    // Bomba con explosión de área
+                    bullets.push({
+                        x: player.x,
+                        y: player.y - 30,
+                        vx: 0,
+                        vy: -6,
+                        damage: weapon.damage * player.weaponLevel,
+                        color: weapon.color,
+                        type: 'bomb',
+                        explosionRadius: 80
                     });
                     break;
             }
@@ -1125,8 +1393,9 @@
                 player.invulnerable = false;
             }
 
-            // Spawn enemigos
-            if (now - lastEnemySpawn > enemySpawnDelay / difficultyMultiplier) {
+            // Spawn enemigos usando configuración de nivel
+            const config = levelConfig[level];
+            if (now - lastEnemySpawn > config.spawnDelay) {
                 spawnEnemy();
                 lastEnemySpawn = now;
             }
@@ -1143,6 +1412,15 @@
             // Actualizar balas
             for (let i = bullets.length - 1; i >= 0; i--) {
                 const bullet = bullets[i];
+
+                // Llamas tienen vida limitada
+                if (bullet.type === 'flame') {
+                    bullet.life--;
+                    if (bullet.life <= 0) {
+                        bullets.splice(i, 1);
+                        continue;
+                    }
+                }
 
                 // Misiles persiguen objetivo
                 if (bullet.type === 'missile' && bullet.target && enemies.includes(bullet.target)) {
@@ -1170,6 +1448,7 @@
                 }
 
                 // Colisión con enemigos
+                let bulletHit = false;
                 for (let j = enemies.length - 1; j >= 0; j--) {
                     const enemy = enemies[j];
                     const type = pterosaurTypes[enemy.type];
@@ -1177,8 +1456,43 @@
                     if (Math.abs(bullet.x - enemy.x) < type.width/2 &&
                         Math.abs(bullet.y - enemy.y) < type.height/2) {
 
+                        // Bomba explota y daña área
+                        if (bullet.type === 'bomb') {
+                            createExplosion(bullet.x, bullet.y, 15);
+                            playSound('explosion');
+                            // Dañar todos los enemigos en el radio
+                            for (let k = enemies.length - 1; k >= 0; k--) {
+                                const e = enemies[k];
+                                const dist = Math.hypot(e.x - bullet.x, e.y - bullet.y);
+                                if (dist < bullet.explosionRadius) {
+                                    e.health -= bullet.damage * (1 - dist / bullet.explosionRadius);
+                                    if (e.health <= 0) {
+                                        createExplosion(e.x, e.y, 8);
+                                        score += pterosaurTypes[e.type].points * level;
+                                        killCount++;
+                                        levelKills++;
+                                        if (e === boss) boss = null;
+                                        enemies.splice(k, 1);
+                                    }
+                                }
+                            }
+                            bullets.splice(i, 1);
+                            checkLevelProgress();
+                            break;
+                        }
+
                         enemy.health -= bullet.damage;
-                        bullets.splice(i, 1);
+
+                        // Boss entra en rage cuando tiene poca vida
+                        if (enemy.type === 'boss' && enemy.health < enemy.maxHealth * 0.3) {
+                            enemy.state = 'rage';
+                        }
+
+                        // Plasma no se destruye al impactar
+                        if (!bullet.piercing) {
+                            bulletHit = true;
+                        }
+
                         playSound('hit');
 
                         // Partículas de impacto
@@ -1196,19 +1510,31 @@
                         }
 
                         if (enemy.health <= 0) {
-                            createExplosion(enemy.x, enemy.y, 8);
+                            createExplosion(enemy.x, enemy.y, enemy.type === 'boss' ? 20 : 8);
                             playSound('explosion');
                             score += type.points * level;
                             killCount++;
+                            levelKills++;
+                            if (enemy === boss) boss = null;
                             enemies.splice(j, 1);
-
-                            // Subir de nivel cada 10 kills
-                            if (killCount % 10 === 0) {
-                                levelUp();
-                            }
+                            checkLevelProgress();
                         }
-                        break;
+
+                        if (bulletHit) break;
                     }
+                }
+                if (bulletHit) {
+                    bullets.splice(i, 1);
+                }
+            }
+
+            // Función para verificar progreso de nivel
+            function checkLevelProgress() {
+                const config = levelConfig[level];
+                if (levelKills >= config.kills && level < 7) {
+                    levelUp();
+                } else if (level === 7 && !boss && levelKills >= 1) {
+                    victory();
                 }
             }
 
@@ -1237,6 +1563,27 @@
                         enemy.phase += 0.03;
                         enemy.x += Math.sin(enemy.phase) * 4;
                         enemy.y += enemy.speed;
+                        break;
+                    case 'boss':
+                        // Boss entra desde arriba
+                        if (enemy.state === 'entering') {
+                            enemy.y += 1;
+                            if (enemy.y >= 120) {
+                                enemy.state = 'fighting';
+                            }
+                        } else {
+                            // Movimiento lateral
+                            enemy.phase += enemy.state === 'rage' ? 0.04 : 0.02;
+                            enemy.x = canvas.width / 2 + Math.sin(enemy.phase) * 200;
+
+                            // Boss ataca periódicamente
+                            enemy.attackTimer++;
+                            const attackInterval = enemy.state === 'rage' ? 60 : 120;
+                            if (enemy.attackTimer >= attackInterval) {
+                                enemy.attackTimer = 0;
+                                bossAttack(enemy);
+                            }
+                        }
                         break;
                 }
 
@@ -1302,33 +1649,92 @@
             // Actualizar partículas
             for (let i = particles.length - 1; i >= 0; i--) {
                 const p = particles[i];
-                p.x += p.vx;
-                p.y += p.vy;
+                p.x += p.vx || 0;
+                p.y += p.vy || 0;
                 p.life--;
-                if (p.life <= 0) {
+
+                // Partículas dañinas del boss
+                if (p.damaging && !player.invulnerable) {
+                    if (Math.abs(p.x - player.x) < 25 && Math.abs(p.y - player.y) < 30) {
+                        player.health -= 15;
+                        player.invulnerable = true;
+                        player.invulnerableTime = now + 1500;
+                        playSound('damage');
+                        createExplosion(player.x, player.y, 5);
+                        particles.splice(i, 1);
+
+                        if (player.health <= 0) {
+                            gameOver();
+                            return;
+                        }
+                        updateHUD();
+                        continue;
+                    }
+                }
+
+                if (p.life <= 0 || p.y > canvas.height + 50 || p.y < -50 || p.x < -50 || p.x > canvas.width + 50) {
                     particles.splice(i, 1);
                 }
             }
+        }
 
-            // Victoria
-            if (killCount >= 50) {
-                victory();
+        // ===== ATAQUE DEL BOSS =====
+        function bossAttack(bossEnemy) {
+            const rage = bossEnemy.state === 'rage';
+
+            // Lanza pterosaurios pequeños
+            if (rage) {
+                // En rage, dispara en abanico
+                for (let angle = -40; angle <= 40; angle += 20) {
+                    const rad = (angle + 90) * Math.PI / 180;
+                    particles.push({
+                        x: bossEnemy.x,
+                        y: bossEnemy.y + 50,
+                        vx: Math.cos(rad) * 6,
+                        vy: Math.sin(rad) * 6,
+                        life: 60,
+                        maxLife: 60,
+                        size: 8,
+                        color: '#ff0000',
+                        damaging: true
+                    });
+                }
+            } else {
+                // Normal: dispara hacia el jugador
+                const dx = player.x - bossEnemy.x;
+                const dy = player.y - bossEnemy.y;
+                const dist = Math.hypot(dx, dy);
+                particles.push({
+                    x: bossEnemy.x,
+                    y: bossEnemy.y + 50,
+                    vx: (dx / dist) * 5,
+                    vy: (dy / dist) * 5,
+                    life: 80,
+                    maxLife: 80,
+                    size: 10,
+                    color: '#ff4400',
+                    damaging: true
+                });
             }
+            playSound('missile');
         }
 
         // ===== SUBIR DE NIVEL =====
         function levelUp() {
+            if (level >= 7) return; // Ya en nivel máximo
+
             level++;
-            difficultyMultiplier = 1 + (level - 1) * 0.15;
+            levelKills = 0; // Reset kills del nivel
             playSound('levelup');
 
+            const config = levelConfig[level];
             const popup = document.getElementById('levelPopup');
-            popup.textContent = '¡NIVEL ' + level + '!';
+            popup.innerHTML = '¡NIVEL ' + level + '!<br><span style="font-size: 12px; color: #ffaa00;">' + config.name + '</span>';
             popup.style.display = 'block';
 
             setTimeout(() => {
                 popup.style.display = 'none';
-            }, 2000);
+            }, 3000);
 
             updateHUD();
         }
@@ -1364,7 +1770,11 @@
 
             // Enemigos
             for (const enemy of enemies) {
-                drawPterosaurus(enemy);
+                if (enemy.type === 'boss') {
+                    drawBoss(enemy);
+                } else {
+                    drawPterosaurus(enemy);
+                }
             }
 
             // Jugador
@@ -1376,7 +1786,8 @@
             document.getElementById('scoreDisplay').textContent = score;
             document.getElementById('healthBar').style.width = (player.health / player.maxHealth * 100) + '%';
             document.getElementById('weaponDisplay').textContent = weapons[player.weapon].name;
-            document.getElementById('levelDisplay').textContent = level;
+            const config = levelConfig[level];
+            document.getElementById('levelDisplay').innerHTML = level + '<br><span style="font-size:6px;color:#aaa;">' + config.name.substring(0, 10) + '</span>';
         }
 
         // ===== GAME OVER =====
@@ -1423,10 +1834,12 @@
             powerups = [];
             particles = [];
             clouds = [];
+            boss = null;
 
             score = 0;
             level = 1;
             killCount = 0;
+            levelKills = 0;
             difficultyMultiplier = 1;
 
             lastShot = 0;
