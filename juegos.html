@@ -542,6 +542,29 @@
                 <a href="stranger-things-leogorgon.html" class="play-btn">▶ JUGAR</a>
             </div>
         </article>
+
+        <!-- Juego 6: Vuelos de Leo -->
+        <article class="game-card">
+            <div class="game-cover">
+                <canvas id="cover6" width="380" height="280"></canvas>
+                <div class="new-badge">NEW!</div>
+                <div class="rating-badge">TODOS</div>
+            </div>
+            <div class="game-info">
+                <h2 class="game-title" style="color: #ffff00; text-shadow: 0 0 10px #ffff00, 2px 2px 0 #ff6600;">VUELOS DE LEO</h2>
+                <p class="game-description">
+                    Pilota tu avión por los cielos prehistóricos.
+                    Destruye Pterosaurios, recoge huevos voladores
+                    y consigue nuevas armas. ¡Estilo Xenon 2!
+                </p>
+                <div class="game-meta">
+                    <span class="meta-item">✈️ SHOOTER</span>
+                    <span class="meta-item">🦖 PTEROSAURIOS</span>
+                    <span class="meta-item">🥚 POWER-UPS</span>
+                </div>
+                <a href="vuelos-de-leo.html" class="play-btn">▶ JUGAR</a>
+            </div>
+        </article>
     </main>
 
     <!-- High Scores decorativo -->
@@ -1507,18 +1530,253 @@
             ctx.fillText('THE UPSIDE DOWN HUNGER', canvas.width/2, 272);
         }
 
+        // ===== PORTADA 6: Vuelos de Leo =====
+        function drawCover6() {
+            const canvas = document.getElementById('cover6');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            const time = Date.now() / 1000;
+
+            // Cielo con degradado
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            skyGradient.addColorStop(0, '#000033');
+            skyGradient.addColorStop(0.4, '#003366');
+            skyGradient.addColorStop(0.7, '#006699');
+            skyGradient.addColorStop(1, '#00aacc');
+            ctx.fillStyle = skyGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Nubes de fondo
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            for (let i = 0; i < 6; i++) {
+                const cloudX = ((i * 70 + time * 20) % (canvas.width + 100)) - 50;
+                const cloudY = 30 + i * 25;
+                ctx.beginPath();
+                ctx.ellipse(cloudX, cloudY, 40, 15, 0, 0, Math.PI * 2);
+                ctx.ellipse(cloudX + 25, cloudY - 5, 30, 12, 0, 0, Math.PI * 2);
+                ctx.ellipse(cloudX - 20, cloudY + 3, 25, 10, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Estrellas en la parte superior
+            ctx.fillStyle = '#ffffff';
+            for (let i = 0; i < 20; i++) {
+                const sx = (i * 67) % canvas.width;
+                const sy = (i * 23) % 60;
+                const twinkle = Math.sin(time * 3 + i) * 0.5 + 0.5;
+                ctx.globalAlpha = twinkle;
+                ctx.beginPath();
+                ctx.arc(sx, sy, 1, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+
+            // PTEROSAURIOS volando
+            const pteroColors = ['#8B4513', '#228B22', '#4B0082', '#B22222', '#FF8C00'];
+            for (let i = 0; i < 5; i++) {
+                const px = 50 + i * 70 + Math.sin(time * 2 + i) * 20;
+                const py = 60 + Math.sin(time * 1.5 + i * 0.8) * 25;
+                const wingFlap = Math.sin(time * 8 + i * 2) * 15;
+
+                ctx.fillStyle = pteroColors[i];
+
+                // Alas
+                ctx.beginPath();
+                ctx.moveTo(px, py);
+                ctx.quadraticCurveTo(px - 25, py - 10 + wingFlap, px - 35, py + 5 + wingFlap);
+                ctx.quadraticCurveTo(px - 15, py + 10, px, py + 5);
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(px, py);
+                ctx.quadraticCurveTo(px + 25, py - 10 + wingFlap, px + 35, py + 5 + wingFlap);
+                ctx.quadraticCurveTo(px + 15, py + 10, px, py + 5);
+                ctx.fill();
+
+                // Cuerpo
+                ctx.beginPath();
+                ctx.ellipse(px, py + 5, 8, 12, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Cabeza
+                ctx.beginPath();
+                ctx.ellipse(px, py - 8, 5, 6, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Pico
+                ctx.fillStyle = '#ffcc00';
+                ctx.beginPath();
+                ctx.moveTo(px, py - 5);
+                ctx.lineTo(px - 2, py);
+                ctx.lineTo(px, py + 8);
+                ctx.lineTo(px + 2, py);
+                ctx.closePath();
+                ctx.fill();
+
+                // Ojos rojos
+                ctx.fillStyle = '#ff0000';
+                ctx.beginPath();
+                ctx.arc(px - 2, py - 9, 2, 0, Math.PI * 2);
+                ctx.arc(px + 2, py - 9, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // AVIÓN DEL JUGADOR (grande, en el centro-abajo)
+            const planeX = 190 + Math.sin(time * 2) * 15;
+            const planeY = 160;
+
+            // Llamas del motor
+            const flameHeight = 20 + Math.random() * 15;
+            ctx.fillStyle = '#ff6600';
+            ctx.beginPath();
+            ctx.moveTo(planeX - 10, planeY + 35);
+            ctx.lineTo(planeX, planeY + 35 + flameHeight);
+            ctx.lineTo(planeX + 10, planeY + 35);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffff00';
+            ctx.beginPath();
+            ctx.moveTo(planeX - 5, planeY + 35);
+            ctx.lineTo(planeX, planeY + 35 + flameHeight * 0.6);
+            ctx.lineTo(planeX + 5, planeY + 35);
+            ctx.fill();
+
+            // Cuerpo del avión
+            ctx.fillStyle = '#3366cc';
+            ctx.beginPath();
+            ctx.moveTo(planeX, planeY - 40);
+            ctx.lineTo(planeX + 18, planeY + 15);
+            ctx.lineTo(planeX + 15, planeY + 35);
+            ctx.lineTo(planeX - 15, planeY + 35);
+            ctx.lineTo(planeX - 18, planeY + 15);
+            ctx.closePath();
+            ctx.fill();
+
+            // Alas
+            ctx.fillStyle = '#4477dd';
+            ctx.beginPath();
+            ctx.moveTo(planeX - 15, planeY);
+            ctx.lineTo(planeX - 55, planeY + 20);
+            ctx.lineTo(planeX - 45, planeY + 28);
+            ctx.lineTo(planeX - 12, planeY + 15);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(planeX + 15, planeY);
+            ctx.lineTo(planeX + 55, planeY + 20);
+            ctx.lineTo(planeX + 45, planeY + 28);
+            ctx.lineTo(planeX + 12, planeY + 15);
+            ctx.closePath();
+            ctx.fill();
+
+            // Cabina
+            ctx.fillStyle = '#66ffff';
+            ctx.beginPath();
+            ctx.ellipse(planeX, planeY - 15, 9, 15, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cañones
+            ctx.fillStyle = '#333333';
+            ctx.fillRect(planeX - 28, planeY + 8, 6, 18);
+            ctx.fillRect(planeX + 22, planeY + 8, 6, 18);
+
+            // DISPAROS del avión
+            ctx.fillStyle = '#ffff00';
+            ctx.shadowColor = '#ffff00';
+            ctx.shadowBlur = 10;
+            for (let i = 0; i < 3; i++) {
+                const bulletY = planeY - 60 - i * 40 - ((time * 200) % 40);
+                if (bulletY > 0) {
+                    ctx.beginPath();
+                    ctx.ellipse(planeX, bulletY, 4, 12, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            ctx.shadowBlur = 0;
+
+            // HUEVO CON ALAS (power-up)
+            const eggX = 320, eggY = 130 + Math.sin(time * 2) * 15;
+            const eggWingFlap = Math.sin(time * 6) * 20;
+
+            // Alas del huevo
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.ellipse(eggX - 20, eggY + eggWingFlap/4, 18, 8, -0.3 + eggWingFlap/60, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(eggX + 20, eggY + eggWingFlap/4, 18, 8, 0.3 - eggWingFlap/60, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Huevo
+            ctx.fillStyle = '#ffeecc';
+            ctx.beginPath();
+            ctx.ellipse(eggX, eggY, 18, 25, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Brillo
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.ellipse(eggX - 6, eggY - 10, 5, 8, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cruz de vida
+            ctx.fillStyle = '#ff0000';
+            ctx.fillRect(eggX - 4, eggY - 12, 8, 24);
+            ctx.fillRect(eggX - 12, eggY - 4, 24, 8);
+
+            // Aura brillante
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(eggX, eggY, 32 + Math.sin(time * 3) * 5, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // EXPLOSIÓN decorativa
+            const expX = 80, expY = 120;
+            ctx.fillStyle = 'rgba(255, 100, 0, 0.7)';
+            ctx.beginPath();
+            ctx.arc(expX, expY, 15 + Math.sin(time * 10) * 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(255, 255, 0, 0.8)';
+            ctx.beginPath();
+            ctx.arc(expX, expY, 8 + Math.sin(time * 10) * 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Título
+            ctx.fillStyle = 'rgba(0, 0, 30, 0.9)';
+            ctx.fillRect(0, 200, canvas.width, 80);
+
+            ctx.fillStyle = '#ffff00';
+            ctx.font = 'bold 22px "Press Start 2P", monospace';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#ff6600';
+            ctx.shadowBlur = 10;
+            ctx.fillText('VUELOS DE', canvas.width/2, 230);
+            ctx.fillStyle = '#00ffff';
+            ctx.fillText('LEO', canvas.width/2, 258);
+
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#aaaaff';
+            ctx.font = '8px "Press Start 2P", monospace';
+            ctx.fillText('SHOOTER PREHISTÓRICO', canvas.width/2, 275);
+        }
+
         // Dibujar portadas
         drawCover1();
         drawCover2();
         drawCover3();
         drawCover4();
         drawCover5();
+        drawCover6();
 
         // Redibujar periódicamente para animación sutil
         setInterval(() => {
             drawCover1();
             drawCover3();
             drawCover5();
+            drawCover6();
         }, 100);
     </script>
 </body>
