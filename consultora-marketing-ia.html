@@ -1,0 +1,2196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarketingIA Pro | Tu Plan de Marketing en Minutos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-cta {
+            background: var(--gradient);
+            color: white !important;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 5% 80px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #cffafe 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: var(--gradient);
+            border-radius: 50%;
+            top: -200px;
+            right: -200px;
+            opacity: 0.1;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(99,102,241,0.2);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .hero h1 span {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 10px 30px rgba(99,102,241,0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(99,102,241,0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .hero-image {
+            position: absolute;
+            right: 5%;
+            width: 45%;
+            max-width: 600px;
+        }
+
+        .hero-mockup {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+            transform: perspective(1000px) rotateY(-5deg);
+        }
+
+        .mockup-header {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mockup-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .mockup-dot:nth-child(1) { background: #ef4444; }
+        .mockup-dot:nth-child(2) { background: #f59e0b; }
+        .mockup-dot:nth-child(3) { background: #22c55e; }
+
+        .mockup-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mockup-line {
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 6px;
+        }
+
+        .mockup-line.short { width: 60%; }
+        .mockup-line.medium { width: 80%; }
+
+        .mockup-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.5rem;
+            height: 100px;
+            margin-top: 1rem;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: var(--gradient);
+            border-radius: 4px;
+            animation: grow 1s ease-out forwards;
+        }
+
+        @keyframes grow {
+            from { height: 0; }
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .stat h3 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat p {
+            font-size: 0.875rem;
+            color: var(--gray);
+            margin: 0;
+        }
+
+        /* Sections Common */
+        section {
+            padding: 100px 5%;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--gray);
+            font-size: 1.125rem;
+        }
+
+        /* How it Works */
+        .how-it-works {
+            background: white;
+        }
+
+        .phases {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+        }
+
+        .phase {
+            background: var(--light);
+            border-radius: 24px;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phase::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .phase-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .phase h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .phase-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .step {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .step-icon {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .step-content h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .step-content p {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        /* Brief Form */
+        .brief-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+        }
+
+        .brief-section .section-header h2,
+        .brief-section .section-header p {
+            color: white;
+        }
+
+        .brief-section .section-header p {
+            opacity: 0.8;
+        }
+
+        .brief-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .brief-form {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            color: var(--dark);
+        }
+
+        .form-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .form-progress::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e2e8f0;
+            z-index: 0;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1;
+        }
+
+        .progress-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .progress-step.active .progress-dot {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .progress-step.completed .progress-dot {
+            background: #22c55e;
+            color: white;
+        }
+
+        .progress-label {
+            font-size: 0.75rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checkbox-item:hover {
+            border-color: var(--primary);
+        }
+
+        .checkbox-item.selected {
+            border-color: var(--primary);
+            background: rgba(99,102,241,0.05);
+        }
+
+        .checkbox-item input {
+            display: none;
+        }
+
+        .checkbox-box {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .checkbox-item.selected .checkbox-box {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .btn-back {
+            background: #f1f5f9;
+            color: var(--gray);
+        }
+
+        /* Result */
+        .result-container {
+            display: none;
+            text-align: center;
+        }
+
+        .result-container.show {
+            display: block;
+        }
+
+        .result-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 3rem;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .result-container h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-container p {
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+
+        .plan-preview {
+            background: var(--light);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: left;
+            margin: 2rem 0;
+        }
+
+        .plan-preview h4 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .plan-sections {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .plan-section-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .plan-section-item i {
+            color: var(--primary);
+        }
+
+        .delivery-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .delivery-option {
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .delivery-option:hover {
+            border-color: var(--primary);
+        }
+
+        .delivery-option.featured {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        }
+
+        .delivery-option.featured::before {
+            content: 'RECOMENDADO';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .delivery-option h4 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .delivery-option .price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .delivery-option .price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--gray);
+        }
+
+        .delivery-option ul {
+            list-style: none;
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .delivery-option ul li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .delivery-option ul li i {
+            color: #22c55e;
+        }
+
+        /* Services */
+        .services {
+            background: var(--light);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(99,102,241,0.15);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .service-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .service-card p {
+            font-size: 0.875rem;
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+
+        .service-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .service-price span {
+            font-size: 0.875rem;
+            color: var(--gray);
+            font-weight: 400;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            background: white;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background: var(--light);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            font-size: 6rem;
+            color: var(--primary);
+            opacity: 0.1;
+            position: absolute;
+            top: 0;
+            left: 1rem;
+            line-height: 1;
+        }
+
+        .testimonial-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .author-info h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .author-info p {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .stars {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        /* Pricing */
+        .pricing {
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .pricing-card.featured {
+            transform: scale(1.05);
+            box-shadow: 0 30px 60px rgba(99,102,241,0.2);
+            border: 2px solid var(--primary);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MÁS POPULAR';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-card .subtitle {
+            color: var(--gray);
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-card .price {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-card .price sup {
+            font-size: 1.5rem;
+            top: -1rem;
+        }
+
+        .pricing-card .period {
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            padding: 0.75rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .pricing-features li i {
+            color: #22c55e;
+        }
+
+        .pricing-features li.disabled {
+            color: var(--gray);
+            opacity: 0.5;
+        }
+
+        .pricing-features li.disabled i {
+            color: var(--gray);
+        }
+
+        /* FAQ */
+        .faq {
+            background: white;
+        }
+
+        .faq-grid {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 1.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.125rem;
+            font-weight: 600;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .faq-question i {
+            transition: transform 0.3s;
+            color: var(--primary);
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-answer p {
+            padding-bottom: 1.5rem;
+            color: var(--gray);
+            line-height: 1.8;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+        }
+
+        /* CTA */
+        .cta {
+            background: var(--gradient);
+            text-align: center;
+            color: white;
+        }
+
+        .cta h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta .btn {
+            background: white;
+            color: var(--primary);
+        }
+
+        .cta .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 5% 30px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand .logo {
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .footer-brand p {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            line-height: 1.8;
+        }
+
+        .footer-links h4 {
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.875rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-bottom p {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: #1e293b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* Mobile Menu */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(255,255,255,0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 2rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-content p {
+            opacity: 0.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-image {
+                display: none;
+            }
+
+            .phases {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .pricing-cards {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1rem;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .hero {
+                padding: 100px 5% 60px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row,
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+
+            .delivery-options,
+            .plan-sections {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .cta h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">MarketingIA Pro</div>
+        <ul class="nav-links">
+            <li><a href="#como-funciona">Cómo Funciona</a></li>
+            <li><a href="#brief">Genera tu Plan</a></li>
+            <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#precios">Precios</a></li>
+            <li><a href="#brief" class="nav-cta">Empezar Gratis</a></li>
+        </ul>
+        <button class="mobile-toggle" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-bolt"></i>
+                Impulsado por Inteligencia Artificial
+            </div>
+            <h1>Tu Plan de Marketing <span>Personalizado</span> en Minutos</h1>
+            <p>Democratizamos la consultoría estratégica para PYMEs y autónomos. Obtén un plan profesional generado por IA, sin costes prohibitivos ni largas esperas.</p>
+            <div class="hero-buttons">
+                <a href="#brief" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    Generar Mi Plan Gratis
+                </a>
+                <a href="#como-funciona" class="btn btn-secondary">
+                    <i class="fas fa-play-circle"></i>
+                    Ver Cómo Funciona
+                </a>
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <h3>+2.500</h3>
+                    <p>Planes generados</p>
+                </div>
+                <div class="stat">
+                    <h3>15min</h3>
+                    <p>Tiempo promedio</p>
+                </div>
+                <div class="stat">
+                    <h3>98%</h3>
+                    <p>Clientes satisfechos</p>
+                </div>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="hero-mockup">
+                <div class="mockup-header">
+                    <div class="mockup-dot"></div>
+                    <div class="mockup-dot"></div>
+                    <div class="mockup-dot"></div>
+                </div>
+                <div class="mockup-content">
+                    <div class="mockup-line short"></div>
+                    <div class="mockup-line"></div>
+                    <div class="mockup-line medium"></div>
+                    <div class="mockup-chart">
+                        <div class="chart-bar" style="height: 40%"></div>
+                        <div class="chart-bar" style="height: 65%"></div>
+                        <div class="chart-bar" style="height: 45%"></div>
+                        <div class="chart-bar" style="height: 80%"></div>
+                        <div class="chart-bar" style="height: 60%"></div>
+                        <div class="chart-bar" style="height: 90%"></div>
+                        <div class="chart-bar" style="height: 70%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="how-it-works" id="como-funciona">
+        <div class="section-header">
+            <h2>El Modelo de Consultoría Híbrida</h2>
+            <p>De la IA al Plan Físico en 24 horas. Un proceso diseñado para maximizar tu inversión en marketing.</p>
+        </div>
+        <div class="phases">
+            <div class="phase">
+                <div class="phase-number">1</div>
+                <h3>Adquisición y Cualificación del Cliente</h3>
+                <p>Te ayudamos a obtener claridad estratégica de forma rápida y accesible.</p>
+                <div class="phase-steps">
+                    <div class="step">
+                        <div class="step-icon"><i class="fas fa-brain"></i></div>
+                        <div class="step-content">
+                            <h4>Plan de Marketing por IA</h4>
+                            <p>Rellena un brief online y la IA genera tu plan estratégico personalizado en minutos.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon"><i class="fas fa-book"></i></div>
+                        <div class="step-content">
+                            <h4>Producto Físico Diferenciador</h4>
+                            <p>Por solo 19,99€ recibe tu plan impreso y encuadernado en tu oficina en 24 horas.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon"><i class="fas fa-filter"></i></div>
+                        <div class="step-content">
+                            <h4>Objetivo "Tripwire"</h4>
+                            <p>Esta venta a bajo coste financia la adquisición y valida al cliente para futuras ventas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="phase">
+                <div class="phase-number">2</div>
+                <h3>La Escalera de Valor y Monetización</h3>
+                <p>Convertimos la estrategia en resultados tangibles para tu negocio.</p>
+                <div class="phase-steps">
+                    <div class="step">
+                        <div class="step-icon"><i class="fas fa-th-large"></i></div>
+                        <div class="step-content">
+                            <h4>Plataforma Interactiva</h4>
+                            <p>El plan se desglosa en servicios ejecutables: SEO, Redes Sociales, Publicidad, etc.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon"><i class="fas fa-mouse-pointer"></i></div>
+                        <div class="step-content">
+                            <h4>De Estrategia a Ejecución</h4>
+                            <p>Selecciona qué tareas delegar y el sistema genera una propuesta comercial al instante.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="step-content">
+                            <h4>Servicios de Alto Margen</h4>
+                            <p>Entre el 10% y 20% de compradores contratan servicios de implementación posteriores.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Brief Form Section -->
+    <section class="brief-section" id="brief">
+        <div class="section-header">
+            <h2>Genera Tu Plan de Marketing con IA</h2>
+            <p>Completa el brief en 5 minutos y recibe un plan estratégico personalizado para tu negocio.</p>
+        </div>
+        <div class="brief-container">
+            <div class="brief-form" id="briefForm">
+                <div class="form-progress">
+                    <div class="progress-step active" data-step="1">
+                        <div class="progress-dot">1</div>
+                        <span class="progress-label">Tu Negocio</span>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <div class="progress-dot">2</div>
+                        <span class="progress-label">Objetivos</span>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <div class="progress-dot">3</div>
+                        <span class="progress-label">Audiencia</span>
+                    </div>
+                    <div class="progress-step" data-step="4">
+                        <div class="progress-dot">4</div>
+                        <span class="progress-label">Contacto</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: Business Info -->
+                <div class="form-step active" data-step="1">
+                    <h3 style="margin-bottom: 1.5rem;">Cuéntanos sobre tu negocio</h3>
+                    <div class="form-group">
+                        <label>Nombre de tu empresa o proyecto</label>
+                        <input type="text" id="businessName" placeholder="Ej: Mi Tienda Online">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Sector / Industria</label>
+                            <select id="sector">
+                                <option value="">Selecciona tu sector</option>
+                                <option value="retail">Retail / Comercio</option>
+                                <option value="servicios">Servicios Profesionales</option>
+                                <option value="hosteleria">Hostelería / Restauración</option>
+                                <option value="salud">Salud / Bienestar</option>
+                                <option value="tecnologia">Tecnología / Software</option>
+                                <option value="educacion">Educación / Formación</option>
+                                <option value="inmobiliaria">Inmobiliaria</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Años de actividad</label>
+                            <select id="years">
+                                <option value="">Selecciona</option>
+                                <option value="nuevo">Menos de 1 año</option>
+                                <option value="1-3">1-3 años</option>
+                                <option value="3-5">3-5 años</option>
+                                <option value="5-10">5-10 años</option>
+                                <option value="10+">Más de 10 años</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Describe brevemente tu negocio</label>
+                        <textarea id="businessDesc" rows="3" placeholder="¿Qué productos o servicios ofreces? ¿Qué te hace único?"></textarea>
+                    </div>
+                    <div class="form-buttons">
+                        <div></div>
+                        <button class="btn btn-primary" onclick="nextStep()">
+                            Siguiente <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Objectives -->
+                <div class="form-step" data-step="2">
+                    <h3 style="margin-bottom: 1.5rem;">¿Cuáles son tus objetivos de marketing?</h3>
+                    <div class="form-group">
+                        <label>Selecciona tus objetivos principales (puedes elegir varios)</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" value="visibilidad">
+                                <span class="checkbox-box"><i class="fas fa-check"></i></span>
+                                <span>Aumentar visibilidad de marca</span>
+                            </label>
+                            <label class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" value="leads">
+                                <span class="checkbox-box"><i class="fas fa-check"></i></span>
+                                <span>Generar más leads/contactos</span>
+                            </label>
+                            <label class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" value="ventas">
+                                <span class="checkbox-box"><i class="fas fa-check"></i></span>
+                                <span>Incrementar ventas online</span>
+                            </label>
+                            <label class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" value="trafico">
+                                <span class="checkbox-box"><i class="fas fa-check"></i></span>
+                                <span>Más tráfico a mi web</span>
+                            </label>
+                            <label class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" value="fidelizacion">
+                                <span class="checkbox-box"><i class="fas fa-check"></i></span>
+                                <span>Fidelizar clientes actuales</span>
+                            </label>
+                            <label class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" value="reputacion">
+                                <span class="checkbox-box"><i class="fas fa-check"></i></span>
+                                <span>Mejorar reputación online</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Presupuesto mensual de marketing</label>
+                            <select id="budget">
+                                <option value="">Selecciona</option>
+                                <option value="0-300">0€ - 300€</option>
+                                <option value="300-500">300€ - 500€</option>
+                                <option value="500-1000">500€ - 1.000€</option>
+                                <option value="1000-2500">1.000€ - 2.500€</option>
+                                <option value="2500+">Más de 2.500€</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>¿Tienes página web?</label>
+                            <select id="hasWebsite">
+                                <option value="">Selecciona</option>
+                                <option value="si-buena">Sí, y está bien optimizada</option>
+                                <option value="si-mejorar">Sí, pero necesita mejoras</option>
+                                <option value="no">No tengo página web</option>
+                                <option value="desarrollo">Está en desarrollo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-buttons">
+                        <button class="btn btn-back" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i> Anterior
+                        </button>
+                        <button class="btn btn-primary" onclick="nextStep()">
+                            Siguiente <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Audience -->
+                <div class="form-step" data-step="3">
+                    <h3 style="margin-bottom: 1.5rem;">Define tu audiencia ideal</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tipo de cliente</label>
+                            <select id="clientType">
+                                <option value="">Selecciona</option>
+                                <option value="b2c">B2C (Consumidor final)</option>
+                                <option value="b2b">B2B (Empresas)</option>
+                                <option value="ambos">Ambos</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Rango de edad principal</label>
+                            <select id="ageRange">
+                                <option value="">Selecciona</option>
+                                <option value="18-25">18-25 años</option>
+                                <option value="25-35">25-35 años</option>
+                                <option value="35-45">35-45 años</option>
+                                <option value="45-55">45-55 años</option>
+                                <option value="55+">55+ años</option>
+                                <option value="todos">Todas las edades</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Ámbito geográfico</label>
+                        <select id="geoScope">
+                            <option value="">Selecciona</option>
+                            <option value="local">Local (ciudad/comarca)</option>
+                            <option value="regional">Regional (comunidad autónoma)</option>
+                            <option value="nacional">Nacional (toda España)</option>
+                            <option value="internacional">Internacional</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>¿En qué canales tienes presencia actualmente?</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" value="instagram">
+                                <span class="checkbox-box"><i class="fas fa-check"></i></span>
+                                <span><i class="fab fa-instagram"></i> Instagram</span>
+                            </label>
+                            <label class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" value="facebook">
+                                <span class="checkbox-box"><i class="fas fa-check"></i></span>
+                                <span><i class="fab fa-facebook"></i> Facebook</span>
+                            </label>
+                            <label class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" value="linkedin">
+                                <span class="checkbox-box"><i class="fas fa-check"></i></span>
+                                <span><i class="fab fa-linkedin"></i> LinkedIn</span>
+                            </label>
+                            <label class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" value="tiktok">
+                                <span class="checkbox-box"><i class="fas fa-check"></i></span>
+                                <span><i class="fab fa-tiktok"></i> TikTok</span>
+                            </label>
+                            <label class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" value="google">
+                                <span class="checkbox-box"><i class="fas fa-check"></i></span>
+                                <span><i class="fab fa-google"></i> Google Ads</span>
+                            </label>
+                            <label class="checkbox-item" onclick="toggleCheckbox(this)">
+                                <input type="checkbox" value="email">
+                                <span class="checkbox-box"><i class="fas fa-check"></i></span>
+                                <span><i class="fas fa-envelope"></i> Email Marketing</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-buttons">
+                        <button class="btn btn-back" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i> Anterior
+                        </button>
+                        <button class="btn btn-primary" onclick="nextStep()">
+                            Siguiente <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Contact -->
+                <div class="form-step" data-step="4">
+                    <h3 style="margin-bottom: 1.5rem;">Datos de contacto</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nombre completo</label>
+                            <input type="text" id="fullName" placeholder="Tu nombre">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="email" placeholder="tu@email.com">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Teléfono (opcional)</label>
+                            <input type="tel" id="phone" placeholder="+34 600 000 000">
+                        </div>
+                        <div class="form-group">
+                            <label>Web (opcional)</label>
+                            <input type="url" id="website" placeholder="https://tuweb.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>¿Algo más que debamos saber?</label>
+                        <textarea id="additionalInfo" rows="3" placeholder="Cuéntanos cualquier detalle adicional que consideres relevante..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-item" onclick="toggleCheckbox(this)" style="display: inline-flex; border: none; padding: 0;">
+                            <input type="checkbox" value="privacy" id="privacy">
+                            <span class="checkbox-box"><i class="fas fa-check"></i></span>
+                            <span style="font-size: 0.875rem;">Acepto la política de privacidad y el tratamiento de mis datos</span>
+                        </label>
+                    </div>
+                    <div class="form-buttons">
+                        <button class="btn btn-back" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i> Anterior
+                        </button>
+                        <button class="btn btn-primary" onclick="generatePlan()">
+                            <i class="fas fa-magic"></i> Generar Mi Plan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Result -->
+                <div class="result-container" id="resultContainer">
+                    <div class="result-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h3>¡Tu Plan de Marketing está Listo!</h3>
+                    <p>Hemos generado un plan estratégico personalizado basado en la información proporcionada.</p>
+
+                    <div class="plan-preview">
+                        <h4><i class="fas fa-file-alt"></i> Tu plan incluye:</h4>
+                        <div class="plan-sections">
+                            <div class="plan-section-item">
+                                <i class="fas fa-bullseye"></i>
+                                <span>Análisis de Mercado</span>
+                            </div>
+                            <div class="plan-section-item">
+                                <i class="fas fa-users"></i>
+                                <span>Buyer Persona</span>
+                            </div>
+                            <div class="plan-section-item">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>Estrategia de Contenidos</span>
+                            </div>
+                            <div class="plan-section-item">
+                                <i class="fas fa-hashtag"></i>
+                                <span>Plan de Redes Sociales</span>
+                            </div>
+                            <div class="plan-section-item">
+                                <i class="fas fa-search"></i>
+                                <span>Estrategia SEO</span>
+                            </div>
+                            <div class="plan-section-item">
+                                <i class="fas fa-ad"></i>
+                                <span>Plan de Publicidad</span>
+                            </div>
+                            <div class="plan-section-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Calendario Editorial</span>
+                            </div>
+                            <div class="plan-section-item">
+                                <i class="fas fa-chart-pie"></i>
+                                <span>KPIs y Métricas</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 style="margin: 2rem 0 1rem;">Elige cómo recibir tu plan:</h4>
+                    <div class="delivery-options">
+                        <div class="delivery-option" onclick="selectDelivery('digital')">
+                            <h4><i class="fas fa-download"></i> Digital</h4>
+                            <div class="price">GRATIS</div>
+                            <ul>
+                                <li><i class="fas fa-check"></i> Descarga inmediata en PDF</li>
+                                <li><i class="fas fa-check"></i> Acceso al dashboard online</li>
+                                <li><i class="fas fa-check"></i> Actualizaciones por email</li>
+                            </ul>
+                            <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem;">
+                                Descargar Gratis
+                            </button>
+                        </div>
+                        <div class="delivery-option featured" onclick="selectDelivery('fisico')">
+                            <h4><i class="fas fa-book"></i> Físico + Digital</h4>
+                            <div class="price">19,99€ <span>IVA inc.</span></div>
+                            <ul>
+                                <li><i class="fas fa-check"></i> Todo lo del plan digital</li>
+                                <li><i class="fas fa-check"></i> Libro impreso premium</li>
+                                <li><i class="fas fa-check"></i> Envío 24h a tu oficina</li>
+                                <li><i class="fas fa-check"></i> Consulta telefónica 15min</li>
+                            </ul>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                                Pedir Libro Impreso
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="servicios">
+        <div class="section-header">
+            <h2>Servicios de Implementación</h2>
+            <p>Una vez tengas tu plan, te ayudamos a ejecutarlo. Selecciona los servicios que necesitas y nosotros nos encargamos.</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>SEO & Posicionamiento</h3>
+                <p>Mejora tu visibilidad en Google y atrae tráfico cualificado a tu web.</p>
+                <div class="service-price">desde 299€<span>/mes</span></div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <h3>Redes Sociales</h3>
+                <p>Gestión completa de tus perfiles sociales con contenido estratégico.</p>
+                <div class="service-price">desde 249€<span>/mes</span></div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-ad"></i>
+                </div>
+                <h3>Publicidad Digital</h3>
+                <p>Campañas en Google Ads, Meta Ads y otras plataformas de pago.</p>
+                <div class="service-price">desde 399€<span>/mes</span></div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+                <h3>Email Marketing</h3>
+                <p>Automatizaciones y campañas de email que convierten.</p>
+                <div class="service-price">desde 199€<span>/mes</span></div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-pen-nib"></i>
+                </div>
+                <h3>Creación de Contenidos</h3>
+                <p>Textos, imágenes y vídeos profesionales para tu marca.</p>
+                <div class="service-price">desde 349€<span>/mes</span></div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <h3>Diseño Web</h3>
+                <p>Webs modernas, rápidas y optimizadas para convertir.</p>
+                <div class="service-price">desde 990€<span></span></div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>Analítica & Reporting</h3>
+                <p>Dashboards personalizados e informes mensuales de resultados.</p>
+                <div class="service-price">desde 149€<span>/mes</span></div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3>Consultoría 1:1</h3>
+                <p>Sesiones estratégicas personalizadas con un experto en marketing.</p>
+                <div class="service-price">desde 99€<span>/hora</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="section-header">
+            <h2>Lo Que Dicen Nuestros Clientes</h2>
+            <p>Más de 2.500 PYMEs y autónomos ya han transformado su marketing con nosotros.</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"El plan que generó la IA fue increíblemente preciso. En 15 minutos tenía una hoja de ruta clara que una agencia tradicional me habría cobrado 2.000€."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MG</div>
+                        <div class="author-info">
+                            <h4>María García</h4>
+                            <p>CEO, Boutique Elena</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Recibir el plan impreso fue un plus increíble. Lo tengo en mi mesa y lo consulto constantemente. El servicio de redes sociales que contraté después ha duplicado mis seguidores."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">JL</div>
+                        <div class="author-info">
+                            <h4>Javier López</h4>
+                            <p>Fundador, TechStart</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="testimonial-text">"Como autónoma, siempre pensé que el marketing estratégico no era para mí. Esta plataforma me demostró lo contrario. Ahora tengo claridad y resultados."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AR</div>
+                        <div class="author-info">
+                            <h4>Ana Rodríguez</h4>
+                            <p>Consultora Freelance</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing" id="precios">
+        <div class="section-header">
+            <h2>Planes de Implementación</h2>
+            <p>Elige el nivel de soporte que necesitas para ejecutar tu estrategia de marketing.</p>
+        </div>
+        <div class="pricing-cards">
+            <div class="pricing-card">
+                <h3>Starter</h3>
+                <p class="subtitle">Para quien empieza</p>
+                <div class="price"><sup>€</sup>299</div>
+                <p class="period">por mes</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Gestión de 2 redes sociales</li>
+                    <li><i class="fas fa-check"></i> 8 publicaciones/mes</li>
+                    <li><i class="fas fa-check"></i> Informe mensual básico</li>
+                    <li><i class="fas fa-check"></i> Soporte por email</li>
+                    <li class="disabled"><i class="fas fa-times"></i> Publicidad digital</li>
+                    <li class="disabled"><i class="fas fa-times"></i> SEO</li>
+                </ul>
+                <a href="#brief" class="btn btn-secondary" style="width: 100%;">Empezar</a>
+            </div>
+            <div class="pricing-card featured">
+                <h3>Growth</h3>
+                <p class="subtitle">El más popular</p>
+                <div class="price"><sup>€</sup>599</div>
+                <p class="period">por mes</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Gestión de 4 redes sociales</li>
+                    <li><i class="fas fa-check"></i> 16 publicaciones/mes</li>
+                    <li><i class="fas fa-check"></i> Campañas de publicidad</li>
+                    <li><i class="fas fa-check"></i> SEO básico incluido</li>
+                    <li><i class="fas fa-check"></i> Dashboard en tiempo real</li>
+                    <li><i class="fas fa-check"></i> Soporte prioritario</li>
+                </ul>
+                <a href="#brief" class="btn btn-primary" style="width: 100%;">Empezar</a>
+            </div>
+            <div class="pricing-card">
+                <h3>Scale</h3>
+                <p class="subtitle">Máximo crecimiento</p>
+                <div class="price"><sup>€</sup>999</div>
+                <p class="period">por mes</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Todo en Growth</li>
+                    <li><i class="fas fa-check"></i> SEO avanzado</li>
+                    <li><i class="fas fa-check"></i> Email marketing</li>
+                    <li><i class="fas fa-check"></i> Creación de contenidos</li>
+                    <li><i class="fas fa-check"></i> Consultoría mensual 1:1</li>
+                    <li><i class="fas fa-check"></i> Account manager dedicado</li>
+                </ul>
+                <a href="#brief" class="btn btn-secondary" style="width: 100%;">Empezar</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq">
+        <div class="section-header">
+            <h2>Preguntas Frecuentes</h2>
+            <p>Resolvemos tus dudas sobre nuestra plataforma y servicios.</p>
+        </div>
+        <div class="faq-grid">
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Cómo funciona el plan generado por IA?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Nuestra IA analiza la información que proporcionas en el brief (sector, objetivos, audiencia, presupuesto) y genera un plan estratégico personalizado basándose en mejores prácticas del sector y datos de mercado actualizados. El proceso tarda entre 5-15 minutos y el resultado es comparable a lo que ofrecería una consultora tradicional.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Por qué el plan digital es gratuito?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Creemos que toda PYME y autónomo merece acceso a planificación estratégica de calidad. El plan gratuito nos permite demostrar el valor de nuestro servicio. Si después decides que necesitas ayuda para implementarlo, ofrecemos servicios de ejecución profesionales. Es un modelo win-win.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Qué incluye el plan impreso de 19,99€?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Recibes un libro de más de 40 páginas impreso en papel de alta calidad, encuadernado profesionalmente, con tu plan completo. Incluye además acceso digital, una consulta telefónica de 15 minutos con un experto, y envío en 24 horas a cualquier punto de España peninsular.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Puedo implementar el plan yo mismo?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>¡Por supuesto! El plan está diseñado para ser accionable y claro. Incluye pasos detallados, herramientas recomendadas y un calendario de implementación. Muchos clientes lo ejecutan internamente. Si en algún momento necesitas apoyo, puedes contratar nuestros servicios de implementación para acciones específicas.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Hay permanencia en los servicios mensuales?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>No. Todos nuestros planes de implementación son sin permanencia. Puedes cancelar cuando quieras con un aviso de 15 días. Creemos que la mejor manera de retenerte es con resultados, no con contratos.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿En cuánto tiempo veré resultados?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Depende del servicio. Publicidad digital puede generar resultados inmediatos. Redes sociales suelen mostrar mejoras significativas en 2-3 meses. SEO es una estrategia a medio-largo plazo, con resultados visibles a partir del mes 3-4. Te proporcionamos métricas claras y dashboards para que siempre sepas cómo vas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <h2>¿Listo para Transformar tu Marketing?</h2>
+        <p>Únete a más de 2.500 PYMEs que ya han dado el salto. Genera tu plan gratuito en minutos.</p>
+        <a href="#brief" class="btn">
+            <i class="fas fa-rocket"></i>
+            Generar Mi Plan Gratis
+        </a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">MarketingIA Pro</div>
+                <p>Democratizamos la consultoría de marketing para PYMEs y autónomos en España. Estrategia profesional al alcance de todos.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Servicios</h4>
+                <ul>
+                    <li><a href="#brief">Generador de Planes</a></li>
+                    <li><a href="#servicios">SEO</a></li>
+                    <li><a href="#servicios">Redes Sociales</a></li>
+                    <li><a href="#servicios">Publicidad Digital</a></li>
+                    <li><a href="#servicios">Email Marketing</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Empresa</h4>
+                <ul>
+                    <li><a href="#">Sobre Nosotros</a></li>
+                    <li><a href="#">Casos de Éxito</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Trabaja con Nosotros</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Aviso Legal</a></li>
+                    <li><a href="#">Política de Privacidad</a></li>
+                    <li><a href="#">Política de Cookies</a></li>
+                    <li><a href="#">Términos y Condiciones</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 MarketingIA Pro. Todos los derechos reservados.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Generando tu Plan de Marketing...</h3>
+            <p>Nuestra IA está analizando tu información</p>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        function toggleMenu() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.remove('active');
+                document.querySelector(`.progress-step[data-step="${currentStep}"]`).classList.remove('active');
+                document.querySelector(`.progress-step[data-step="${currentStep}"]`).classList.add('completed');
+
+                currentStep++;
+
+                document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.add('active');
+                document.querySelector(`.progress-step[data-step="${currentStep}"]`).classList.add('active');
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.remove('active');
+                document.querySelector(`.progress-step[data-step="${currentStep}"]`).classList.remove('active');
+
+                currentStep--;
+
+                document.querySelector(`.progress-step[data-step="${currentStep}"]`).classList.remove('completed');
+                document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.add('active');
+                document.querySelector(`.progress-step[data-step="${currentStep}"]`).classList.add('active');
+            }
+        }
+
+        function toggleCheckbox(element) {
+            element.classList.toggle('selected');
+        }
+
+        function generatePlan() {
+            // Show loading
+            document.getElementById('loadingOverlay').classList.add('show');
+
+            // Simulate AI processing
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.remove('show');
+
+                // Hide form steps
+                document.querySelectorAll('.form-step').forEach(step => {
+                    step.classList.remove('active');
+                });
+                document.querySelector('.form-progress').style.display = 'none';
+
+                // Show result
+                document.getElementById('resultContainer').classList.add('show');
+            }, 3000);
+        }
+
+        function selectDelivery(type) {
+            if (type === 'digital') {
+                alert('¡Excelente! Te enviaremos el plan digital a tu email en unos minutos.');
+            } else {
+                alert('¡Genial! Serás redirigido a la pasarela de pago para completar tu pedido de 19,99€.');
+            }
+        }
+
+        function toggleFaq(element) {
+            const faqItem = element.parentElement;
+            faqItem.classList.toggle('active');
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+                // Close mobile menu if open
+                document.querySelector('.nav-links').classList.remove('active');
+            });
+        });
+
+        // Animate chart bars on load
+        window.addEventListener('load', () => {
+            const bars = document.querySelectorAll('.chart-bar');
+            bars.forEach((bar, index) => {
+                const height = bar.style.height;
+                bar.style.height = '0';
+                setTimeout(() => {
+                    bar.style.height = height;
+                }, 300 + (index * 100));
+            });
+        });
+    </script>
+</body>
+</html>
