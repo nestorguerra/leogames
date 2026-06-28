@@ -219,8 +219,50 @@
     }
     #finale-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #2e7d1c; }
     .hidden { display: none !important; }
+    /* ===== Día / Noche 🌞🌙 ===== */
+    #daynight {
+      position: fixed; top: 64px; left: 14px; z-index: 22; display: flex; align-items: center; gap: 8px;
+      background: rgba(46,58,35,.82); border: 3px solid #6abf47; border-radius: 12px; padding: 6px 13px;
+      font-size: 16px; font-weight: 700; color: #eafbe2; pointer-events: none; transition: border-color .6s, background .6s;
+    }
+    #daynight .dn-ico { font-size: 19px; }
+    #daynight.is-night { background: rgba(20,22,46,.85); border-color: #6f7ad6; color: #cfe0ff; }
+    /* velo de noche: oscurece bordes + estrellas (no tapa el centro, se puede jugar) */
+    #nightveil {
+      position: fixed; inset: 0; z-index: 8; opacity: 0; pointer-events: none; transition: opacity 1.2s ease;
+      background:
+        radial-gradient(2px 2px at 18% 22%, #fff, transparent), radial-gradient(2px 2px at 72% 16%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 42% 30%, #cfe, transparent), radial-gradient(2px 2px at 88% 38%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 30% 12%, #fff, transparent), radial-gradient(2px 2px at 62% 40%, #def, transparent),
+        radial-gradient(1.5px 1.5px at 8% 44%, #fff, transparent), radial-gradient(2px 2px at 52% 8%, #fff, transparent),
+        radial-gradient(ellipse at center, transparent 52%, rgba(6,8,26,.72) 100%);
+      background-repeat: no-repeat;
+    }
+    /* atrapado por una araña: despertar a salvo (sin susto fuerte) */
+    #web-catch {
+      position: fixed; inset: 0; z-index: 82; display: flex; align-items: center; justify-content: center;
+      background: rgba(10,8,22,0); opacity: 0; transition: opacity .5s ease, background .5s ease; pointer-events: none;
+    }
+    #web-catch.show { opacity: 1; background: rgba(10,8,22,.62); }
+    #web-catch .web-card {
+      background: #fffdf5; border: 7px solid #b07aff; border-radius: 24px; padding: 22px 30px; text-align: center;
+      max-width: 480px; width: 88vw; box-shadow: 0 16px 44px rgba(0,0,0,.45); transform: scale(.85); transition: transform .5s ease;
+    }
+    #web-catch.show .web-card { transform: scale(1); }
+    #web-catch .web-emoji { font-size: 58px; }
+    #web-catch h2 { margin: 6px 0 8px; font-size: clamp(26px,5vw,38px); color: #6a3fb0; }
+    #web-catch p { margin: 0; font-size: clamp(17px,3vw,22px); font-weight: 600; color: #23331a; line-height: 1.45; }
+    /* partículas al espantar una araña */
+    .spider-poof {
+      position: fixed; z-index: 60; width: 9px; height: 9px; border-radius: 50%; background: #6f5a86; pointer-events: none;
+      animation: poofOut .65s ease-out forwards;
+    }
+    @keyframes poofOut {
+      0% { transform: translate(0,0) scale(1); opacity: .9; }
+      100% { transform: translate(calc(var(--dx) * 80px), calc(var(--dy) * 80px)) scale(.2); opacity: 0; }
+    }
   </style>
-  <script type="module" crossorigin src="./assets/index-mQVSrC-V.js"></script>
+  <script type="module" crossorigin src="./assets/index-DDZhveD5.js"></script>
 </head>
 <body>
   <div id="title">Leo<span>Craft</span></div>
